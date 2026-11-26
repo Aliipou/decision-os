@@ -1,0 +1,12 @@
+# Changes here need Ali's review. Turn on "Require review from Code Owners" for main.
+/oracle/                         @Aliipou
+/.claude/                        @Aliipou
+/docs/agents/                    @Aliipou
+/CLAUDE.md                       @Aliipou
+/RUST_REWRITE.md                 @Aliipou
+/scripts/gate-fast.sh            @Aliipou
+/scripts/check-protected.sh      @Aliipou
+/.github/CODEOWNERS              @Aliipou
+/.github/workflows/protected.yml @Aliipou
+/spec/MODEL.md                   @Aliipou
+/spec/INVARIANT_MAP.md           @Aliipou

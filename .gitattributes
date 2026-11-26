@@ -1,0 +1,6 @@
+# Shell and Python hooks must keep LF on Windows checkouts (core.autocrlf).
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.md text eol=lf

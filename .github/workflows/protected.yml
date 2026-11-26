@@ -1,0 +1,32 @@
+name: protected
+# The backstop behind the agent hooks. Frozen: only Ali changes this file (CODEOWNERS).
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  protected-paths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # merge-base and oracle tags
+      - name: Frozen and append-only paths unchanged
+        run: bash scripts/check-protected.sh
+
+  full-gate:
+    needs: protected-paths
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Gate
+        run: bash scripts/gate-fast.sh fast
