@@ -1,0 +1,44 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+.env
+.env.local
+.venv/
+venv/
+authgate-kernel/.venv/
+authgate-kernel/target/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+# Rust build artifacts (any crate)
+target/
+authgate-kernel/target/
+**/target/
+*.so
+*.dll
+htmlcov/
+.coverage
+extracted_raw.txt
+*.db
+*.db-shm
+*.db-wal
+CLAUDE.md
+ANTI_GARBAGE_CHECKLIST.md
+.claude/
+# TLC / TLA+ local tooling (download per formal/TLC_SETUP.md)
+formal/tla2tools.jar
+formal/states/
+formal/*.tla.old
+formal/tlc_run_verify.log
+# Local verification scratch (do not commit)
+_pytest_full.txt
+_exp_*.txt
+_*.log
+
+# Lean build output
+.lake/
