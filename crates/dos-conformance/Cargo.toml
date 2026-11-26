@@ -1,0 +1,13 @@
+[package]
+name = "dos-conformance"
+version = "0.1.0"
+description = "Runs conformance vectors against any implementation's adapter and diffs the results."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]

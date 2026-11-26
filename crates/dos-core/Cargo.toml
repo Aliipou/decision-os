@@ -1,0 +1,12 @@
+[package]
+name = "dos-core"
+version = "0.1.0"
+description = "Decision OS trusted core: canonical form, fingerprint, verdict lattice, signatures. No I/O, no clock."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
