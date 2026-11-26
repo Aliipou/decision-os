@@ -29,6 +29,7 @@ Sources: sluicegate at `c731f31`, decision-os-min at `5ee36cb` (both imported un
 | SG-13 | Extension and plugin exceptions are caught and logged instead of denying. | PLUGIN_MODEL.md:91 | Any evaluator or extension failure is DENY and is audited. | open |
 | SG-14 | Signed-result canonical form differs between spec (big-endian) and code (little-endian, different field order). | SPEC.md:241-246; crypto.rs:47-72 | One canonical form (JCS), one definition in `spec/`. | open |
 | SG-15 | TCB size is stated seven different ways; real non-test TCB is about 2,000 lines. | see docs digest | TCB lines measured by a script in CI against one budget. | open |
+| SG-16 | The kernel's optional `sandbox` feature pins wasmtime with eight advisories (RUSTSEC-2026-0566..0573: host aborts, panics, unbounded memory). The oracle's supply-chain job fails, here and on sluicegate main. | authgate-kernel/Cargo.lock; job "Supply chain" in oracle-sluicegate-ci.yml | No dos-* crate ships a dependency with an open advisory: `cargo deny` and `cargo audit` block the workspace CI. Any sandbox uses a patched wasmtime. | open |
 
 ## decision-os-min (oracle/decision-os-min)
 
