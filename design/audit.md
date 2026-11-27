@@ -37,3 +37,12 @@ Round trip; every tamper above (edit field, edit hash, rehash without key, reord
 ## Open
 
 Domain `audit-head` is reused for entry signatures (payloads are structurally distinct); a dedicated `audit-entry` domain needs a `spec/sign.md` change. Anchor in a separate trust domain is deployment work.
+
+## As built (changes since the first draft)
+
+- No cached head: every append and `head()` re-reads the last line from disk under the locks (a cached head could be stale or swapped for a same-length file).
+- `FileSink::with_lock_path`: every writer of one log must use one lock file, including the Python gateway (`<home>/locks/audit.lock`).
+- The sink accepts a Python-written tail (same chain, ASCII-escaped hash) so Rust can continue an oracle log. Entries over 1 MiB are refused.
+- Signatures: Ed25519 over the JCS of the entry without `sig` and `entry_hash`, domain `audit-head` (shared with the anchor; payloads are structurally distinct: an entry always has `prev_hash`, a head never does).
+- Extra surface: `dos-audit verify` CLI; conformance area `audit` (16 vectors, answered by `dos-core-adapter`); Lean models in `formal/audit/`.
+- Known limits: a key holder can rewrite log and anchor together; rolling both back to an older matching pair is undetectable without an external anchor; `python_compat` accepts unsigned entries; keys are checked at verify time, not entry time; no directory fsync after create or rename.
