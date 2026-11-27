@@ -1,5 +1,9 @@
 # Escalation: decisions only Ali can make
 
+Status 2026-11-27: Ali accepted E1 and E7 for Phase 0 and authorized the merge of PR #1
+(merge commit 353008e) and the `oracle-v0` tag. Both stay open as risks until a
+non-admin agent account exists.
+
 Raised under CLAUDE.md "Stop and ask Ali". Nothing here is worked around; each item
 waits for a decision.
 
