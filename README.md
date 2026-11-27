@@ -17,8 +17,18 @@ done is `CLAUDE.md`.
 | `oracle/contracts-spec/` | The Authority Enforcement Profile (AE-1..AE-10) and its conformance suite. Frozen reference. |
 | `spec/` | The normative spec. `spec/KNOWN_GAPS.md` lists every gap found in the oracles and what Rust must do instead. |
 | `conformance/` | Language-neutral test vectors and the runner that checks any implementation against them (arrives with the first Rust tasks; `dos-audit` exists). |
-| `crates/` | The Rust implementation (`dos-*`, arrives with the first Rust tasks; `dos-audit` exists). |
+| `crates/` | The Rust implementation (`dos-*`): core, conformance, decision, exec, install, store, audit, cli. |
 | `docs/` | `docs/INDEX.md` maps all documentation, including the oracles' own. |
+
+## The `decision-os` command (`dos-cli`)
+
+```text
+decision-os keygen <key-file>
+decision-os proxy --key-file <f> [--policy <toml>] [--audit <log>] [--client <name>] -- <mcp server command...>
+decision-os audit verify <log> --key <pubkey-hex> [--anchor-file <p>] [--python-compat]
+```
+
+`proxy` sits between an MCP client and a server, gates every `tools/call` and `resources/read` with the gateway policy (`dos-decision`), and writes every outcome to the signed, hash-chained audit log before any effect (`dos-exec`, `dos-audit`). `Ask` is refused (no interactive approvals yet). If the log cannot be written the call is blocked. `keygen` writes a random 32-byte key (never overwrites) and prints the public key for `audit verify`.
 
 ## Audit log (`dos-audit`)
 
