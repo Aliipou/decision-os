@@ -30,3 +30,14 @@ kill -9 mid-write (a torn line is simulated, no process is killed); disk full; r
 ## Known limits, not defects
 
 A key holder can rewrite log and anchor together; rolling both back to an older matching pair is undetectable without an external anchor; `python_compat` lets an attacker strip signatures and rehash.
+
+## Interop review against the other implementations (sluicegate `kernel/audit.py`, gateway `LockedHashLog`)
+
+Same principles hold in mine: append under an exclusive cross-process lock, re-read the last line for the head on every append, fsync, hash over all fields except `entry_hash`, head exposed for anchoring. Two gaps found and fixed:
+
+| # | Sev | Finding | Fix and test |
+|---|---|---|---|
+| A-2 | S1 | The sink locked `<log>.lock`; the Python gateway locks `<home>/locks/audit.lock`. Writers using different lock files do not exclude each other, so a mixed Rust and Python deployment could fork the chain. | `FileSink::with_lock_path`; the lock directory is created. Test `shared_explicit_lock_file_is_used`. Deployment must pass the gateway's lock path. Flock (Unix) and byte-range lock (Windows) are the same OS mechanisms as Python's; not exercised live here (no Python). |
+| A-3 | S2 | The sink refused to continue a Python log whose last entry has non-ASCII text (Python hashes the ASCII-escaped form, the sink checked only the JCS hash). | `scan_tail` accepts the legacy hash. Tests `rust_continues_a_python_log_with_non_ascii_tail`, `corrupt_python_tail_still_fails_closed`. |
+
+sluicegate's `AuditLog` is not safe across processes, has no fsync and an in-memory rotation; nothing in it is needed beyond what the gateway log already covers.
