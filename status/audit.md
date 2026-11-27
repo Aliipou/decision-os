@@ -47,3 +47,13 @@ Covered: round trip, resume, empty log, reserved/bad input, field edit, rehash w
 - [ ] Wire `audit` area into `dos-core-adapter` and the oracle adapter (`oracle-decision-os-min/adapter.py`); the vectors are ready. Not done here: it edits `areas/mod.rs`, which sibling branches also edit (merge conflict risk), and Python does not run on this machine.
 - [ ] `dos-pep` wiring (crate does not exist on this branch).
 - [ ] Live Python cross-check; external anchor; dedicated `audit-entry` domain (Ali's decision); clippy run; build the fuzz target (online, nightly).
+
+## Red team and verification round
+
+Finding fixed (S2): `FileSink` cached the head keyed on file length, so a log swapped for another of the same length between two appends from one sink would be chained from a stale head. The cache is gone; every append re-reads the last line (test `sink_follows_the_disk_not_a_cache`).
+
+New tests in `crates/dos-audit/tests/redteam.rs` (11): every single-bit flip (two bits per byte) of a 3-entry log is detected with the anchor; every byte prefix is detected; extensions and duplicates refused; all line permutations and removals; signature replay across entries; cross-domain signatures; stripped-and-rehashed signatures refused in strict mode; 3 OS processes x 25 appends verify as one 75-entry chain; hostile inputs (deep nesting, BOM, bad UTF-8, huge numbers) never panic, in the verifier and the sink.
+
+Evidence: `cargo test -p dos-audit --offline -j 2`, run 6 times, all green (21 + 11 + 1 + 1 tests); workspace run: only the known `orphan_holding_stderr_does_not_hang` fails.
+
+Known limits (by design, not defects): a writer holding the key can rewrite the whole log and anchor together; rolling back log and anchor to an older matching pair is undetectable without an external anchor; `python_compat` mode lets an attacker strip signatures and rehash.
