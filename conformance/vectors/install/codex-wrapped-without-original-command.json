@@ -1,0 +1,56 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-wrapped-without-original-command",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\ncommand = \"p\"\nargs = [\"-m\", \"decision_os_min.gateway\", \"mcp-proxy\", \"--\"]\n"
+    },
+    "steps": [
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"p\"\nargs = [\"-m\", \"decision_os_min.gateway\", \"mcp-proxy\", \"--\"]\n"
+          },
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "no-original-command"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "crash": "ValueError",
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"p\"\nargs = [\"-m\", \"decision_os_min.gateway\", \"mcp-proxy\", \"--\"]\n"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle raises ValueError and aborts the run; Rust leaves the entry and reports it like the JSON path",
+  "source": "installer unwrap_args in _process_codex"
+}

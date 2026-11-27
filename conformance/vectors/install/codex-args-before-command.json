@@ -1,0 +1,74 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-args-before-command",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\nargs = [\"1\"] # a\nenv = { K = \"v\" }\ncommand = 'x'\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "[mcp_servers.a]\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\", \"1\"]\nenv = { K = \"v\" }\ncommand = \"/opt/decision-os/bin/decision-os\"\n\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\", \"1\"]\nenv = { K = \"v\" }\ncommand = \"/opt/decision-os/bin/decision-os\"\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\nargs = [\"1\"]\nenv = { K = \"v\" }\ncommand = \"x\"\n\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _edit_codex_server spans"
+}

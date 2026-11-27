@@ -1,0 +1,89 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-lone-surrogate",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\", \"env\": {\"K\": \"\\ud800\"}}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "file": {
+            "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\", \"env\": {\"K\": \"\\ud800\"}}}}"
+          },
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-json"
+          }
+        },
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-json"
+          },
+          "file": {
+            "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\", \"env\": {\"K\": \"\\ud800\"}}}}"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "crash": "UnicodeEncodeError",
+          "file": {
+            "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\", \"env\": {\"K\": \"\\ud800\"}}}}"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\", \"env\": {\"K\": \"\\ud800\"}}}}"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "a lone surrogate cannot be written as UTF-8: the oracle crashes mid-write (leaving a temp file); Rust refuses the file as invalid JSON",
+  "source": "REDTEAM installer: unicode"
+}

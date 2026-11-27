@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-tab-indent",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n\t\"mcpServers\": {\n\t\t\"a\": {\"command\": \"x\", \"args\": []}\n\t},\n\t\"e\": {},\n\t\"l\": []\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n\t\"mcpServers\": {\n\t\t\"a\": {\n\t\t\t\"command\": \"/opt/decision-os/bin/decision-os\",\n\t\t\t\"args\": [\n\t\t\t\t\"mcp-proxy\",\n\t\t\t\t\"--home\",\n\t\t\t\t\"@DOS_HOME@\",\n\t\t\t\t\"--client\",\n\t\t\t\t\"claude-desktop\",\n\t\t\t\t\"--server\",\n\t\t\t\t\"a\",\n\t\t\t\t\"--\",\n\t\t\t\t\"x\"\n\t\t\t]\n\t\t}\n\t},\n\t\"e\": {},\n\t\"l\": []\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n\t\"mcpServers\": {\n\t\t\"a\": {\"command\": \"x\", \"args\": []}\n\t},\n\t\"e\": {},\n\t\"l\": []\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _indent"
+}

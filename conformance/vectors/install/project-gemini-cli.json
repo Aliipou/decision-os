@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "project-gemini-cli",
+  "input": {
+    "kind": "run",
+    "client": "gemini-cli",
+    "project": true,
+    "path": ".gemini/settings.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"theme\": \"x\",\n  \"mcpServers\": {\n    \"pg\": {\n      \"command\": \"uvx\"\n    }\n  }\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "pg"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"theme\": \"x\",\n  \"mcpServers\": {\n    \"pg\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"gemini-cli\",\n        \"--server\",\n        \"pg\",\n        \"--\",\n        \"uvx\"\n      ]\n    }\n  }\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "pg"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"theme\": \"x\",\n  \"mcpServers\": {\n    \"pg\": {\n      \"command\": \"uvx\"\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_project_install"
+}

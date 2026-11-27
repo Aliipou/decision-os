@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-invalid-toml",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a\ncommand = \"x\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-toml"
+          },
+          "file": {
+            "text": "[mcp_servers.a\ncommand = \"x\"\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "REDTEAM installer: invalid TOML"
+}

@@ -1,0 +1,21 @@
+[package]
+name = "dos-install"
+version = "0.1.0"
+description = "Decision OS installer: MCP client registry, config wrap/unwrap, backups, byte-exact restore."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order", "arbitrary_precision"] }
+toml_edit = { version = "0.25", default-features = false, features = ["parse"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+base64 = "0.22"
+proptest = "1"
+tempfile = "3"

@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-bom",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "﻿# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"npx\"   # docs\nargs = [\n  \"-y\",\n  \"@upstash/context7-mcp\",\n]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/usr/local/bin/shell-mcp\"\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-toml"
+          },
+          "file": {
+            "text": "﻿# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"npx\"   # docs\nargs = [\n  \"-y\",\n  \"@upstash/context7-mcp\",\n]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/usr/local/bin/shell-mcp\"\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "REDTEAM installer: BOM (TOML)"
+}

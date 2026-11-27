@@ -1,0 +1,70 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-crlf-restore",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "# Codex config\r\nmodel = \"gpt-5\"\r\n\r\n[mcp_servers.context7]\r\ncommand = \"npx\"   # docs\r\nargs = [\r\n  \"-y\",\r\n  \"@upstash/context7-mcp\",\r\n]\r\n\r\n[mcp_servers.context7.env]\r\nDEBUG = \"1\"\r\n\r\n[mcp_servers.\"my-shell\"]\r\ncommand = \"/usr/local/bin/shell-mcp\"\r\n\r\n[mcp_servers.remote]\r\nurl = \"https://mcp.example.com/mcp\"\r\n\r\n[profiles.fast]\r\nmodel = \"gpt-5-mini\"\r\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "context7",
+              "my-shell"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "remote"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"context7\", \"--\", \"npx\", \"-y\", \"@upstash/context7-mcp\"]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"my-shell\", \"--\", \"/usr/local/bin/shell-mcp\"]\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "context7",
+              "my-shell"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "# Codex config\r\nmodel = \"gpt-5\"\r\n\r\n[mcp_servers.context7]\r\ncommand = \"npx\"   # docs\r\nargs = [\r\n  \"-y\",\r\n  \"@upstash/context7-mcp\",\r\n]\r\n\r\n[mcp_servers.context7.env]\r\nDEBUG = \"1\"\r\n\r\n[mcp_servers.\"my-shell\"]\r\ncommand = \"/usr/local/bin/shell-mcp\"\r\n\r\n[mcp_servers.remote]\r\nurl = \"https://mcp.example.com/mcp\"\r\n\r\n[profiles.fast]\r\nmodel = \"gpt-5-mini\"\r\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "REDTEAM installer: CRLF (TOML)"
+}

@@ -1,0 +1,74 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "cursor-command-string-app-edit-no-args-invented",
+  "input": {
+    "kind": "run",
+    "client": "cursor",
+    "project": false,
+    "path": ".cursor/mcp.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n    \"mcpServers\": {\n        \"fs\": {\n            \"command\": \"npx -y fs-mcp\"\n        }\n    }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n    \"mcpServers\": {\n        \"fs\": {\n            \"command\": \"/opt/decision-os/bin/decision-os\",\n            \"args\": [\n                \"mcp-proxy\",\n                \"--home\",\n                \"@DOS_HOME@\",\n                \"--client\",\n                \"cursor\",\n                \"--server\",\n                \"fs\",\n                \"--\",\n                \"npx -y fs-mcp\"\n            ]\n        }\n    }\n}\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "fs"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n    \"mcpServers\": {\n        \"fs\": {\n            \"command\": \"/opt/decision-os/bin/decision-os\",\n            \"args\": [\n                \"mcp-proxy\",\n                \"--home\",\n                \"@DOS_HOME@\",\n                \"--client\",\n                \"cursor\",\n                \"--server\",\n                \"fs\",\n                \"--\",\n                \"npx -y fs-mcp\"\n            ]\n        }\n    }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "fs"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n    \"mcpServers\": {\n        \"fs\": {\n            \"command\": \"npx -y fs-mcp\"\n        }\n    }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_cursor_command_string_and_codex_args_absent_round_trip"
+}
