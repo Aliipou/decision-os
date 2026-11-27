@@ -12,3 +12,5 @@ workspace = true
 
 [dependencies]
 dos-conformance = { path = "../dos-conformance" }
+dos-core = { path = "../dos-core" }
+dos-audit = { path = "../dos-audit" }

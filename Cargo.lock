@@ -215,7 +215,9 @@ dependencies = [
 name = "dos-core-adapter"
 version = "0.1.0"
 dependencies = [
+ "dos-audit",
  "dos-conformance",
+ "dos-core",
 ]
 
 [[package]]

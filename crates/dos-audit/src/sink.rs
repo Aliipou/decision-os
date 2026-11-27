@@ -11,7 +11,7 @@ use dos_core::store::{AuditReceipt, AuditSink, StoreError};
 
 use crate::anchor::{Anchor, FileAnchor, Head};
 use crate::entry::{
-    GENESIS, RESERVED, field, hash_of, seq_field, seq_value, signing_bytes, str_field,
+    GENESIS, RESERVED, field, hash_of, legacy_hash_of, seq_field, seq_value, signing_bytes, str_field,
 };
 
 /// The head of the log as read from disk.
@@ -43,6 +43,14 @@ impl FileSink {
         let path = path.into();
         let anchor = FileAnchor::new(with_suffix(&path, ".anchor"), SigningKey::from_bytes(secret));
         FileSink::open_with_anchor(path, secret, Some(Box::new(anchor)))
+    }
+
+    /// Uses `lock_path` for the cross-process lock instead of `<log>.lock`. Every writer of
+    /// one log must use the same lock file, including the Python gateway, which locks
+    /// `<home>/locks/audit.lock` (flock on Unix, byte 0 on Windows).
+    pub fn with_lock_path(mut self, lock_path: impl Into<PathBuf>) -> FileSink {
+        self.lock_path = lock_path.into();
+        self
     }
 
     /// Like `open` with a caller-chosen anchor. `None` disables anchoring: tail
@@ -101,7 +109,10 @@ fn scan_tail(bytes: &[u8]) -> Result<State, StoreError> {
     };
     let seq = seq_field(&m).ok_or(StoreError::Unavailable)?;
     let hash = str_field(&m, "entry_hash").ok_or(StoreError::Unavailable)?;
-    if hash_of(&m).map_err(|_| StoreError::Unavailable)? != hash {
+    // The oracle (Python) writes the same chain with an ASCII-escaped hash; accept its
+    // tail so Rust can continue a Python-written log.
+    let jcs_ok = hash_of(&m).map_err(|_| StoreError::Unavailable)? == hash;
+    if !jcs_ok && legacy_hash_of(&m).as_deref() != Some(hash) {
         return Err(StoreError::Unavailable);
     }
     Ok(State {
@@ -136,6 +147,11 @@ impl FileSink {
 
     fn append_locked(&self, entry_jcs: &[u8]) -> Result<AuditReceipt, StoreError> {
         let _guard = self.state.lock().map_err(|_| StoreError::Unavailable)?;
+        if let Some(dir) = self.lock_path.parent() {
+            if !dir.as_os_str().is_empty() {
+                fs::create_dir_all(dir).map_err(|_| StoreError::Unavailable)?;
+            }
+        }
         let lock = File::options()
             .create(true)
             .write(true)
