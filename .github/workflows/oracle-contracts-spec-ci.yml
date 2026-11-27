@@ -1,0 +1,41 @@
+name: oracle contracts-spec ci
+
+# contracts-spec is the installable `decision-os-contracts` package (the root of
+# truth). CI installs it editable, lints + type-checks it, validates every
+# schema/example, and runs the shared conformance enforcers against itself.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: oracle/contracts-spec
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - run: python -m pip install --upgrade pip
+      - name: Install (editable, with dev tools)
+        run: pip install -e ".[dev]" mypy
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Types (mypy)
+        run: mypy decision_os_contracts
+      - name: Validate contracts (schemas + examples + frozen invariants)
+        run: pytest -q
+        env:
+          AUTHGATE_BACKEND: python
+      - name: Self-check enforcers (rules A & B run clean on this repo)
+        run: |
+          python -m decision_os_contracts.conformance.check_authority --roots decision_os_contracts/conformance
+          python -m decision_os_contracts.conformance.check_imports --policy decision_os_contracts/conformance/self_policy.json

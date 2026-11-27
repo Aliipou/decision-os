@@ -1,0 +1,372 @@
+name: oracle sluicegate CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+
+# The Python suite validates the pure-Python reference implementation in a single
+# type system. The Rust TCB is validated by the rust-check + TCB-tests jobs.
+env:
+  AUTHGATE_BACKEND: python
+  AUTHGATE_ADMIN_TOKEN: ci-admin-token
+
+defaults:
+  run:
+    working-directory: oracle/sluicegate-py
+
+jobs:
+  rust-check:
+    name: Rust — clippy + tests
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: oracle/sluicegate-py/authgate-kernel
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cargo cache
+        uses: Swatinem/rust-cache@9bdad043e88c75890e36ad3bbc8d27f0090dd609
+        with:
+          workspaces: oracle/sluicegate-py/authgate-kernel
+
+      - name: TCB LOC guard — engine.rs must stay under 300 lines
+        run: |
+          loc=$(wc -l < src/engine.rs)
+          echo "engine.rs: ${loc} lines"
+          if [ "$loc" -gt 300 ]; then
+            echo "ERROR: engine.rs exceeds 300 LOC (TCB inflation). Current: ${loc}"
+            echo "If this is a legitimate TCB change, update the limit with justification."
+            exit 1
+          fi
+
+      - name: TCB API guard — engine.rs must export exactly one public function
+        run: |
+          pub_fns=$(grep -c '^pub fn ' src/engine.rs || true)
+          echo "engine.rs public functions: ${pub_fns}"
+          if [ "$pub_fns" -gt 1 ]; then
+            echo "ERROR: engine.rs has ${pub_fns} public functions (must be 1: verify)."
+            echo "New public API in engine.rs expands the TCB surface. Move to a separate module."
+            exit 1
+          fi
+
+      - name: TCB import guard — engine.rs may only import from capability and wire
+        run: |
+          bad_imports=$(grep '^use crate::' src/engine.rs | grep -v 'crate::capability\|crate::wire' || true)
+          if [ -n "$bad_imports" ]; then
+            echo "ERROR: engine.rs imports from outside capability/wire:"
+            echo "$bad_imports"
+            echo "TCB must not depend on modules outside its defined boundary."
+            exit 1
+          fi
+
+      - name: TCB purity check — no randomness/network/filesystem in engine.rs
+        run: |
+          if grep -E 'OsRng|rand_core|TcpStream|UdpSocket|File::open|fs::read|fs::write|std::net' src/engine.rs; then
+            echo "ERROR: engine.rs contains I/O or randomness (TCB violation)"
+            exit 1
+          fi
+
+      - name: TCB v2 full-path LOC ceiling — semantic-contamination guard
+        run: |
+          # Per the architect's discipline rule: every LOC inside the TCB v2 path
+          # must justify its existence. The hard ceiling forces scope-creep visibility.
+          # If this fails, the PR must either: remove LOC, OR justify the increase
+          # and update the ceiling here with sign-off.
+          ENGINE=$(wc -l < src/tcb/engine.rs)
+          DAG=$(wc -l < src/tcb/dag.rs)
+          CG=$(wc -l < src/tcb/call_gate.rs)
+          SEQ=$(wc -l < src/tcb/sequence.rs)
+          TYPES=$(wc -l < src/tcb/types.rs)
+          TOTAL=$((ENGINE + DAG + CG + SEQ + TYPES))
+          CEILING=1500
+          echo "TCB v2 LOC breakdown:"
+          echo "  engine.rs    : $ENGINE"
+          echo "  dag.rs       : $DAG"
+          echo "  call_gate.rs : $CG"
+          echo "  sequence.rs  : $SEQ"
+          echo "  types.rs     : $TYPES"
+          echo "  TOTAL        : $TOTAL  (ceiling: $CEILING)"
+          if [ "$TOTAL" -gt "$CEILING" ]; then
+            echo ""
+            echo "ERROR: TCB v2 total exceeds $CEILING LOC."
+            echo ""
+            echo "Per TCB_DISCIPLINE.md:"
+            echo "  Rule 1: anything removable without breaking invariants belongs OUTSIDE TCB"
+            echo "  Rule 2: no semantic concept enters TCB"
+            echo "  Rule 3: every new TCB line needs a test, proof, or invariant"
+            echo ""
+            echo "Either shrink the TCB or update the ceiling in .github/workflows/ci.yml"
+            echo "with a written justification of what attack the new code prevents."
+            exit 1
+          fi
+          # Individual file caps — engine.rs is most sacred
+          if [ "$ENGINE" -gt 500 ]; then
+            echo "ERROR: engine.rs ${ENGINE} > 500 LOC (hard cap)"
+            exit 1
+          fi
+          if [ "$CG" -gt 500 ]; then
+            echo "ERROR: call_gate.rs ${CG} > 500 LOC"
+            exit 1
+          fi
+
+      - name: TCB v2 purity — no I/O, network, randomness, or semantic terms
+        run: |
+          # Per discipline rule 2: forbidden semantic concepts must never appear
+          # inside the TCB. These would be semantic contamination.
+          FORBIDDEN_TERMS='manipulation_score|coercion|sovereignty_metric|constitutional|recursive_governance|persuasion_score|ethics|alignment_score|trustworthiness'
+          BAD=$(grep -rE "$FORBIDDEN_TERMS" src/tcb/ || true)
+          if [ -n "$BAD" ]; then
+            echo "ERROR: forbidden semantic terms found inside TCB v2:"
+            echo "$BAD"
+            echo ""
+            echo "These concepts are heuristics. They belong in extensions/, not in the TCB."
+            echo "See TCB_DISCIPLINE.md rule 2: 'no semantic concept enters TCB'."
+            exit 1
+          fi
+          # No I/O in TCB
+          IO=$(grep -rE 'std::fs::|TcpStream|UdpSocket|std::net::|reqwest|hyper' src/tcb/ || true)
+          if [ -n "$IO" ]; then
+            echo "ERROR: I/O found inside TCB v2:"
+            echo "$IO"
+            exit 1
+          fi
+
+      - name: TCB algebra guard — capability.rs must stay finite and self-contained
+        run: |
+          cap_loc=$(wc -l < src/capability.rs)
+          echo "capability.rs: ${cap_loc} lines"
+          if [ "$cap_loc" -gt 200 ]; then
+            echo "ERROR: capability.rs exceeds 200 LOC (hard ceiling). Capability algebra must stay finite."
+            echo "Ceiling raised from 150→200 in v2 to accommodate the expanded AI/agent capability taxonomy"
+            echo "and CapabilityRisk enum. If you need more than 200 LOC, you are adding policy logic."
+            echo "That belongs outside the TCB."
+            exit 1
+          fi
+          if grep -E '^use crate::' src/capability.rs; then
+            echo "ERROR: capability.rs imports from the project (use crate:: found)."
+            echo "capability.rs must be self-contained — zero project dependencies."
+            exit 1
+          fi
+          if grep -E '^pub struct |^struct ' src/capability.rs; then
+            echo "ERROR: capability.rs contains struct definitions."
+            echo "Only enums are permitted. Structs carry state and open extension points."
+            exit 1
+          fi
+
+      - name: Clippy — zero-panic policy
+        run: |
+          cargo clippy --all-targets -- \
+            -D warnings \
+            -D clippy::unwrap_used \
+            -D clippy::expect_used \
+            -D clippy::indexing_slicing \
+            -D clippy::panic
+
+      - name: Build (locked)
+        run: cargo build --release --locked
+
+  python-test:
+    name: Python — lint + tests
+    runs-on: ubuntu-24.04
+    needs: rust-check
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Rust kernel
+        working-directory: oracle/sluicegate-py/authgate-kernel
+        run: pip install .
+
+      - name: Install Python dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check src tests
+
+      - name: Type check (mypy)
+        run: mypy src --ignore-missing-imports
+
+      - name: Test with coverage gate
+        run: pytest --cov=authgate --cov-report=term-missing --cov-fail-under=85
+
+  supply-chain:
+    name: Supply chain — cargo-deny + audit
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: oracle/sluicegate-py/authgate-kernel
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: cargo-deny
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: oracle/sluicegate-py/authgate-kernel/Cargo.toml
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: cargo audit
+        run: |
+          cargo install cargo-audit --locked
+          # Ignore list mirrors authgate-kernel/deny.toml: only the two pyo3
+          # advisories (affected APIs not called by this crate; reasons and
+          # review dates in deny.toml). Do not add an ignore without a written
+          # reachability note and a review date.
+          cargo audit \
+            --ignore RUSTSEC-2025-0020 --ignore RUSTSEC-2026-0177
+
+  api-smoke:
+    name: API smoke test
+    runs-on: ubuntu-24.04
+    needs: python-test
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build and install
+        working-directory: oracle/sluicegate-py/authgate-kernel
+        run: pip install .
+
+      - run: pip install -e ".[dev]"
+
+      - name: Smoke test API
+        run: pytest tests/test_api.py -v
+
+  cli-smoke:
+    name: CLI — pip install + authgate-cli --help
+    runs-on: ubuntu-24.04
+    needs: rust-check
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Fresh venv install (matches README Quick Start)
+        run: |
+          python -m venv /tmp/ag-cli-venv
+          /tmp/ag-cli-venv/bin/pip install -U pip
+          /tmp/ag-cli-venv/bin/pip install ./authgate-kernel
+          /tmp/ag-cli-venv/bin/pip install .
+          /tmp/ag-cli-venv/bin/authgate-cli --help
+          /tmp/ag-cli-venv/bin/authgate-cli verify --help
+
+  performance-gate:
+    name: Performance regression gate
+    runs-on: ubuntu-24.04
+    needs: python-test
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -e ".[dev]"
+
+      - name: Run benchmarks with performance gate
+        run: |
+          python benchmarks/comprehensive_bench.py --gate
+          echo "All performance targets met"
+
+  adversarial-simulation:
+    name: Adversarial simulation (231 scenarios, 0 violations)
+    runs-on: ubuntu-24.04
+    needs: python-test
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -e ".[dev]"
+
+      - name: Run simulation engine
+        run: |
+          cd attack_harness
+          python simulation/run_simulation.py
+          echo "Simulation passed: 0 violations"
+
+  red-team-tests:
+    name: Red team adversarial tests
+    runs-on: ubuntu-24.04
+    needs: python-test
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -e ".[dev]"
+
+      - name: Run red team tests
+        run: pytest tests/test_adversarial_redteam.py tests/test_epoch_revocation.py tests/test_api_redteam_boundary.py -v
+
+  docker-smoke:
+    name: Docker image build + /readyz smoke
+    runs-on: ubuntu-24.04
+    needs: api-smoke
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Build image
+        run: docker build -t authgate:ci .
+
+      - name: Smoke container
+        run: |
+          docker run -d --name ag \
+            -e AUTHGATE_ADMIN_TOKEN=ci-smoke-token \
+            -e AUTHGATE_AUDIT_PATH=/data/audit.jsonl \
+            -p 8000:8000 authgate:ci
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/readyz && break || sleep 1
+          done
+          curl -sf http://localhost:8000/readyz
+          curl -sf http://localhost:8000/healthz
+          curl -sf -X POST http://localhost:8000/verify \
+            -H 'content-type: application/json' \
+            -d '{"action_id":"ci","actor":{"name":"ghost","kind":"MACHINE"},"bypasses_verifier":true}' \
+            | grep -q '"permitted":false'
+          docker rm -f ag
+

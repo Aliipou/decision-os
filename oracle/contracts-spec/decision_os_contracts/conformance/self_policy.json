@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "roots": ["decision_os_contracts/conformance"],
+      "forbidden": ["research", "fdk_research", "agent_runtime", "control_plane"],
+      "ban_dynamic_import": true
+    }
+  ]
+}

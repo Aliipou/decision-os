@@ -1,0 +1,111 @@
+#![allow(unexpected_cfgs)]
+#![allow(clippy::useless_conversion)]
+// Test code is permitted to panic/unwrap/index; the zero-panic policy applies to
+// the library (non-test) build, which CI enforces via `cargo clippy --all-targets`.
+#![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing))]
+pub mod authority_graph;
+/// Mahdavi Compass — post-hoc scorer; annotates, never denies (NOT in TCB).
+pub mod compass;
+/// v2 TCB — stateless proof-chain engine (replaces registry-based v1 engine).
+/// See src/tcb/ for the trusted computing base boundary.
+pub mod tcb;
+/// Composition safety — session-scoped rights accumulation (NOT in TCB).
+pub mod sequence;
+/// Semantic gate — heuristic coercion/deception analysis (NOT in TCB, advisory).
+pub mod semantic_gate;
+#[cfg(test)]
+mod semantic_gate_redteam;
+/// Capability-constrained WASM tool executor. Enable with `--features sandbox`.
+#[cfg(feature = "sandbox")]
+pub mod sandbox;
+/// Rights-derived seccomp allowlists for Linux subprocess isolation (NOT in TCB).
+pub mod seccomp;
+/// Monotonic session clock helper for caller-side time sourcing (NOT in TCB).
+pub mod session_clock;
+pub mod capability;
+mod crypto;
+pub mod engine;
+/// Python-facing "v1" entity model (pyo3 classes). Not used by the TCB or
+/// the wasm build — see the `python` feature.
+#[cfg(feature = "python")]
+pub mod entities;
+pub mod ffi;
+pub mod goal_tree;
+#[cfg(kani)]
+mod kani_proofs;
+pub mod multi_agent;
+pub mod planner;
+/// Python-facing "v1" registry (pyo3 classes). Not used by the TCB or the
+/// wasm build — see the `python` feature.
+#[cfg(feature = "python")]
+pub mod registry;
+/// Python-facing "v1" verifier (pyo3 classes). Not used by the TCB or the
+/// wasm build — see the `python` feature.
+#[cfg(feature = "python")]
+pub mod verifier;
+#[cfg(feature = "wasm")]
+pub mod wasm;
+pub mod wire;
+
+// The pyo3 extension module is only meaningful (and only compiles) on a
+// native target with a Python interpreter available. It pulled in
+// unconditionally before, which meant the crate's own documented
+// `wasm-pack build --features wasm` command could never actually succeed —
+// pyo3 can't cross-compile to wasm32 without a Python-for-wasm toolchain
+// this crate has no use for. Gating it behind the (default-on) `python`
+// feature keeps every existing native/Python build working exactly as
+// before, while `--no-default-features --features wasm` now builds clean.
+// See DECISIONS.md.
+#[cfg(feature = "python")]
+mod python_bindings {
+    use pyo3::prelude::*;
+
+    use crate::entities::{AgentType, Entity, Resource, ResourceType, RightsClaim};
+    use crate::registry::{ConflictRecord, OwnershipRegistry};
+    use crate::verifier::{Action, FreedomVerifier, VerificationResult};
+
+    /// Verify an action against a registry using the JSON wire format.
+    ///
+    /// `input_json` must be:
+    ///   `{"registry": <OwnershipRegistryWire>, "action": <ActionWire>}`
+    ///
+    /// Returns a JSON string (`VerificationResultWire`) with an ed25519 signature.
+    /// Works identically to `FreedomVerifier.verify_signed()` but speaks pure JSON —
+    /// usable from any language that can call the Python extension or the C ABI.
+    #[pyfunction]
+    fn verify_json(input_json: &str) -> PyResult<String> {
+        let vi: crate::wire::VerifyInput = serde_json::from_str(input_json)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+        let mut r = crate::engine::verify(&vi.registry, &vi.action);
+        crate::ffi::attach_signature(&mut r)
+            .map_err(pyo3::exceptions::PyRuntimeError::new_err)?;
+        serde_json::to_string(&r)
+            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+    }
+
+    /// Return this kernel instance's ed25519 verifying key (hex, 64 chars).
+    ///
+    /// Any party that holds the public key can verify signatures on
+    /// `VerificationResult.signature` without trusting the calling process.
+    #[pyfunction]
+    fn kernel_pubkey() -> String {
+        crate::crypto::pubkey_hex()
+    }
+
+    #[pymodule]
+    fn authgate_kernel(m: &Bound<'_, PyModule>) -> PyResult<()> {
+        m.add_class::<AgentType>()?;
+        m.add_class::<ResourceType>()?;
+        m.add_class::<Resource>()?;
+        m.add_class::<Entity>()?;
+        m.add_class::<RightsClaim>()?;
+        m.add_class::<ConflictRecord>()?;
+        m.add_class::<OwnershipRegistry>()?;
+        m.add_class::<Action>()?;
+        m.add_class::<VerificationResult>()?;
+        m.add_class::<FreedomVerifier>()?;
+        m.add_function(wrap_pyfunction!(verify_json, m)?)?;
+        m.add_function(wrap_pyfunction!(kernel_pubkey, m)?)?;
+        Ok(())
+    }
+}

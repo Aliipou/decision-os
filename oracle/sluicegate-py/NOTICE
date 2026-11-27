@@ -1,0 +1,39 @@
+AUTHORSHIP AND OWNERSHIP NOTICE
+================================
+
+Project:   Sluicegate (formerly authgate-kernel)
+Author:    Ali Pourrahim (https://github.com/Aliipou)
+Contact:   Alipourrahim.ap@gmail.com
+Copyright: © 2026 Ali Pourrahim
+
+Statement of independent authorship
+------------------------------------
+Sluicegate (formerly authgate-kernel) — a capability-constrained authorization kernel for
+agent tool execution — was conceived, designed, and implemented by
+the Author as an independent personal work.
+
+It was NOT created as part of, and does NOT incorporate or depend on:
+  - any course, thesis, or degree requirement of any institution;
+  - any employment, grant, scholarship, or funded research project;
+  - any institution's facilities, equipment, funding, or confidential
+    information.
+
+The Author is the sole owner of all intellectual property in this
+work. No third party, including any university, research, development,
+or innovation (RDI) office, holds any ownership interest, license, or
+right to claim credit for this work, its design, or its underlying
+ideas, except by a separate written agreement signed by the Author.
+
+Evidence of authorship and priority
+-----------------------------------
+Authorship and creation dates are evidenced by the public version-
+control history of this repository (commit authorship and timestamps)
+and its public publication record at:
+  https://github.com/Aliipou/authgate-kernel
+
+Use and attribution
+--------------------
+Licensed under the Apache License, Version 2.0 (see LICENSE), including
+its express patent grant. Redistributions must retain this NOTICE file.
+The name "Sluicegate" and the Author's name are not licensed for use as
+trademarks or to imply endorsement (Apache-2.0 §6).

@@ -1,0 +1,191 @@
+name: oracle dosmin ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+defaults:
+  run:
+    working-directory: oracle/decision-os-min
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - run: python -m pip install --upgrade pip
+      - name: Install (core + service + dev)
+        run: pip install -e ".[service,dev]"
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Types (mypy)
+        run: mypy decision_os_min
+      - name: Tests (pytest)
+        run: pytest -q --ignore=tests/test_os_isolation.py --ignore=tests/test_e2e_agent_boundary.py
+        env:
+          AUTHGATE_BACKEND: python
+
+  gateway-cross-platform:
+    name: Gateway on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev]" mcp
+      - name: Gateway tests (MCP proxy, model gateway, installer, dashboard)
+        run: pytest -q tests/gateway
+      - name: One-click installer smoke test (no real configs touched)
+        shell: bash
+        run: |
+          export HOME="$RUNNER_TEMP/home" USERPROFILE="$RUNNER_TEMP/home" APPDATA="$RUNNER_TEMP/home/AppData/Roaming"
+          mkdir -p "$HOME"
+          decision-os install --dry-run
+          decision-os install
+          decision-os policy check
+          decision-os doctor
+
+  installed-e2e:
+    name: Installed wheel end-to-end (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip wheel --no-deps -w dist .
+      - name: One-line installer on the built wheel, real MCP round trips
+        run: bash tests/e2e/installed.sh dist/*.whl
+
+  installed-e2e-windows:
+    name: Installed wheel end-to-end (windows-latest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: python -m pip wheel --no-deps -w dist .
+      - name: Install-DecisionOS.cmd in a throwaway profile, real MCP round trips
+        shell: powershell
+        run: |
+          $whl = (Get-ChildItem dist\*.whl).FullName
+          powershell -NoProfile -ExecutionPolicy Bypass -File tests\e2e\installed.ps1 -Src $whl -RealNpx
+          exit $LASTEXITCODE
+
+  tm-a-isolation:
+    name: TM-A OS isolation (agent-noambient-v1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev]"
+      - name: Build agent sandbox image
+        run: docker build -t decision-os-agent:noambient-v1 -f sandbox/Dockerfile.agent sandbox/
+      - name: Run TM-A sandbox probes
+        run: bash sandbox/run_tm_a_probes.sh
+        env:
+          AGENT_SANDBOX_IMAGE: decision-os-agent:noambient-v1
+      - name: Pytest TM-A markers
+        run: pytest -q -m tm_a tests/test_os_isolation.py tests/test_e2e_agent_boundary.py
+        env:
+          AUTHGATE_BACKEND: python
+          AGENT_SANDBOX_IMAGE: decision-os-agent:noambient-v1
+
+  product-site:
+    name: Product site production smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate static bundle
+        run: |
+          node --check public/app.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          json.loads(Path("vercel.json").read_text(encoding="utf-8"))
+          for asset in ("index.html", "styles.css", "app.js"):
+              assert (Path("public") / asset).is_file(), asset
+          PY
+      - name: Smoke-test routes
+        run: |
+          python -m http.server 4173 --directory public >/tmp/site.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for route in / /styles.css /app.js; do
+            curl --fail --retry 5 --retry-connrefused --retry-delay 1 "http://127.0.0.1:4173$route"
+          done
+
+  real-system-comparison:
+    name: Real OPA / Cedar / MCP comparison
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - name: Install pinned official Cedar CLI
+        run: |
+          curl --fail --location --output /tmp/cedar.tar.xz \
+            https://github.com/cedar-policy/cedar/releases/download/cedar-policy-cli-v4.12.0/cedar-policy-cli-x86_64-unknown-linux-gnu.tar.xz
+          echo "fc29b830bca41763c7cbb6ce66d1a14040fc2d077318479512c6a83052b70851  /tmp/cedar.tar.xz" \
+            | sha256sum --check
+          mkdir /tmp/cedar
+          tar -xJf /tmp/cedar.tar.xz -C /tmp/cedar --strip-components=1
+      - name: Run shared-workload conformance
+        run: python bench/comparison/run_comparison.py --iterations 3 --warmup 1 --cedar-bin /tmp/cedar/cedar
+
+  docker:
+    runs-on: ubuntu-latest
+    environment:
+      name: production-smoke
+      url: https://github.com/${{ github.repository }}/deployments/production-smoke
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build image
+        run: docker build -t decision-os-min:ci .
+      - name: Smoke-test the container
+        run: |
+          set -euo pipefail
+          docker run -d --name dos -p 8080:8080 decision-os-min:ci
+          ok=0
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:8080/healthz; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ok" != 1 ]; then
+            echo "=== docker logs ==="
+            docker logs dos || true
+            docker rm -f dos || true
+            exit 1
+          fi
+          curl -sf http://127.0.0.1:8080/readyz | tee /tmp/readyz.json
+          docker rm -f dos

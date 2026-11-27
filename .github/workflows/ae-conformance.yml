@@ -1,0 +1,47 @@
+name: AE conformance
+
+# The Authority Enforcement Profile v0.1 (oracle/contracts-spec/conformance/PROFILE.md),
+# AE-1..AE-10 plus the attack probes, run against every implementation we have.
+# Today that is the decision-os-min oracle; the Rust core joins this matrix as soon
+# as it has a driver. A FAIL or a BROKEN probe fails the job.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ae:
+    name: AE-1..AE-10 (${{ matrix.impl }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - impl: decision-os-min oracle
+            install: oracle/decision-os-min
+            driver: conformance.drivers.decision_os_min_driver:DecisionOSMinDriver
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e oracle/contracts-spec -e "${{ matrix.install }}"
+      - name: Profile and attack probes
+        working-directory: oracle/contracts-spec
+        run: |
+          python -m conformance --driver "${{ matrix.driver }}" --probes --json "$RUNNER_TEMP/ae.json"
+          # The CLI exits 1 on any FAIL or BROKEN probe. We also claim every capability,
+          # so N/A is a failure here: all ten requirements must be measured and pass.
+          python - "$RUNNER_TEMP/ae.json" <<'PY'
+          import json, sys
+          s = json.load(open(sys.argv[1]))["summary"]
+          print(s)
+          sys.exit(0 if s == {"pass": 10, "fail": 0, "not_applicable": 0} else 1)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ae-report-${{ strategy.job-index }}
+          path: ${{ runner.temp }}/ae.json
