@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "project-codex",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": true,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.pg]\ncommand = \"uvx\"\nargs = [\"pg-mcp\"]\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "pg"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.pg]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"pg\", \"--\", \"uvx\", \"pg-mcp\"]\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "pg"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "[mcp_servers.pg]\ncommand = \"uvx\"\nargs = [\"pg-mcp\"]\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_project_install"
+}

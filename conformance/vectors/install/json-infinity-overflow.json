@@ -1,0 +1,103 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-infinity-overflow",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"n\": 1e400, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "non-finite-number"
+          },
+          "file": {
+            "text": "{\"n\": 1e400, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\"n\": 1e400, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"n\": Infinity,\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"x\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\"n\": 1e400, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle writes 1e400 back as Infinity, which is not JSON and breaks the app; Rust refuses",
+  "source": "Python json allow_nan"
+}

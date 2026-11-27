@@ -1,0 +1,104 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-read-only-file",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"a\"\n      ]\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ],
+    "mode": 292
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "read-only"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"a\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"a\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"a\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"a\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle replaces a read-only file through rename on POSIX (and crashes on Windows); Rust refuses on every OS and leaves the file untouched",
+  "source": "REDTEAM installer: read-only files"
+}

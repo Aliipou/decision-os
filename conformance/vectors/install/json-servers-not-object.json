@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-servers-not-object",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"mcpServers\": [{\"command\": \"x\"}], \"servers\": {\"a\": {\"command\": \"x\"}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\"mcpServers\": [{\"command\": \"x\"}], \"servers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _server_tables"
+}

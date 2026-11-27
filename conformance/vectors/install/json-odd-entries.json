@@ -1,0 +1,102 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-odd-entries",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"s\": {\n      \"command\": \"x\",\n      \"args\": \"notalist\"\n    },\n    \"n\": {\n      \"command\": \"x\",\n      \"args\": [\n        1\n      ]\n    },\n    \"c\": {\n      \"command\": [\n        \"x\"\n      ]\n    },\n    \"e\": {\n      \"command\": \"\"\n    },\n    \"none\": {\n      \"args\": [\n        \"x\"\n      ]\n    },\n    \"nul\": {\n      \"command\": \"x\",\n      \"args\": null\n    },\n    \"str\": \"x\",\n    \"null\": null,\n    \"ok\": {\n      \"command\": \"y\"\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "status",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"s\": {\n      \"command\": \"x\",\n      \"args\": \"notalist\"\n    },\n    \"n\": {\n      \"command\": \"x\",\n      \"args\": [\n        1\n      ]\n    },\n    \"c\": {\n      \"command\": [\n        \"x\"\n      ]\n    },\n    \"e\": {\n      \"command\": \"\"\n    },\n    \"none\": {\n      \"args\": [\n        \"x\"\n      ]\n    },\n    \"nul\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"nul\",\n        \"--\",\n        \"x\"\n      ]\n    },\n    \"str\": \"x\",\n    \"null\": null,\n    \"ok\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"ok\",\n        \"--\",\n        \"y\"\n      ]\n    }\n  }\n}\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "nul",
+              "ok"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "args-not-strings"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"s\": {\n      \"command\": \"x\",\n      \"args\": \"notalist\"\n    },\n    \"n\": {\n      \"command\": \"x\",\n      \"args\": [\n        1\n      ]\n    },\n    \"c\": {\n      \"command\": [\n        \"x\"\n      ]\n    },\n    \"e\": {\n      \"command\": \"\"\n    },\n    \"none\": {\n      \"args\": [\n        \"x\"\n      ]\n    },\n    \"nul\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"nul\",\n        \"--\",\n        \"x\"\n      ]\n    },\n    \"str\": \"x\",\n    \"null\": null,\n    \"ok\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"ok\",\n        \"--\",\n        \"y\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [
+              "nul",
+              "ok"
+            ],
+            "plain": [
+              "s",
+              "n",
+              "e"
+            ],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"s\": {\n      \"command\": \"x\",\n      \"args\": \"notalist\"\n    },\n    \"n\": {\n      \"command\": \"x\",\n      \"args\": [\n        1\n      ]\n    },\n    \"c\": {\n      \"command\": [\n        \"x\"\n      ]\n    },\n    \"e\": {\n      \"command\": \"\"\n    },\n    \"none\": {\n      \"args\": [\n        \"x\"\n      ]\n    },\n    \"nul\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"nul\",\n        \"--\",\n        \"x\"\n      ]\n    },\n    \"str\": \"x\",\n    \"null\": null,\n    \"ok\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"ok\",\n        \"--\",\n        \"y\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "nul",
+              "ok"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"s\": {\n      \"command\": \"x\",\n      \"args\": \"notalist\"\n    },\n    \"n\": {\n      \"command\": \"x\",\n      \"args\": [\n        1\n      ]\n    },\n    \"c\": {\n      \"command\": [\n        \"x\"\n      ]\n    },\n    \"e\": {\n      \"command\": \"\"\n    },\n    \"none\": {\n      \"args\": [\n        \"x\"\n      ]\n    },\n    \"nul\": {\n      \"command\": \"x\",\n      \"args\": null\n    },\n    \"str\": \"x\",\n    \"null\": null,\n    \"ok\": {\n      \"command\": \"y\"\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _process_json skips"
+}

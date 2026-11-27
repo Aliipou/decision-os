@@ -1,0 +1,74 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-args-with-spaces-and-dashes",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/my tools/run server\",\n      \"args\": [\n        \"--root\",\n        \"/path with spaces\",\n        \"a\\\"b\",\n        \"\",\n        \"-\",\n        \"--\",\n        \"--x=1\",\n        \"\\u00fc\",\n        \"\\\\\\\\srv\\\\share\",\n        \"$HOME\",\n        \"`x`\"\n      ]\n    }\n  }\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"/opt/my tools/run server\",\n        \"--root\",\n        \"/path with spaces\",\n        \"a\\\"b\",\n        \"\",\n        \"-\",\n        \"--\",\n        \"--x=1\",\n        \"ü\",\n        \"\\\\\\\\srv\\\\share\",\n        \"$HOME\",\n        \"`x`\"\n      ]\n    }\n  }\n}\n\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"/opt/my tools/run server\",\n        \"--root\",\n        \"/path with spaces\",\n        \"a\\\"b\",\n        \"\",\n        \"-\",\n        \"--\",\n        \"--x=1\",\n        \"ü\",\n        \"\\\\\\\\srv\\\\share\",\n        \"$HOME\",\n        \"`x`\"\n      ]\n    }\n  }\n}\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/my tools/run server\",\n      \"args\": [\n        \"--root\",\n        \"/path with spaces\",\n        \"a\\\"b\",\n        \"\",\n        \"-\",\n        \"--\",\n        \"--x=1\",\n        \"ü\",\n        \"\\\\\\\\srv\\\\share\",\n        \"$HOME\",\n        \"`x`\"\n      ]\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "task: args with spaces"
+}

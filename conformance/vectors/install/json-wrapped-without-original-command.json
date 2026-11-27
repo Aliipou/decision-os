@@ -1,0 +1,64 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-wrapped-without-original-command",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"mcp-proxy\",\n        \"--\"\n      ]\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [
+              "a"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"mcp-proxy\",\n        \"--\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "no-original-command"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"mcp-proxy\",\n        \"--\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer unwrap_args ValueError"
+}

@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-dotted-keys-server",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "mcp_servers.a.command = \"x\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "manual",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "not-plain-table"
+          },
+          "file": {
+            "text": "mcp_servers.a.command = \"x\"\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer manual"
+}

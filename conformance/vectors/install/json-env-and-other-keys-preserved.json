@@ -1,0 +1,76 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-env-and-other-keys-preserved",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"a\"\n      ],\n      \"env\": {\n        \"TOKEN\": \"t\",\n        \"EMPTY\": \"\"\n      },\n      \"cwd\": \"/w\",\n      \"type\": \"stdio\",\n      \"timeout\": 30,\n      \"alwaysAllow\": [\n        \"x\"\n      ]\n    },\n    \"b\": {\n      \"env\": {\n        \"A\": \"1\"\n      },\n      \"args\": [\n        \"first\"\n      ],\n      \"command\": \"node\"\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"npx\",\n        \"a\"\n      ],\n      \"env\": {\n        \"TOKEN\": \"t\",\n        \"EMPTY\": \"\"\n      },\n      \"cwd\": \"/w\",\n      \"type\": \"stdio\",\n      \"timeout\": 30,\n      \"alwaysAllow\": [\n        \"x\"\n      ]\n    },\n    \"b\": {\n      \"env\": {\n        \"A\": \"1\"\n      },\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"b\",\n        \"--\",\n        \"node\",\n        \"first\"\n      ],\n      \"command\": \"/opt/decision-os/bin/decision-os\"\n    }\n  }\n}\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a",
+              "b"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"npx\",\n        \"a\"\n      ],\n      \"env\": {\n        \"TOKEN\": \"t\",\n        \"EMPTY\": \"\"\n      },\n      \"cwd\": \"/w\",\n      \"type\": \"stdio\",\n      \"timeout\": 30,\n      \"alwaysAllow\": [\n        \"x\"\n      ]\n    },\n    \"b\": {\n      \"env\": {\n        \"A\": \"1\"\n      },\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"b\",\n        \"--\",\n        \"node\",\n        \"first\"\n      ],\n      \"command\": \"/opt/decision-os/bin/decision-os\"\n    }\n  }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a",
+              "b"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"a\"\n      ],\n      \"env\": {\n        \"TOKEN\": \"t\",\n        \"EMPTY\": \"\"\n      },\n      \"cwd\": \"/w\",\n      \"type\": \"stdio\",\n      \"timeout\": 30,\n      \"alwaysAllow\": [\n        \"x\"\n      ]\n    },\n    \"b\": {\n      \"env\": {\n        \"A\": \"1\"\n      },\n      \"args\": [\n        \"first\"\n      ],\n      \"command\": \"node\"\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer docstring: every other key is kept"
+}

@@ -1,0 +1,74 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-comments-forced-app-edit",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "/* header */\n{\n  \"mcpServers\": { // line\n    \"a\": {\"command\": \"npx\", /* why */ \"args\": [\"//not\", \"/*no*/\"]}\n  },\n  \"x\": \"http://u\"\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": true
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"npx\",\n        \"//not\",\n        \"/*no*/\"\n      ]\n    }\n  },\n  \"x\": \"http://u\"\n}\n "
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": true
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"npx\",\n        \"//not\",\n        \"/*no*/\"\n      ]\n    }\n  },\n  \"x\": \"http://u\"\n}\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"//not\",\n        \"/*no*/\"\n      ]\n    }\n  },\n  \"x\": \"http://u\"\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "REDTEAM installer: comments"
+}
