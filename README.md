@@ -16,8 +16,8 @@ done is `CLAUDE.md`.
 | `oracle/sluicegate-py/` | sluicegate: capability authority, Rust TCB, Lean and TLA+ models. Frozen reference. |
 | `oracle/contracts-spec/` | The Authority Enforcement Profile (AE-1..AE-10) and its conformance suite. Frozen reference. |
 | `spec/` | The normative spec. `spec/KNOWN_GAPS.md` lists every gap found in the oracles and what Rust must do instead. |
-| `conformance/` | Language-neutral test vectors and the runner that checks any implementation against them. |
-| `crates/` | The Rust implementation (`dos-*`). |
+| `conformance/` | Language-neutral test vectors and the runner that checks any implementation against them (arrives with the first Rust tasks). |
+| `crates/` | The Rust implementation (`dos-*`, arrives with the first Rust tasks). |
 | `docs/` | `docs/INDEX.md` maps all documentation, including the oracles' own. |
 
 The oracles are imported with their full history and are not edited. Each one's CI
