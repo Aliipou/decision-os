@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-decision-ascii",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "68656c6c6f"
+  },
+  "expected": {
+    "ok": {
+      "sig": "9b3b5fdb7581074e3ad4cb8a81547520fd7e6c4cd1c23f07f3b6ffbb2919086acb013960a41789bf6ee6fd4d014f5ffe918369f9b59f747374e8e3cd5518100f",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md signed bytes",
+  "gap": "SG-9"
+}

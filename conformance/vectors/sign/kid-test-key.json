@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-test-key",
+  "input": {
+    "op": "kid",
+    "public_key": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"
+  },
+  "expected": {
+    "ok": "b1f1515d964ca23d4f37283c507551d3"
+  },
+  "source": "spec/sign.md key id",
+  "gap": "DM-4"
+}

@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-sig-uppercase",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "584F808F7921F2247AF1EB49F337CC75B19B60AECDCE8D6DB46BC15509976CB1A8D243AFA90F6365D92DB7786A61147EC8D6D51D33F6CFE3244912D2C74B4307"
+  },
+  "expected": {
+    "error": "bad_hex"
+  },
+  "source": "spec/sign.md text encoding"
+}

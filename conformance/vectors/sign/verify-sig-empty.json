@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-sig-empty",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": ""
+  },
+  "expected": {
+    "error": "bad_length"
+  },
+  "source": "spec/sign.md text encoding"
+}

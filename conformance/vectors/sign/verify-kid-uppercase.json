@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-kid-uppercase",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "584f808f7921f2247af1eb49f337cc75b19b60aecdce8d6db46bc15509976cb1a8d243afa90f6365d92db7786a61147ec8d6d51d33f6cfe3244912d2c74b4307",
+    "kid": "B1F1515D964CA23D4F37283C507551D3"
+  },
+  "expected": {
+    "error": "bad_hex"
+  },
+  "source": "spec/sign.md text encoding"
+}

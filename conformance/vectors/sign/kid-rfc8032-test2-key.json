@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-rfc8032-test2-key",
+  "input": {
+    "op": "kid",
+    "public_key": "3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c"
+  },
+  "expected": {
+    "ok": "c62afec178c8df450b55002dc338c0da"
+  },
+  "source": "spec/sign.md key id",
+  "gap": "DM-4"
+}

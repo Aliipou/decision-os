@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-kid-mismatch-before-bad-signature",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "kid": "c62afec178c8df450b55002dc338c0da"
+  },
+  "expected": {
+    "error": "kid_mismatch"
+  },
+  "source": "spec/sign.md check order"
+}

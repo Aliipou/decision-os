@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-non-canonical-large-order-point",
+  "input": {
+    "op": "kid",
+    "public_key": "f0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"
+  },
+  "expected": {
+    "error": "non_canonical_key"
+  },
+  "source": "spec/sign.md public key checks; y = 3 encoded as p + 3: not small order, so verify_strict alone would accept it",
+  "gap": "SG-8"
+}

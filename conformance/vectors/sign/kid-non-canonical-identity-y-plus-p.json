@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-non-canonical-identity-y-plus-p",
+  "input": {
+    "op": "kid",
+    "public_key": "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"
+  },
+  "expected": {
+    "error": "non_canonical_key"
+  },
+  "source": "spec/sign.md public key checks",
+  "gap": "SG-8"
+}

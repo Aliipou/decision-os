@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-decision-payload-with-nul",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "610062"
+  },
+  "expected": {
+    "ok": {
+      "sig": "01e1185a82b2a3ed04b67486f8fdf9a5d049f2fd923468b198d91db80f8579964a2bd983ad64a9d387b31cb4c6ed4a3b581240d4f6d382e99ae1125be8453206",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md; 0x00 inside payload is data",
+  "gap": "SG-9"
+}

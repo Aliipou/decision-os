@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-not-on-curve",
+  "input": {
+    "op": "kid",
+    "public_key": "0200000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "invalid_key"
+  },
+  "source": "spec/sign.md public key checks; y = 2 has no x"
+}

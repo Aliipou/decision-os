@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-capability-signature-under-decision",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "187ec4dc1c6e3158c5a095da4e31777878cd7df9392dd4333b9fb424147f2716a9124d33910a1e0e983478c0a26f2d1adb5b7227b6b5959e531ca4619d92850e"
+  },
+  "expected": {
+    "error": "bad_signature"
+  },
+  "source": "spec/sign.md; cross-domain reuse impossible",
+  "gap": "SG-9"
+}

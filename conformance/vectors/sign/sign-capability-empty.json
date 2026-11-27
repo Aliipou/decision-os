@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-capability-empty",
+  "input": {
+    "op": "sign",
+    "domain": "capability",
+    "payload_hex": ""
+  },
+  "expected": {
+    "ok": {
+      "sig": "ee98550a0316c9b2bf6234ebfd6a94d9f3c3cdefc6426eeb6c0470c39fcd87ebd0e924a0ee7efbb376b5b276037f5b8adf1efa28b5aaf799fcfb6cd76640d40a",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md reserved domain",
+  "gap": "SG-9"
+}

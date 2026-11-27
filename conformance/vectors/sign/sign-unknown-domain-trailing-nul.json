@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-unknown-domain-trailing-nul",
+  "input": {
+    "op": "sign",
+    "domain": "decision\u0000",
+    "payload_hex": ""
+  },
+  "expected": {
+    "error": "unknown_domain"
+  },
+  "source": "spec/sign.md domains"
+}
