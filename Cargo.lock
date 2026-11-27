@@ -219,6 +219,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-exec"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "dos-install"
 version = "0.1.0"
 dependencies = [
