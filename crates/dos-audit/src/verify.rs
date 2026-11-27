@@ -127,7 +127,8 @@ pub fn verify_file_with_anchor_file(
     Ok(v)
 }
 
-fn verify_bytes(bytes: &[u8], opts: &VerifyOptions<'_>) -> Result<Verified, VerifyError> {
+/// Verifies log bytes (the file contents); `verify_file` reads the file and calls this.
+pub fn verify_bytes(bytes: &[u8], opts: &VerifyOptions<'_>) -> Result<Verified, VerifyError> {
     let mut prev = GENESIS.to_string();
     let mut count: usize = 0;
     let mut anchor_hit = false;
@@ -159,14 +160,11 @@ fn verify_bytes(bytes: &[u8], opts: &VerifyOptions<'_>) -> Result<Verified, Veri
         prev = hash;
         count += 1;
     }
-    if let Some(a) = &opts.anchor {
-        if !anchor_hit {
-            return Err(VerifyError {
-                line: None,
-                kind: VerifyErrorKind::Truncated,
-            });
-        }
-        let _ = a;
+    if opts.anchor.is_some() && !anchor_hit {
+        return Err(VerifyError {
+            line: None,
+            kind: VerifyErrorKind::Truncated,
+        });
     }
     Ok(Verified {
         entries: count as u64,

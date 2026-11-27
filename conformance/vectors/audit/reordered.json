@@ -1,0 +1,20 @@
+{
+  "area": "audit",
+  "expected": {
+    "error": "seq_mismatch"
+  },
+  "input": {
+    "keys": {
+      "b1f1515d964ca23d4f37283c507551d3": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"
+    },
+    "log": [
+      "{\"actor\":\"agent\",\"entry_hash\":\"d68ad4168d96a1163eaf54f33401a855ca510196993aae869223eb6393514dfc\",\"executed\":true,\"kid\":\"b1f1515d964ca23d4f37283c507551d3\",\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"reason\":\"ok\",\"seq\":0,\"sig\":\"fd20fc267c77d32cfc1ca9d52c08361d48413733947dcc60b536f3afb3f8cb770d17a6d49574cd5918d7191859890102772cdfb60067686fb818fffe55a8e501\",\"tool\":\"t0\",\"ts\":\"2026-01-01T00:00:00+00:00\",\"verdict\":\"ALLOW\"}",
+      "{\"actor\":\"agent\",\"entry_hash\":\"6e80c66a67eb4e8ae533dbd56bf10c888088ca845fc180855f4b1b45d555ea9b\",\"executed\":true,\"kid\":\"b1f1515d964ca23d4f37283c507551d3\",\"prev_hash\":\"31094d7f9777d0f073fcce23584b8a721a78b7cb101bf71f4af669bd5f9561d3\",\"reason\":\"ok\",\"seq\":2,\"sig\":\"7406f1b0e97e95c992af128b790e205671f0d075bd2a38264898e92bfeb6a466935cbd45b78034f0e9af6dce8c7c4130270b2ae69b6675afabbe6c45df308d00\",\"tool\":\"t2\",\"ts\":\"2026-01-01T00:00:00+00:00\",\"verdict\":\"ALLOW\"}",
+      "{\"actor\":\"agent\",\"entry_hash\":\"31094d7f9777d0f073fcce23584b8a721a78b7cb101bf71f4af669bd5f9561d3\",\"executed\":true,\"kid\":\"b1f1515d964ca23d4f37283c507551d3\",\"prev_hash\":\"d68ad4168d96a1163eaf54f33401a855ca510196993aae869223eb6393514dfc\",\"reason\":\"ok\",\"seq\":1,\"sig\":\"42be758d4d55db0ecbb90e934dfc4098b4ba8a5aedd8bc87744e0af74653eb3f0bc365c88530ebb503eec4b3a6723dbb134c6c0dabc693f2b55ccc15bc5e490e\",\"tool\":\"t1\",\"ts\":\"2026-01-01T00:00:00+00:00\",\"verdict\":\"ALLOW\"}"
+    ],
+    "op": "verify"
+  },
+  "name": "reordered",
+  "source": "DM HB-2 reorder",
+  "v": 1
+}

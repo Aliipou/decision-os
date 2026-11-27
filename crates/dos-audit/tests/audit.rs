@@ -383,3 +383,21 @@ fn large_entries_and_non_ascii_resume() {
     assert_eq!(s.append(b"{}").unwrap().seq, 2);
     assert_eq!(full(&p, &keys).unwrap().entries, 3);
 }
+
+#[test]
+fn cli_verify_exit_codes() {
+    let p = tmp("cli");
+    fill(&p, 2);
+    let exe = env!("CARGO_BIN_EXE_dos-audit");
+    let pk = SigningKey::from_bytes(&SECRET).verifying_key().to_hex();
+    let run = |args: &[&str]| std::process::Command::new(exe).args(args).output().unwrap();
+    let ps = p.to_str().unwrap();
+    let a = anchor_path(&p);
+    let o = run(&["verify", ps, "--key", &pk, "--anchor-file", a.to_str().unwrap()]);
+    assert_eq!(o.status.code(), Some(0), "{}", String::from_utf8_lossy(&o.stderr));
+    assert!(String::from_utf8_lossy(&o.stdout).starts_with("ok entries=2"));
+    let other = SigningKey::from_bytes(&[9u8; 32]).verifying_key().to_hex();
+    assert_eq!(run(&["verify", ps, "--key", &other]).status.code(), Some(1));
+    assert_eq!(run(&["verify"]).status.code(), Some(2));
+    assert_eq!(run(&["nope"]).status.code(), Some(2));
+}

@@ -15,5 +15,6 @@ pub use anchor::{Anchor, FileAnchor, Head, read_anchor_file};
 pub use entry::GENESIS;
 pub use sink::FileSink;
 pub use verify::{
-    Verified, VerifyError, VerifyErrorKind, VerifyOptions, verify_file, verify_file_with_anchor_file,
+    Verified, VerifyError, VerifyErrorKind, VerifyOptions, verify_bytes, verify_file,
+    verify_file_with_anchor_file,
 };
