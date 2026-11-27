@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-redact-string",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\nredact = \"x\""
+  },
+  "expected": {
+    "error": "policy.toml: rule 1: redact must be a list of argument names"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

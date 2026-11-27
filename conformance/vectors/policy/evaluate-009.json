@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-009",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"github\"\ntool = \"*\"\nargs = { repo = [\"me/*\", \"team/public-*\"] }\ndecision = \"allow\"\n\n[[rule]]\nserver = \"github\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "github",
+    "tool": "create_issue",
+    "model": null,
+    "args": {
+      "repo": 5
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "deny",
+      "purpose": "rule:2",
+      "reason": "denied by rule 2 (server=github)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

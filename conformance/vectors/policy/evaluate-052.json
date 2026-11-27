@@ -1,0 +1,44 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-052",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\ntool = \"t\"\nargs = { n = \"4*\", flag = \"true\", nothing = \"null\", obj = '{\"a\":1*', list = \"[1,*\", f = \"1e+*\" }\ndecision = \"allow\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "t",
+    "model": null,
+    "args": {
+      "n": 4,
+      "flag": true,
+      "nothing": null,
+      "obj": {
+        "a": 1
+      },
+      "list": [
+        1,
+        2
+      ],
+      "f": 1e+20
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "rule:1",
+      "reason": "allowed by rule 1 (tool=t, args.n=4*, args.flag=true, args.nothing=null, args.obj={\"a\":1*, args.list=[1,*, args.f=1e+*)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

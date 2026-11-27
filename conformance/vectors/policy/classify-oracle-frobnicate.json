@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-frobnicate",
+  "input": {
+    "op": "classify",
+    "name": "frobnicate",
+    "hints": []
+  },
+  "expected": {
+    "ok": "unknown"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

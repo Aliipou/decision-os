@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-029",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"filesystem\"\ntool = \"write_file\"\nargs = { path = \"~/projects/*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"*delete*\"\ndecision = \"deny\"\nreason = \"nothing gets deleted by an agent\"\n\n[[rule]]\nclient = \"claude-code\"\nserver = \"llm\"\ntool = \"Bash\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"send_*\"\ndecision = \"ask\"\nredact = [\"token\"]\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "filesystem",
+    "tool": "write_file",
+    "model": null,
+    "args": {
+      "path": "c:/users/alice/projects/x"
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "profile:balanced:write",
+      "reason": "balanced profile asks for state-changing tools",
+      "redact": [],
+      "source": "profile"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

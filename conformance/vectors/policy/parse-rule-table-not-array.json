@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-table-not-array",
+  "input": {
+    "op": "parse",
+    "text": "[rule]\ndecision = \"allow\""
+  },
+  "expected": {
+    "error": "policy.toml: use [[rule]] for rules"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-flag-hide-int",
+  "input": {
+    "op": "parse",
+    "text": "hide_denied_tools = 0"
+  },
+  "expected": {
+    "error": "policy.toml: hide_denied_tools must be true or false"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

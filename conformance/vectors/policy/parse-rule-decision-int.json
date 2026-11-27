@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-decision-int",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = 1"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1 needs decision = allow | ask | deny"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

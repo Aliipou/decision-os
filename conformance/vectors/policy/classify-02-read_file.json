@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-02-read_file",
+  "input": {
+    "op": "classify",
+    "name": "read_file",
+    "hints": [
+      "hint:destructive"
+    ]
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

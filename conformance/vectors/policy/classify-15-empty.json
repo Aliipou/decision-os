@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-15-empty",
+  "input": {
+    "op": "classify",
+    "name": "",
+    "hints": []
+  },
+  "expected": {
+    "ok": "unknown"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

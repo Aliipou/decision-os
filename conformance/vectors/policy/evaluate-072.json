@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-072",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\ntool = \"num\"\nargs = { n = \"42\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"flt\"\nargs = { f = [\"2.0\", \"1e-07\", \"Infinity\", \"NaN\"] }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"b\"\nargs = { v = [\"true\", \"null\"] }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"o\"\nargs = { v = ['{\"a\":\"\\u00e9\",\"b\":[1,2]}', '[\"x\",{\"k\":null}]'] }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"case\"\nargs = { v = \"HELLO*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"set\"\nargs = { v = [\"[abc]x\", \"[!0-9]y\", \"[z-a]q\", \"a[b\"] }\ndecision = \"allow\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "b",
+    "model": null,
+    "args": {
+      "v": null
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "rule:3",
+      "reason": "allowed by rule 3 (tool=b, args.v=true|null)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

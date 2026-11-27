@@ -1,0 +1,19 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "normalize-posix-26",
+  "input": {
+    "op": "normalize_path",
+    "path": "C:\\Users\\Alice\\..\\Bob",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": "c:/users/bob"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

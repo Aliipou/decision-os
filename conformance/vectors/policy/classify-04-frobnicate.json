@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-04-frobnicate",
+  "input": {
+    "op": "classify",
+    "name": "frobnicate",
+    "hints": [
+      "hint:destructive",
+      "hint:readonly"
+    ]
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

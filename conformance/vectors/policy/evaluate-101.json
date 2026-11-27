@@ -1,0 +1,32 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-101",
+  "input": {
+    "op": "evaluate",
+    "policy": "[[rule]]\ntool = \"move_*\"\ndecision = \"ask\"\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "fs",
+    "tool": "move_file",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "rule:1",
+      "reason": "needs approval by rule 1 (tool=move_*)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

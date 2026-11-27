@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-7",
+  "input": {
+    "op": "parse",
+    "text": "[llm.upstreams]\nx = \"ftp://nope\""
+  },
+  "expected": {
+    "error": "policy.toml: llm.upstreams.x must be an http(s) URL"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

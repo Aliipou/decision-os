@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-unknown-two-sorted",
+  "input": {
+    "op": "parse",
+    "text": "zeta = 1\nalpha = 2"
+  },
+  "expected": {
+    "error": "policy.toml: unknown setting(s) ['alpha', 'zeta']"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-5",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ntool = \"x\"\ndecision = \"deny\"\nredact = [\"a\"]"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1: redact makes no sense on deny"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

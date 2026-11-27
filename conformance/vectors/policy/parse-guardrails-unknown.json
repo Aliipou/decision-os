@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-guardrails-unknown",
+  "input": {
+    "op": "parse",
+    "text": "[guardrails]\nfoo = 1\nbar = 2"
+  },
+  "expected": {
+    "error": "policy.toml: unknown guardrail setting(s) ['bar', 'foo']"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}
