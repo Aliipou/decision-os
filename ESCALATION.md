@@ -27,8 +27,8 @@ on CI scripts an agent can edit.
 `.github/workflows/oracle-*.yml`, `ae-conformance.yml` and later `conformance.yml` are
 the CI that proves the oracles and the AE profile. They are not in CODEOWNERS, the
 guard's frozen list or `check-protected.sh`, so a change that turns them into no-ops
-is caught by nothing but review. They are now required checks on `main`, which stops
-deleting a job, not hollowing one out.
+is caught by nothing but review. The 13 main suites and the AE job are now required checks on
+`main` (about 18 other oracle jobs are not), which stops deleting a job, not hollowing one out.
 
 Decision: add `/.github/workflows/` to CODEOWNERS (and to the guard's frozen list) or
 accept review as the only control.
@@ -69,3 +69,19 @@ Recommended: 1.
 
 `spec/MODEL.md` and `spec/INVARIANT_MAP.md` are Code Owner files and need your
 approval in review.
+
+## E7 (S1, Phase 0 red team F2 + F3, verifier round 2): the agents can move or delete the oracle tag
+
+The ruleset "oracle tags are immutable" binds everyone except the Admin role, and the
+agents push as Ali, who is the admin. The verifier pushed and deleted a throwaway
+`oracle-v*` tag as the agents' identity: GitHub reported "Bypassed rule violations" and
+allowed both. `guard.py` also allows `git push origin oracle-v1`. And
+`scripts/check-protected.sh` fails open when no `oracle-v*` tag exists ("oracle/ not
+checked"), so deleting the tag silences the freeze.
+
+Options (any of them closes it; 1 is the root cause, shared with E1):
+1. A non-admin GitHub account for agents (then the ruleset binds them).
+2. `guard.py` refuses any push of `refs/tags/oracle-v*` for agent roles.
+3. `check-protected.sh` fails closed after Phase 0 when the tag is missing (for
+   example, when `oracle/` exists and no `oracle-v*` tag is found, exit 1 unless the
+   branch is the Phase 0 import).

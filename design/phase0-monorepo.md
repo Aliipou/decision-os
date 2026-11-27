@@ -43,7 +43,8 @@ so oracle tags never collide with this repository's releases.
    actions read (cache keys, workspaces, manifests, path filters). Dropped:
    decision-os-min `release.yml` (the oracle is never shipped), sluicegate
    `pr-checklist-gate.yml` (PR-body format for that repository), contracts-spec
-   `deployment-testimony.yml` (records deployments across other repositories).
+   `deployment-testimony.yml` (records deployments, and runs an FDK integration check
+   and a live `/v1/decide` probe; both failed at the source and are tracked as OR-3).
 4. **No root Cargo workspace yet.** The first `dos-*` crate adds it, with
    `exclude = ["oracle"]` so `oracle/sluicegate-py/authgate-kernel` keeps building as
    its own workspace.
@@ -71,9 +72,12 @@ so oracle tags never collide with this repository's releases.
 
 - F3 (oracle tags could be moved): repository ruleset "oracle tags are immutable" now
   blocks creating, updating and deleting `refs/tags/oracle-v*` for everyone but the
-  repository admin.
-- F4 (new workflows not required): `main` now requires the oracle test jobs and the AE
-  job besides `protected-paths` and `full-gate` (13 checks). Protecting the workflow
+  repository admin. The agents act as the admin, so this does not bind them yet:
+  escalated as E7.
+- F4 (new workflows not required): `main` now requires the main oracle test suites
+  and the AE job besides `protected-paths` and `full-gate` (13 checks). About 18 other
+  oracle jobs (Lean, TLC, sandbox, seccomp, TCB, gateway, wheel e2e) run but are not
+  required. Protecting the workflow
   files themselves needs a CODEOWNERS change: escalated.
 - F5: the SG-16 wording claimed the job fails on sluicegate main; corrected.
 - F6 (a squash merge drops the imported history): squash and rebase merges are now
@@ -83,4 +87,5 @@ so oracle tags never collide with this repository's releases.
   exemption) and the CODEOWNERS part of F4 change the agent kit or who reviews:
   escalated in `ESCALATION.md`.
 - F2 (the freeze is not in force until the tag exists): the tag is pushed in the same
-  step as the merge; until then `oracle/` is protected only by review.
+  step as the merge; until then `oracle/` is protected only by review. The check also
+  fails open if the tag is later deleted: escalated as E7.
