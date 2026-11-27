@@ -1,6 +1,11 @@
 //! Interop with the Python gateway's `LockedHashLog` (oracle/decision-os-min/.../gateway/audit.py):
 //! same chain, same lock file, last-line head read, Python-written tails.
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing
+)]
 
 use std::path::PathBuf;
 
@@ -48,7 +53,12 @@ fn rust_continues_a_python_log_with_non_ascii_tail() {
     assert_eq!(s.append(br#"{"actor":"rust"}"#).unwrap().seq, 2);
     let sk = SigningKey::from_bytes(&SECRET);
     let keys = Keys(vec![(sk.kid().to_hex(), sk.verifying_key().to_bytes())]);
-    let o = VerifyOptions { keys: &keys, now_unix_ms: 0, python_compat: true, anchor: None };
+    let o = VerifyOptions {
+        keys: &keys,
+        now_unix_ms: 0,
+        python_compat: true,
+        anchor: None,
+    };
     assert_eq!(verify_file(&p, &o).unwrap().entries, 3);
 }
 
@@ -58,7 +68,12 @@ fn python_head_read_accepts_rust_lines() {
     let p = tmp("pyhead");
     let s = FileSink::open(&p, &SECRET).unwrap();
     s.append(br#"{"actor":"a"}"#).unwrap();
-    let last = std::fs::read_to_string(&p).unwrap().lines().last().unwrap().to_string();
+    let last = std::fs::read_to_string(&p)
+        .unwrap()
+        .lines()
+        .last()
+        .unwrap()
+        .to_string();
     let v: serde_json::Value = serde_json::from_str(&last).unwrap();
     assert_eq!(v["seq"], 0);
     assert_eq!(v["entry_hash"].as_str().unwrap().len(), 64);

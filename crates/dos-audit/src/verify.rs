@@ -149,13 +149,11 @@ pub fn verify_bytes(bytes: &[u8], opts: &VerifyOptions<'_>) -> Result<Verified, 
             return Err(err(this, VerifyErrorKind::PartialLine));
         }
         let hash = verify_line(line, count, &prev, opts, this)?;
-        if let Some(a) = &opts.anchor {
-            if a.seq == count as u64 {
-                if a.entry_hash != hash {
-                    return Err(err(this, VerifyErrorKind::AnchorMismatch));
-                }
-                anchor_hit = true;
+        if let Some(a) = opts.anchor.as_ref().filter(|a| a.seq == count as u64) {
+            if a.entry_hash != hash {
+                return Err(err(this, VerifyErrorKind::AnchorMismatch));
             }
+            anchor_hit = true;
         }
         prev = hash;
         count += 1;
@@ -196,8 +194,7 @@ fn verify_line(
     }
     let stored = str_field(&m, "entry_hash").ok_or_else(|| err(n, VerifyErrorKind::Malformed))?;
     let jcs_ok = hash_of(&m).map_err(|_| err(n, VerifyErrorKind::Malformed))? == stored;
-    let legacy_ok =
-        opts.python_compat && legacy_hash_of(&m).as_deref() == Some(stored);
+    let legacy_ok = opts.python_compat && legacy_hash_of(&m).as_deref() == Some(stored);
     if !jcs_ok && !legacy_ok {
         return Err(err(n, VerifyErrorKind::HashMismatch));
     }

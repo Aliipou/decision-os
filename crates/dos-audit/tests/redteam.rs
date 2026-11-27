@@ -1,5 +1,10 @@
 //! Red-team tests: exhaustive mutation, replay, stripping, multi-process, hostile input.
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing
+)]
 
 use std::path::PathBuf;
 
@@ -42,17 +47,28 @@ fn strict(bytes: &[u8], anchor: Option<Head>) -> Result<Verified, VerifyError> {
     let k = keys();
     verify_bytes(
         bytes,
-        &VerifyOptions { keys: &k, now_unix_ms: 0, python_compat: false, anchor },
+        &VerifyOptions {
+            keys: &k,
+            now_unix_ms: 0,
+            python_compat: false,
+            anchor,
+        },
     )
 }
 
 fn lines_of(b: &[u8]) -> Vec<String> {
-    String::from_utf8(b.to_vec()).unwrap().lines().map(String::from).collect()
+    String::from_utf8(b.to_vec())
+        .unwrap()
+        .lines()
+        .map(String::from)
+        .collect()
 }
 
 fn rehash(mut v: serde_json::Value) -> String {
     v.as_object_mut().unwrap().remove("entry_hash");
-    let h = hex_encode(&Sha256::digest(serde_json::to_string(&v).unwrap().as_bytes()));
+    let h = hex_encode(&Sha256::digest(
+        serde_json::to_string(&v).unwrap().as_bytes(),
+    ));
     v["entry_hash"] = h.into();
     serde_json::to_string(&v).unwrap()
 }
@@ -84,7 +100,10 @@ fn every_single_bit_mutation_is_detected() {
 fn every_prefix_is_detected_and_extensions_refused() {
     let (_p, orig, head) = anchored("prefix");
     for n in 0..orig.len() {
-        assert!(strict(&orig[..n], Some(head.clone())).is_err(), "prefix {n} verified");
+        assert!(
+            strict(&orig[..n], Some(head.clone())).is_err(),
+            "prefix {n} verified"
+        );
     }
     let last = lines_of(&orig).last().unwrap().clone();
     for extra in [format!("{last}\n"), "{}\n".to_string()] {
@@ -121,7 +140,10 @@ fn signature_cannot_be_replayed_across_entries() {
     let mut b: serde_json::Value = serde_json::from_str(&l[1]).unwrap();
     b["sig"] = a["sig"].clone();
     let log = format!("{}\n{}\n", l[0], rehash(b));
-    assert_eq!(strict(log.as_bytes(), None).unwrap_err().kind, VerifyErrorKind::BadSignature);
+    assert_eq!(
+        strict(log.as_bytes(), None).unwrap_err().kind,
+        VerifyErrorKind::BadSignature
+    );
 }
 
 #[test]
@@ -133,7 +155,11 @@ fn signature_from_another_domain_is_rejected() {
             continue;
         }
         let sig = sk.sign(d, payload);
-        assert!(sk.verifying_key().verify(Domain::AuditHead, payload, &sig).is_err());
+        assert!(
+            sk.verifying_key()
+                .verify(Domain::AuditHead, payload, &sig)
+                .is_err()
+        );
     }
 }
 
@@ -145,7 +171,10 @@ fn stripping_signature_and_rehashing_is_refused_in_strict_mode() {
         v.as_object_mut().unwrap().remove(k);
     }
     let log = format!("{}\n", rehash(v));
-    assert_eq!(strict(log.as_bytes(), None).unwrap_err().kind, VerifyErrorKind::MissingSignature);
+    assert_eq!(
+        strict(log.as_bytes(), None).unwrap_err().kind,
+        VerifyErrorKind::MissingSignature
+    );
 }
 
 #[test]
@@ -159,13 +188,18 @@ fn sink_follows_the_disk_not_a_cache() {
     assert_eq!(other.len(), std::fs::read(&p).unwrap().len());
     std::fs::write(&p, &other).unwrap();
     s.append(b"{}").unwrap();
-    assert_eq!(strict(&std::fs::read(&p).unwrap(), None).unwrap().entries, 3);
+    assert_eq!(
+        strict(&std::fs::read(&p).unwrap(), None).unwrap().entries,
+        3
+    );
 }
 
 #[test]
 fn child_appender() {
     // Does nothing unless run as a child of `multiple_processes_append`.
-    let Ok(path) = std::env::var("DOS_AUDIT_CHILD_LOG") else { return };
+    let Ok(path) = std::env::var("DOS_AUDIT_CHILD_LOG") else {
+        return;
+    };
     let s = FileSink::open(&path, &SECRET).unwrap();
     for i in 0..25 {
         s.append(format!(r#"{{"child":{i}}}"#).as_bytes()).unwrap();
@@ -210,7 +244,12 @@ fn hostile_inputs_never_panic() {
         &[0u8; 100],
     ] {
         assert!(strict(b, None).is_err());
-        let o = VerifyOptions { keys: &k, now_unix_ms: 0, python_compat: true, anchor: None };
+        let o = VerifyOptions {
+            keys: &k,
+            now_unix_ms: 0,
+            python_compat: true,
+            anchor: None,
+        };
         let _ = verify_bytes(b, &o);
     }
 }
@@ -220,7 +259,14 @@ fn sink_refuses_hostile_input_without_writing() {
     let p = tmp("hostile-in");
     let s = FileSink::open(&p, &SECRET).unwrap();
     let deep = format!("{}1{}", "[".repeat(5000), "]".repeat(5000));
-    for b in [&b""[..], b"\xff", b"{\"kid\":\"x\"}", b"{\"a\":1e999}", deep.as_bytes(), b"{} {}"] {
+    for b in [
+        &b""[..],
+        b"\xff",
+        b"{\"kid\":\"x\"}",
+        b"{\"a\":1e999}",
+        deep.as_bytes(),
+        b"{} {}",
+    ] {
         assert_eq!(s.append(b), Err(StoreError::InvalidInput));
     }
     assert_eq!(std::fs::read(&p).unwrap().len(), 0);

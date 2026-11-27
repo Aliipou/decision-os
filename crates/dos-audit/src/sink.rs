@@ -11,7 +11,8 @@ use dos_core::store::{AuditReceipt, AuditSink, StoreError};
 
 use crate::anchor::{Anchor, FileAnchor, Head};
 use crate::entry::{
-    GENESIS, RESERVED, field, hash_of, legacy_hash_of, seq_field, seq_value, signing_bytes, str_field,
+    GENESIS, RESERVED, field, hash_of, legacy_hash_of, seq_field, seq_value, signing_bytes,
+    str_field,
 };
 
 /// Largest entry the sink accepts (bytes of input JCS); keeps the tail read bounded.
@@ -44,7 +45,10 @@ impl FileSink {
     /// head file at `<path>.anchor`, written with the same key.
     pub fn open(path: impl Into<PathBuf>, secret: &[u8; 32]) -> Result<FileSink, StoreError> {
         let path = path.into();
-        let anchor = FileAnchor::new(with_suffix(&path, ".anchor"), SigningKey::from_bytes(secret));
+        let anchor = FileAnchor::new(
+            with_suffix(&path, ".anchor"),
+            SigningKey::from_bytes(secret),
+        );
         FileSink::open_with_anchor(path, secret, Some(Box::new(anchor)))
     }
 
@@ -64,10 +68,8 @@ impl FileSink {
         anchor: Option<Box<dyn Anchor>>,
     ) -> Result<FileSink, StoreError> {
         let path = path.into();
-        if let Some(dir) = path.parent() {
-            if !dir.as_os_str().is_empty() {
-                fs::create_dir_all(dir).map_err(|_| StoreError::Unavailable)?;
-            }
+        if let Some(dir) = path.parent().filter(|d| !d.as_os_str().is_empty()) {
+            fs::create_dir_all(dir).map_err(|_| StoreError::Unavailable)?;
         }
         OpenOptions::new()
             .create(true)
@@ -137,12 +139,16 @@ impl FileSink {
         if RESERVED.iter().any(|k| field(&m, k).is_some()) {
             return Err(StoreError::InvalidInput);
         }
-        m.push(("seq".into(), seq_value(st.next_seq).map_err(|_| StoreError::InvalidInput)?));
+        m.push((
+            "seq".into(),
+            seq_value(st.next_seq).map_err(|_| StoreError::InvalidInput)?,
+        ));
         m.push(("prev_hash".into(), Value::String(st.last_hash.clone())));
         m.push(("kid".into(), Value::String(self.key.kid().to_hex())));
-        let sig = self
-            .key
-            .sign(Domain::AuditHead, &signing_bytes(&m).map_err(|_| StoreError::InvalidInput)?);
+        let sig = self.key.sign(
+            Domain::AuditHead,
+            &signing_bytes(&m).map_err(|_| StoreError::InvalidInput)?,
+        );
         m.push(("sig".into(), Value::String(hex_encode(&sig.to_bytes()))));
         let hash = hash_of(&m).map_err(|_| StoreError::InvalidInput)?;
         m.push(("entry_hash".into(), Value::String(hash.clone())));
@@ -154,10 +160,12 @@ impl FileSink {
     /// Runs `f` holding the in-process mutex and the cross-process file lock.
     fn locked<T>(&self, f: impl FnOnce() -> Result<T, StoreError>) -> Result<T, StoreError> {
         let _guard = self.state.lock().map_err(|_| StoreError::Unavailable)?;
-        if let Some(dir) = self.lock_path.parent() {
-            if !dir.as_os_str().is_empty() {
-                fs::create_dir_all(dir).map_err(|_| StoreError::Unavailable)?;
-            }
+        if let Some(dir) = self
+            .lock_path
+            .parent()
+            .filter(|d| !d.as_os_str().is_empty())
+        {
+            fs::create_dir_all(dir).map_err(|_| StoreError::Unavailable)?;
         }
         let lock = File::options()
             .create(true)

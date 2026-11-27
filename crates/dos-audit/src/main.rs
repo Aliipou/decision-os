@@ -40,7 +40,9 @@ fn main() -> ExitCode {
                 None => return usage(),
             },
             "--key" => {
-                let Some(hex) = args.next() else { return usage() };
+                let Some(hex) = args.next() else {
+                    return usage();
+                };
                 match VerifyingKey::from_hex(&hex) {
                     Ok(k) => keys.0.push((k.kid().to_hex(), k.to_bytes())),
                     Err(e) => {

@@ -1,7 +1,12 @@
 //! Runs `conformance/vectors/audit/*.json` against the verifier. Missing vector files
 //! are generated deterministically (Ed25519 is deterministic, entries are fixed);
 //! existing files are never rewritten (vectors are append-only).
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing
+)]
 
 use std::path::{Path, PathBuf};
 
@@ -53,11 +58,25 @@ fn good_log(name: &str) -> (Vec<String>, Value) {
         .unwrap();
     }
     let head = s.head().unwrap().unwrap();
-    let lines = std::fs::read_to_string(&log).unwrap().lines().map(String::from).collect();
-    (lines, json!({"seq": head.seq, "entry_hash": head.entry_hash}))
+    let lines = std::fs::read_to_string(&log)
+        .unwrap()
+        .lines()
+        .map(String::from)
+        .collect();
+    (
+        lines,
+        json!({"seq": head.seq, "entry_hash": head.entry_hash}),
+    )
 }
 
-fn vector(name: &str, log: Vec<String>, keys: &[&str], extra: Value, expected: Value, source: &str) -> Value {
+fn vector(
+    name: &str,
+    log: Vec<String>,
+    keys: &[&str],
+    extra: Value,
+    expected: Value,
+    source: &str,
+) -> Value {
     let mut input = json!({
         "op": "verify",
         "log": log,
@@ -74,36 +93,134 @@ fn generate() {
     let err = |c: &str| json!({"error": c});
     let mut all: Vec<Value> = vec![];
     let none = json!({});
-    all.push(vector("valid-chain", good.clone(), &[SECRET_HEX], none.clone(), json!({"ok": {"entries": 3}}), "spec U-CHAIN-LOG"));
-    all.push(vector("valid-chain-anchored", good.clone(), &[SECRET_HEX], json!({"anchor": head}), json!({"ok": {"entries": 3}}), "DM-5"));
+    all.push(vector(
+        "valid-chain",
+        good.clone(),
+        &[SECRET_HEX],
+        none.clone(),
+        json!({"ok": {"entries": 3}}),
+        "spec U-CHAIN-LOG",
+    ));
+    all.push(vector(
+        "valid-chain-anchored",
+        good.clone(),
+        &[SECRET_HEX],
+        json!({"anchor": head}),
+        json!({"ok": {"entries": 3}}),
+        "DM-5",
+    ));
     let mut l = good.clone();
     l[1] = l[1].replace("ALLOW", "DENY_");
-    all.push(vector("edited-field", l, &[SECRET_HEX], none.clone(), err("hash_mismatch"), "DM HB-2 edit"));
+    all.push(vector(
+        "edited-field",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("hash_mismatch"),
+        "DM HB-2 edit",
+    ));
     let mut l = good.clone();
     l.swap(1, 2);
-    all.push(vector("reordered", l, &[SECRET_HEX], none.clone(), err("seq_mismatch"), "DM HB-2 reorder"));
+    all.push(vector(
+        "reordered",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("seq_mismatch"),
+        "DM HB-2 reorder",
+    ));
     let mut l = good.clone();
     l.remove(1);
-    all.push(vector("deleted-middle", l, &[SECRET_HEX], none.clone(), err("seq_mismatch"), "DM HB-2 delete"));
+    all.push(vector(
+        "deleted-middle",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("seq_mismatch"),
+        "DM HB-2 delete",
+    ));
     let mut l = good.clone();
     l.remove(0);
-    all.push(vector("deleted-head", l, &[SECRET_HEX], none.clone(), err("seq_mismatch"), "DM HB-2 head deletion"));
+    all.push(vector(
+        "deleted-head",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("seq_mismatch"),
+        "DM HB-2 head deletion",
+    ));
     let mut l = good.clone();
     l.insert(1, good[0].clone());
-    all.push(vector("duplicated-entry", l, &[SECRET_HEX], none.clone(), err("seq_mismatch"), "insert"));
+    all.push(vector(
+        "duplicated-entry",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("seq_mismatch"),
+        "insert",
+    ));
     let mut l = good.clone();
     l.truncate(2);
-    all.push(vector("truncated-no-anchor", l.clone(), &[SECRET_HEX], none.clone(), json!({"ok": {"entries": 2}}), "chain alone cannot see truncation (HB-2)"));
-    all.push(vector("truncated-with-anchor", l, &[SECRET_HEX], json!({"anchor": head}), err("truncated"), "DM-5"));
+    all.push(vector(
+        "truncated-no-anchor",
+        l.clone(),
+        &[SECRET_HEX],
+        none.clone(),
+        json!({"ok": {"entries": 2}}),
+        "chain alone cannot see truncation (HB-2)",
+    ));
+    all.push(vector(
+        "truncated-with-anchor",
+        l,
+        &[SECRET_HEX],
+        json!({"anchor": head}),
+        err("truncated"),
+        "DM-5",
+    ));
     let mut a = head.clone();
     a["entry_hash"] = json!("f".repeat(64));
-    all.push(vector("anchor-hash-differs", good.clone(), &[SECRET_HEX], json!({"anchor": a}), err("anchor_mismatch"), "fork"));
-    all.push(vector("unknown-key", good.clone(), &[OTHER_HEX], none.clone(), err("unknown_key"), "U-SIG"));
-    all.push(vector("empty-log", vec![], &[SECRET_HEX], none.clone(), json!({"ok": {"entries": 0}}), "empty chain"));
-    all.push(vector("partial-last-line", good.clone(), &[SECRET_HEX], json!({"final_newline": false}), err("partial_line"), "torn write"));
+    all.push(vector(
+        "anchor-hash-differs",
+        good.clone(),
+        &[SECRET_HEX],
+        json!({"anchor": a}),
+        err("anchor_mismatch"),
+        "fork",
+    ));
+    all.push(vector(
+        "unknown-key",
+        good.clone(),
+        &[OTHER_HEX],
+        none.clone(),
+        err("unknown_key"),
+        "U-SIG",
+    ));
+    all.push(vector(
+        "empty-log",
+        vec![],
+        &[SECRET_HEX],
+        none.clone(),
+        json!({"ok": {"entries": 0}}),
+        "empty chain",
+    ));
+    all.push(vector(
+        "partial-last-line",
+        good.clone(),
+        &[SECRET_HEX],
+        json!({"final_newline": false}),
+        err("partial_line"),
+        "torn write",
+    ));
     let mut l = good.clone();
     l[0] = l[0].replacen(',', ", ", 1);
-    all.push(vector("non-canonical-line", l, &[SECRET_HEX], none.clone(), err("non_canonical"), "DM-3"));
+    all.push(vector(
+        "non-canonical-line",
+        l,
+        &[SECRET_HEX],
+        none.clone(),
+        err("non_canonical"),
+        "DM-3",
+    ));
     // Entry without signature: strict refuses, compat accepts (oracle logs).
     let unsigned = {
         use sha2::{Digest, Sha256};
@@ -111,8 +228,22 @@ fn generate() {
         let h = dos_core::sign::hex_encode(&Sha256::digest(e.as_bytes()));
         format!(r#"{{"actor": "a", "seq": 0, "prev_hash": "{GENESIS}", "entry_hash": "{h}"}}"#)
     };
-    all.push(vector("oracle-log-strict", vec![unsigned.clone()], &[SECRET_HEX], none.clone(), err("non_canonical"), "oracle audit.py line format"));
-    all.push(vector("oracle-log-compat", vec![unsigned], &[SECRET_HEX], json!({"python_compat": true}), json!({"ok": {"entries": 1}}), "oracle audit.py"));
+    all.push(vector(
+        "oracle-log-strict",
+        vec![unsigned.clone()],
+        &[SECRET_HEX],
+        none.clone(),
+        err("non_canonical"),
+        "oracle audit.py line format",
+    ));
+    all.push(vector(
+        "oracle-log-compat",
+        vec![unsigned],
+        &[SECRET_HEX],
+        json!({"python_compat": true}),
+        json!({"ok": {"entries": 1}}),
+        "oracle audit.py",
+    ));
     std::fs::create_dir_all(dir()).unwrap();
     for v in all {
         let path = dir().join(format!("{}.json", v["name"].as_str().unwrap()));
@@ -126,9 +257,19 @@ fn run(v: &Value) -> Value {
     let input = &v["input"];
     let mut keys = Keys(vec![]);
     for (kid, pk) in input["keys"].as_object().unwrap() {
-        keys.0.push((kid.clone(), hex_decode_array::<32>(pk.as_str().unwrap()).unwrap()));
+        keys.0.push((
+            kid.clone(),
+            hex_decode_array::<32>(pk.as_str().unwrap()).unwrap(),
+        ));
     }
-    let mut bytes = input["log"].as_array().unwrap().iter().map(|l| l.as_str().unwrap()).collect::<Vec<_>>().join("\n").into_bytes();
+    let mut bytes = input["log"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|l| l.as_str().unwrap())
+        .collect::<Vec<_>>()
+        .join("\n")
+        .into_bytes();
     if !bytes.is_empty() && input.get("final_newline") != Some(&json!(false)) {
         bytes.push(b'\n');
     }
