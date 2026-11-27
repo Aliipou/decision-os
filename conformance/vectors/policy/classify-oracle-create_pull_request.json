@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-create_pull_request",
+  "input": {
+    "op": "classify",
+    "name": "create_pull_request",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

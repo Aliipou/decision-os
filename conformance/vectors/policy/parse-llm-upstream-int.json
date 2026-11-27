@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-llm-upstream-int",
+  "input": {
+    "op": "parse",
+    "text": "[llm.upstreams]\nx = 1"
+  },
+  "expected": {
+    "error": "policy.toml: llm.upstreams.x must be an http(s) URL"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

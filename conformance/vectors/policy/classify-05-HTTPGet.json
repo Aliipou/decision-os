@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-05-HTTPGet",
+  "input": {
+    "op": "classify",
+    "name": "HTTPGet",
+    "hints": []
+  },
+  "expected": {
+    "ok": "unknown"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-unknown-with-quote",
+  "input": {
+    "op": "parse",
+    "text": "\"it's\" = 1"
+  },
+  "expected": {
+    "error": "policy.toml: unknown setting(s) [\"it's\"]"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-14-caf__get",
+  "input": {
+    "op": "classify",
+    "name": "caf\u00e9_get",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

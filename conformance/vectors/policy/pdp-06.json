@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "pdp-06",
+  "input": {
+    "op": "pdp",
+    "policy": "\n[[rule]]\ntool = \"write_file\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "policy_error": null,
+    "action": {
+      "actor": "agent:c",
+      "tool": "fs/read_file",
+      "capability": "tool:fs/read_file",
+      "action_purpose": "profile:balanced:read",
+      "data_labels": [],
+      "payload": null,
+      "nonce": "n"
+    },
+    "learned": {},
+    "approved": false,
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": {
+      "verdict": "ALLOW",
+      "reason": "balanced profile allows read-only tools"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

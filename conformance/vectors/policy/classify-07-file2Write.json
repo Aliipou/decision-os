@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-07-file2Write",
+  "input": {
+    "op": "classify",
+    "name": "file2Write",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,32 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-047",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"filesystem\"\ntool = \"write_file\"\nargs = { path = \"~/projects/*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"*delete*\"\ndecision = \"deny\"\nreason = \"nothing gets deleted by an agent\"\n\n[[rule]]\nclient = \"claude-code\"\nserver = \"llm\"\ntool = \"Bash\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"send_*\"\ndecision = \"ask\"\nredact = [\"token\"]\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "mail",
+    "tool": "frobnicate",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "profile:balanced:unknown",
+      "reason": "balanced profile asks for unclassified tools",
+      "redact": [],
+      "source": "profile"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

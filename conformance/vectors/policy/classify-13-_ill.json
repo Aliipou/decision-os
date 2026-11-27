@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-13-_ill",
+  "input": {
+    "op": "classify",
+    "name": "\u212aill",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

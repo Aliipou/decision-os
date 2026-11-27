@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-4",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ntool = \"x\"\ndecision = \"allow\"\nwhen = 1"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1 has unknown field(s) ['when']"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

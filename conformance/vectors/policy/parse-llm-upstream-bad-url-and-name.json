@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-llm-upstream-bad-url-and-name",
+  "input": {
+    "op": "parse",
+    "text": "[llm.upstreams]\n\"bad name\" = \"ftp://x\""
+  },
+  "expected": {
+    "error": "policy.toml: llm.upstreams.bad name must be an http(s) URL"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-050",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"filesystem\"\ntool = \"write_file\"\nargs = { path = \"~/projects/*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"*delete*\"\ndecision = \"deny\"\nreason = \"nothing gets deleted by an agent\"\n\n[[rule]]\nclient = \"claude-code\"\nserver = \"llm\"\ntool = \"Bash\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"send_*\"\ndecision = \"ask\"\nredact = [\"token\"]\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "mail",
+    "tool": "read_inbox",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {
+      "c|mail|read_inbox": "deny"
+    }
+  },
+  "expected": {
+    "ok": {
+      "decision": "deny",
+      "purpose": "profile:balanced:read",
+      "reason": "you chose 'always deny' for mail/read_inbox",
+      "redact": [],
+      "source": "learned"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

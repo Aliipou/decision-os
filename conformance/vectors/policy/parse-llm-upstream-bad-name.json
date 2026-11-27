@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-llm-upstream-bad-name",
+  "input": {
+    "op": "parse",
+    "text": "[llm.upstreams]\n\"bad name\" = \"https://x\""
+  },
+  "expected": {
+    "error": "policy.toml: llm.upstreams name 'bad name' may only use letters, digits, _ . -"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

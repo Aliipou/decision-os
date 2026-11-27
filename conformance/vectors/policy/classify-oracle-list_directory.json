@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-list_directory",
+  "input": {
+    "op": "classify",
+    "name": "list_directory",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

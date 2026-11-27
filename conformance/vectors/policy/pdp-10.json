@@ -1,0 +1,36 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "pdp-10",
+  "input": {
+    "op": "pdp",
+    "policy": "\n[[rule]]\ntool = \"write_file\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "policy_error": null,
+    "action": {
+      "actor": "c",
+      "tool": "fs/write_file",
+      "capability": "tool:fs/write_file",
+      "action_purpose": "rule:1",
+      "data_labels": [],
+      "payload": null,
+      "nonce": "n"
+    },
+    "learned": {
+      "c|fs|write_file": "allow"
+    },
+    "approved": false,
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": {
+      "verdict": "ALLOW",
+      "reason": "you chose 'always allow' for fs/write_file"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

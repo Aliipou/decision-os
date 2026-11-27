@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-profile-bad",
+  "input": {
+    "op": "parse",
+    "text": "profile = \"paranoid\""
+  },
+  "expected": {
+    "error": "policy.toml: profile must be one of ('balanced', 'strict', 'open'), got 'paranoid'"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,44 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-057",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\ntool = \"t\"\nargs = { n = \"4*\", flag = \"true\", nothing = \"null\", obj = '{\"a\":1*', list = \"[1,*\", f = \"1e+*\" }\ndecision = \"allow\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "t",
+    "model": null,
+    "args": {
+      "n": false,
+      "flag": true,
+      "nothing": null,
+      "obj": {
+        "a": 1
+      },
+      "list": [
+        1,
+        2
+      ],
+      "f": 1e+20
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "profile:balanced:unknown",
+      "reason": "balanced profile asks for unclassified tools",
+      "redact": [],
+      "source": "profile"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-port-over",
+  "input": {
+    "op": "parse",
+    "text": "dashboard_port = 65536"
+  },
+  "expected": {
+    "error": "policy.toml: invalid dashboard_port"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

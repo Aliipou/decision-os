@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-06-getHTTPResponse",
+  "input": {
+    "op": "classify",
+    "name": "getHTTPResponse",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

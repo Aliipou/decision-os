@@ -1,0 +1,19 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "normalize-posix-16",
+  "input": {
+    "op": "normalize_path",
+    "path": "$MISSING/x",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": "$MISSING/x"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}
