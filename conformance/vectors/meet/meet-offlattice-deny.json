@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-offlattice-deny",
+  "input": {
+    "op": "meet",
+    "a": "WAT",
+    "b": "DENY"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py F1: meet(x, DENY) == DENY verbatim"
+}

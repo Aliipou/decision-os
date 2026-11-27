@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-zwj-inside",
+  "input": {
+    "op": "parse",
+    "s": "AL\u200dLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "zero-width joiner inside"
+}

@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-empty-string",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      ""
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "empty string verdict"
+}

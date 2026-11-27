@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-escaped-nul-text",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\\u0000"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "literal backslash escape text"
+}

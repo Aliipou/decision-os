@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-trailing-crlf",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\r\n"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Windows line ending residue"
+}

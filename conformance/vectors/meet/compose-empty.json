@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-empty",
+  "input": {
+    "op": "compose",
+    "verdicts": []
+  },
+  "expected": {
+    "ok": "ALLOW"
+  },
+  "source": "compose([]) == ALLOW, the identity (oracle compose docstring)"
+}

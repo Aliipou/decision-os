@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-math-bold-allow",
+  "input": {
+    "op": "parse",
+    "s": "\ud835\udc00\ud835\udc0b\ud835\udc0b\ud835\udc0e\ud835\udc16"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "math bold lookalike"
+}

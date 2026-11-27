@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-allowed",
+  "input": {
+    "op": "parse",
+    "s": "ALLOWED"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "prefix match must not count"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-trailing-nul",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\u0000"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "C string truncation attack"
+}

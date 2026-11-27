@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-defer-allow",
+  "input": {
+    "op": "meet",
+    "a": "DEFER",
+    "b": "ALLOW"
+  },
+  "expected": {
+    "ok": "DEFER"
+  },
+  "source": "spec 5x5 meet table"
+}

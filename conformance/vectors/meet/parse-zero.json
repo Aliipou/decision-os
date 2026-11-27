@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-zero",
+  "input": {
+    "op": "parse",
+    "s": "0"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "rank as text"
+}

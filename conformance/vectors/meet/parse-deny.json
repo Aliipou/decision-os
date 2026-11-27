@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-deny",
+  "input": {
+    "op": "parse",
+    "s": "DENY"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "spec wire string"
+}

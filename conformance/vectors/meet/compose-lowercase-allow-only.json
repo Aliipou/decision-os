@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-lowercase-allow-only",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "allow",
+      "allow"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variants never permit"
+}

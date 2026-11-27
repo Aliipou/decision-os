@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-none-text",
+  "input": {
+    "op": "parse",
+    "s": "None"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Python None as text"
+}

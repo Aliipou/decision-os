@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-lower-defer",
+  "input": {
+    "op": "parse",
+    "s": "defer"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variant"
+}

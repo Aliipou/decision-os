@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-mixed-allow",
+  "input": {
+    "op": "parse",
+    "s": "aLLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variant"
+}

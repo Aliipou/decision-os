@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-limit-contain",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "LIMIT",
+      "CONTAIN"
+    ]
+  },
+  "expected": {
+    "ok": "CONTAIN"
+  },
+  "source": "obligation non-claim: LIMIT and CONTAIN gives CONTAIN"
+}

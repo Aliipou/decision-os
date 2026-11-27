@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-lookalike-in-chain",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "\u0410LLOW",
+      "LIMIT"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "homoglyph in a chain"
+}

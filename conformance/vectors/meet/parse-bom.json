@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-bom",
+  "input": {
+    "op": "parse",
+    "s": "\ufeffALLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "byte order mark prefix"
+}

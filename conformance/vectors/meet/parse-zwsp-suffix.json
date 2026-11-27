@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-zwsp-suffix",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\u200b"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "zero-width space suffix"
+}

@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-deny-last",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "ALLOW",
+      "DENY"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "one veto anywhere"
+}

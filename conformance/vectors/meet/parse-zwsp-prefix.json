@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-zwsp-prefix",
+  "input": {
+    "op": "parse",
+    "s": "\u200bALLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "zero-width space prefix"
+}

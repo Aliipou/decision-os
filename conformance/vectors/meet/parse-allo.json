@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-allo",
+  "input": {
+    "op": "parse",
+    "s": "ALLO"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "truncation"
+}

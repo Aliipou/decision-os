@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-defer-among-permitting",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "LIMIT",
+      "DEFER",
+      "CONTAIN"
+    ]
+  },
+  "expected": {
+    "ok": "DEFER"
+  },
+  "source": "DEFER is not permitting"
+}

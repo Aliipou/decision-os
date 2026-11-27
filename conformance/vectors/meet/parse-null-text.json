@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-null-text",
+  "input": {
+    "op": "parse",
+    "s": "null"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "JSON null as text"
+}

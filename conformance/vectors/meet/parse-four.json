@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-four",
+  "input": {
+    "op": "parse",
+    "s": "4"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "rank as text"
+}

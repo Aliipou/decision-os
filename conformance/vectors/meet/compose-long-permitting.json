@@ -1,0 +1,30 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-long-permitting",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT",
+      "ALLOW",
+      "LIMIT"
+    ]
+  },
+  "expected": {
+    "ok": "LIMIT"
+  },
+  "source": "16 permitting verdicts"
+}

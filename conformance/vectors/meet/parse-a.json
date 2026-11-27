@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-a",
+  "input": {
+    "op": "parse",
+    "s": "A"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "single letter"
+}

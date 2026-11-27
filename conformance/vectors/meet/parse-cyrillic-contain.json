@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-cyrillic-contain",
+  "input": {
+    "op": "parse",
+    "s": "\u0421\u041eNTAIN"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Cyrillic C and O homoglyphs"
+}

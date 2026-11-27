@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-nul-in-chain",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "LIMIT",
+      "LIMIT\u0000"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "NUL suffix in a chain"
+}

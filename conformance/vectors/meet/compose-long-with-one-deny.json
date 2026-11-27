@@ -1,0 +1,30 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-long-with-one-deny",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "ALLOW",
+      "DENY"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "16 verdicts, last one vetoes"
+}

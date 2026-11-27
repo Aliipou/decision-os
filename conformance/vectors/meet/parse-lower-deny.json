@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-lower-deny",
+  "input": {
+    "op": "parse",
+    "s": "deny"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_redteam_composition.py _forging_plugin default verdict"
+}

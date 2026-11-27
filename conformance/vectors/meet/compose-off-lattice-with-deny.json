@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-off-lattice-with-deny",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "WAT",
+      "DENY"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py F1 verbatim DENY"
+}
