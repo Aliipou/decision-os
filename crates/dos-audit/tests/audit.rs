@@ -1,4 +1,4 @@
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
+﻿#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -121,9 +121,9 @@ fn rehash_without_key_detected() {
     let mut v: serde_json::Value = serde_json::from_str(&l[1]).unwrap();
     v["verdict"] = "DENY".into();
     v.as_object_mut().unwrap().remove("entry_hash");
-    let h = hex_encode(&Sha256::digest(serde_json::to_string(&v).unwrap().as_bytes()));
+    let h = hex_encode(&Sha256::digest(ser(&v).as_bytes()));
     v["entry_hash"] = h.into();
-    l[1] = serde_json::to_string(&v).unwrap();
+    l[1] = ser(&v);
     write_lines(&p, &l);
     assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::BadSignature);
 }
@@ -292,6 +292,30 @@ fn unwritable_location_fails() {
 
 // ---- oracle compatibility ----
 
+/// Serialise like Python's `json.dumps(sort_keys=True)` regardless of which
+/// serde_json features other workspace crates enable (dos-install turns on
+/// `preserve_order`, which would otherwise keep insertion order).
+fn sorted(v: &serde_json::Value) -> serde_json::Value {
+    match v {
+        serde_json::Value::Object(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let mut out = serde_json::Map::new();
+            for k in keys {
+                if let Some(x) = m.get(k) {
+                    out.insert(k.clone(), sorted(x));
+                }
+            }
+            serde_json::Value::Object(out)
+        }
+        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
+        other => other.clone(),
+    }
+}
+
+fn ser(v: &serde_json::Value) -> String {
+    serde_json::to_string(&sorted(v)).unwrap()
+}
 fn python_log(entries: &[serde_json::Value]) -> String {
     // Python recipe: sha256(json.dumps(entry minus entry_hash, sort_keys, compact, ensure_ascii))
     let mut out = String::new();
@@ -300,10 +324,10 @@ fn python_log(entries: &[serde_json::Value]) -> String {
         let mut e = e.clone();
         e["seq"] = i.into();
         e["prev_hash"] = prev.clone().into();
-        let h = hex_encode(&Sha256::digest(serde_json::to_string(&e).unwrap().as_bytes()));
+        let h = hex_encode(&Sha256::digest(ser(&e).as_bytes()));
         e["entry_hash"] = h.clone().into();
         // Python writes json.dumps(entry): spaces after separators
-        out.push_str(&serde_json::to_string(&e).unwrap().replace("\":", "\": ").replace("\",", "\", "));
+        out.push_str(&ser(&e).replace("\":", "\": ").replace("\",", "\", "));
         out.push('\n');
         prev = h;
     }
@@ -332,10 +356,10 @@ fn python_log_verifies_in_compat_mode_only() {
 fn python_non_ascii_legacy_hash() {
     let keys = keys_for(&SECRET);
     let p = tmp("pyuni");
-    // Python's ensure_ascii hash input: "café" and an astral char as a surrogate pair
-    let e = r#"{"actor":"café 😀","prev_hash":"0000000000000000000000000000000000000000000000000000000000000000","seq":0}"#;
+    // Python's ensure_ascii hash input: "cafÃ©" and an astral char as a surrogate pair
+    let e = r#"{"actor":"cafÃ© ðŸ˜€","prev_hash":"0000000000000000000000000000000000000000000000000000000000000000","seq":0}"#;
     let h = hex_encode(&Sha256::digest(e.as_bytes()));
-    let line = format!(r#"{{"actor": "café 😀", "seq": 0, "prev_hash": "{GENESIS}", "entry_hash": "{h}"}}"#);
+    let line = format!(r#"{{"actor": "cafÃ© ðŸ˜€", "seq": 0, "prev_hash": "{GENESIS}", "entry_hash": "{h}"}}"#);
     std::fs::write(&p, format!("{line}\n")).unwrap();
     let mut o = opts(&keys);
     o.python_compat = true;
@@ -351,7 +375,7 @@ fn rust_log_matches_python_recipe() {
         let mut v: serde_json::Value = serde_json::from_str(&l).unwrap();
         let stored = v["entry_hash"].as_str().unwrap().to_string();
         v.as_object_mut().unwrap().remove("entry_hash");
-        let h = hex_encode(&Sha256::digest(serde_json::to_string(&v).unwrap().as_bytes()));
+        let h = hex_encode(&Sha256::digest(ser(&v).as_bytes()));
         assert_eq!(h, stored);
     }
 }
