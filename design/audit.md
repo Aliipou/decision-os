@@ -46,3 +46,11 @@ Domain `audit-head` is reused for entry signatures (payloads are structurally di
 - Signatures: Ed25519 over the JCS of the entry without `sig` and `entry_hash`, domain `audit-head` (shared with the anchor; payloads are structurally distinct: an entry always has `prev_hash`, a head never does).
 - Extra surface: `dos-audit verify` CLI; conformance area `audit` (16 vectors, answered by `dos-core-adapter`); Lean models in `formal/audit/`.
 - Known limits: a key holder can rewrite log and anchor together; rolling both back to an older matching pair is undetectable without an external anchor; `python_compat` accepts unsigned entries; keys are checked at verify time, not entry time; no directory fsync after create or rename.
+
+## After red team 2
+
+- Append checks the log against the anchor (`Anchor::latest`) under the lock: equal head passes; a longer log must verify in full (strict, own key, anchored entry in place); anything else is refused. A non-empty log with no anchor is refused unless `adopt_unanchored(true)`.
+- The tail check reads the last two lines and chains them; the tail read is capped at 4 MiB. Appends are written without append mode and rolled back with `set_len` if any later step (including the anchor publish) fails.
+- Entries with U+2028, U+2029 or U+0085 are refused (Python `splitlines`). Default lock file: log path with extension `lock`.
+- Verification: with an anchor demanded, a missing anchor is `anchor_missing`; unsigned entries after the anchored head are refused even in compat mode. CLI: `<log>.anchor` is used automatically.
+- Accepted limits: ESCALATION.md E-A1 to E-A3.

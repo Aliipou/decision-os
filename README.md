@@ -33,7 +33,7 @@ dos-audit verify <log> --key <ed25519-public-key-hex> [--anchor-file <log>.ancho
 
 Exit 0 verifies, 1 does not (reason on stderr), 2 is a usage error. `--python-compat`
 verifies logs written by the Python oracle. A mixed Rust and Python deployment must
-share one lock file (`FileSink::with_lock_path`). Design: `design/audit.md`; status and
+share one lock file (`FileSink::with_lock_path`). `FileSink` refuses to continue a log that does not match its anchor (truncated, wiped, replaced) and rolls back an entry whose anchor write fails; `adopt_unanchored(true)` lets the first append continue an oracle log. `dos-audit verify` uses `<log>.anchor` automatically (`--no-anchor` opts out). Design: `design/audit.md`; status and
 open decisions: `status/audit.md`; red-team results: `findings/audit.md`.
 
 The oracles are imported with their full history and are not edited. Each one's CI

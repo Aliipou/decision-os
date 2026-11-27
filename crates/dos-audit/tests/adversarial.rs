@@ -208,7 +208,7 @@ fn odd_but_valid_entries_round_trip() {
     let entries = [
         r#"{}"#,
         r#"{"a":null,"b":true,"c":false,"d":[],"e":{},"f":[1,2,{"g":"h"}]}"#,
-        r#"{"u":"café 😀   \u0000 \u001f \" \\ /"}"#,
+        r#"{"u":"café 😀  \u0000 \u001f \" \\ /"}"#,
         r#"{"n":[0,-0,1e21,1.5,4.9e-324,9007199254740991,-9007199254740991]}"#,
         r#"{"kéy":1,"😀":2,"a":3}"#,
         r#"{"seq_":1,"prev":2,"sig_":3,"nested":{"seq":9,"entry_hash":"x","sig":"y","kid":"z"}}"#,
@@ -285,4 +285,18 @@ fn anchor_cannot_be_used_as_an_entry_signature() {
     let log = format!("{}\n{}\n", lines[0], lines[1]);
     let r = verify_bytes(log.as_bytes(), &opts(&k, false, None));
     assert_eq!(r.unwrap_err().kind, VerifyErrorKind::BadSignature);
+}
+
+#[test]
+fn python_line_break_characters_are_refused() {
+    // JCS writes U+2028, U+2029 and U+0085 raw; Python's splitlines() would cut the line
+    // there and the oracle's HashLog could no longer read the log. The sink refuses them.
+    let p = tmp("pybreaks");
+    let s = FileSink::open(&p, &SECRET).unwrap();
+    for c in ['\u{2028}', '\u{2029}', '\u{85}'] {
+        let e = format!("{{\"reason\":\"a{c}b\"}}");
+        assert_eq!(s.append(e.as_bytes()), Err(StoreError::InvalidInput));
+    }
+    assert_eq!(std::fs::read(&p).unwrap().len(), 0);
+    assert_eq!(s.append(b"{}").unwrap().seq, 0);
 }

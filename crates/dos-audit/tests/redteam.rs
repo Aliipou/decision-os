@@ -183,15 +183,20 @@ fn sink_follows_the_disk_not_a_cache() {
     let p = tmp("swap");
     let s = fill(&p, 2);
     let q = tmp("swap-other");
-    let _ = fill(&q, 2);
+    // same shape and length, different content (so a different chain)
+    let sq = FileSink::open(&q, &SECRET).unwrap();
+    for i in 0..2 {
+        sq.append(format!(r#"{{"actor":"a","tool":"u{i}","verdict":"ALLOW"}}"#).as_bytes())
+            .unwrap();
+    }
     let other = std::fs::read(&q).unwrap();
+    assert_ne!(other, std::fs::read(&p).unwrap());
     assert_eq!(other.len(), std::fs::read(&p).unwrap().len());
     std::fs::write(&p, &other).unwrap();
-    s.append(b"{}").unwrap();
-    assert_eq!(
-        strict(&std::fs::read(&p).unwrap(), None).unwrap().entries,
-        3
-    );
+    // The sink reads the disk, not a cache: it sees a log that does not match its anchor and
+    // refuses to continue it, leaving the file as it found it.
+    assert_eq!(s.append(b"{}"), Err(StoreError::Unavailable));
+    assert_eq!(std::fs::read(&p).unwrap(), other);
 }
 
 #[test]

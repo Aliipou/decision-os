@@ -24,6 +24,14 @@ pub struct Head {
 /// rewrite (a WORM bucket, another host) for real tamper-evidence.
 pub trait Anchor: Send + Sync {
     fn publish(&self, head: &Head) -> Result<(), StoreError>;
+
+    /// The latest published head, `Ok(None)` if none was ever published. The sink checks
+    /// the log against it before every append, so a log that was truncated, wiped or
+    /// replaced is never silently continued. An anchor that cannot answer returns
+    /// `Ok(None)` (the default): then the sink cannot detect truncation itself.
+    fn latest(&self) -> Result<Option<Head>, StoreError> {
+        Ok(None)
+    }
 }
 
 /// Latest head as a signed one-line JSON file, replaced atomically (temp file + rename).
@@ -52,7 +60,22 @@ fn head_payload(kid: &str, head: &Head) -> Result<Vec<u8>, canon::CanonError> {
     ]))
 }
 
+struct OneKey(String, [u8; 32]);
+
+impl KeyStore for OneKey {
+    fn verifying_key(&self, kid: &str, _now: i64) -> Result<Option<[u8; 32]>, StoreError> {
+        Ok((kid == self.0).then_some(self.1))
+    }
+}
+
 impl Anchor for FileAnchor {
+    fn latest(&self) -> Result<Option<Head>, StoreError> {
+        let vk = self.key.verifying_key();
+        let keys = OneKey(self.key.kid().to_hex(), vk.to_bytes());
+        // A present but unreadable, unsigned or foreign anchor is an error, not "none".
+        read_anchor_file(&self.path, &keys, 0).map_err(|_| StoreError::Unavailable)
+    }
+
     fn publish(&self, head: &Head) -> Result<(), StoreError> {
         let kid = self.key.kid().to_hex();
         let payload = head_payload(&kid, head).map_err(|_| StoreError::InvalidInput)?;

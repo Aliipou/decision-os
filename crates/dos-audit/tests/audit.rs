@@ -101,7 +101,9 @@ fn empty_log_verifies() {
     let p = tmp("empty");
     let keys = keys_for(&SECRET);
     let _s = FileSink::open(&p, &SECRET).unwrap();
-    assert_eq!(full(&p, &keys).unwrap().entries, 0);
+    assert_eq!(verify_file(&p, &opts(&keys)).unwrap().entries, 0);
+    // With the anchor demanded, an empty log is refused: it cannot be told from a wiped one.
+    assert_eq!(kind(full(&p, &keys)), VerifyErrorKind::AnchorMissing);
 }
 
 #[test]
@@ -236,7 +238,8 @@ fn fork_detected_by_anchor() {
     let anchored = std::fs::read(anchor_path(&p)).unwrap();
     // an attacker with the key rewrites the last entry; the old anchor disagrees
     std::fs::remove_file(&p).unwrap();
-    let s = FileSink::open(&p, &SECRET).unwrap();
+    // (a sink without an anchor: the rewriting attacker holds the key and bypasses the checks)
+    let s = FileSink::open_with_anchor(&p, &SECRET, None).unwrap();
     for i in 0..3 {
         s.append(format!(r#"{{"other":{i}}}"#).as_bytes()).unwrap();
     }
@@ -434,7 +437,7 @@ fn rust_extends_python_log() {
     let keys = keys_for(&SECRET);
     let p = tmp("pyext");
     std::fs::write(&p, python_log(&[serde_json::json!({"actor":"a"})])).unwrap();
-    let s = FileSink::open(&p, &SECRET).unwrap();
+    let s = FileSink::open(&p, &SECRET).unwrap().adopt_unanchored(true);
     assert_eq!(s.append(b"{}").unwrap().seq, 1);
     let mut o = opts(&keys);
     assert_eq!(kind(verify_file(&p, &o)), VerifyErrorKind::NonCanonical);

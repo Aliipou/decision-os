@@ -49,7 +49,7 @@ fn rust_continues_a_python_log_with_non_ascii_tail() {
     let (l0, h0) = python_line(0, GENESIS, "x", "x");
     let (l1, _) = python_line(1, &h0, "caf\u{e9}", r"café 😀");
     std::fs::write(&p, format!("{l0}\n{l1}\n")).unwrap();
-    let s = FileSink::open(&p, &SECRET).unwrap();
+    let s = FileSink::open(&p, &SECRET).unwrap().adopt_unanchored(true);
     assert_eq!(s.append(br#"{"actor":"rust"}"#).unwrap().seq, 2);
     let sk = SigningKey::from_bytes(&SECRET);
     let keys = Keys(vec![(sk.kid().to_hex(), sk.verifying_key().to_bytes())]);

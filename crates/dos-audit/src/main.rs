@@ -19,7 +19,7 @@ impl KeyStore for Keys {
 
 fn usage() -> ExitCode {
     eprintln!(
-        "usage: dos-audit verify <log> --key <ed25519-public-key-hex>... [--anchor-file <path>] [--python-compat]"
+        "usage: dos-audit verify <log> --key <ed25519-public-key-hex>... [--anchor-file <path>] [--python-compat] [--no-anchor]"
     );
     ExitCode::from(2)
 }
@@ -33,6 +33,7 @@ fn main() -> ExitCode {
     let mut anchor: Option<PathBuf> = None;
     let mut keys = Keys(Vec::new());
     let mut compat = false;
+    let mut no_anchor = false;
     while let Some(a) = args.next() {
         match a.as_str() {
             "--anchor-file" => match args.next() {
@@ -52,11 +53,21 @@ fn main() -> ExitCode {
                 }
             }
             "--python-compat" => compat = true,
+            "--no-anchor" => no_anchor = true,
             _ if log.is_none() && !a.starts_with("--") => log = Some(PathBuf::from(a)),
             _ => return usage(),
         }
     }
     let Some(log) = log else { return usage() };
+    // `<log>.anchor` next to the log is used automatically; `--no-anchor` opts out.
+    if anchor.is_none() && !no_anchor {
+        let mut s = log.clone().into_os_string();
+        s.push(".anchor");
+        let candidate = PathBuf::from(s);
+        if candidate.exists() {
+            anchor = Some(candidate);
+        }
+    }
     let opts = VerifyOptions {
         keys: &keys,
         now_unix_ms: 0,
@@ -67,6 +78,9 @@ fn main() -> ExitCode {
         Some(p) => verify_file_with_anchor_file(&log, p, opts),
         None => verify_file(&log, &opts),
     };
+    if anchor.is_none() {
+        eprintln!("warning: no --anchor-file: tail truncation is not checked");
+    }
     match result {
         Ok(v) => {
             match v.head {
