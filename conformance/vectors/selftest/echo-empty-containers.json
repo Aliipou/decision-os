@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-empty-containers",
+  "input": {"op": "echo", "value": {"o": {}, "a": [], "s": ""}},
+  "expected": {"ok": {"o": {}, "a": [], "s": ""}},
+  "source": "pipe: empty object, array and string"
+}

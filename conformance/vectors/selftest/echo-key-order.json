@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-key-order",
+  "input": {"op": "echo", "value": {"b": 1, "a": [1, 2, {"d": null, "c": "x"}]}},
+  "expected": {"ok": {"a": [1, 2, {"c": "x", "d": null}], "b": 1}},
+  "source": "object key order is ignored, array order is not"
+}

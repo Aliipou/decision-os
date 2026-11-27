@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "invalid-input",
+  "input": {"op": "echo"},
+  "expected": {"error": "invalid_input"},
+  "source": "selftest: echo without a value is refused"
+}
