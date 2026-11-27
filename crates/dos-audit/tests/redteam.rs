@@ -50,11 +50,31 @@ fn lines_of(b: &[u8]) -> Vec<String> {
     String::from_utf8(b.to_vec()).unwrap().lines().map(String::from).collect()
 }
 
+/// Sort object keys recursively. Other workspace crates (dos-install) enable
+/// serde_json's `preserve_order`, so serialisation order cannot be assumed.
+fn sorted(v: &serde_json::Value) -> serde_json::Value {
+    match v {
+        serde_json::Value::Object(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let mut out = serde_json::Map::new();
+            for k in keys {
+                if let Some(x) = m.get(k) {
+                    out.insert(k.clone(), sorted(x));
+                }
+            }
+            serde_json::Value::Object(out)
+        }
+        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
+        other => other.clone(),
+    }
+}
+
 fn rehash(mut v: serde_json::Value) -> String {
     v.as_object_mut().unwrap().remove("entry_hash");
-    let h = hex_encode(&Sha256::digest(serde_json::to_string(&v).unwrap().as_bytes()));
+    let h = hex_encode(&Sha256::digest(serde_json::to_string(&sorted(&v)).unwrap().as_bytes()));
     v["entry_hash"] = h.into();
-    serde_json::to_string(&v).unwrap()
+    serde_json::to_string(&sorted(&v)).unwrap()
 }
 
 fn anchored(name: &str) -> (PathBuf, Vec<u8>, Head) {
