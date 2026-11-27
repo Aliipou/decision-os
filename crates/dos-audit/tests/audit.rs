@@ -392,3 +392,18 @@ fn rust_extends_python_log() {
     o.python_compat = true;
     assert_eq!(verify_file(&p, &o).unwrap().entries, 2);
 }
+
+#[test]
+fn large_entries_and_non_ascii_resume() {
+    let keys = keys_for(&SECRET);
+    let p = tmp("large");
+    let s = FileSink::open(&p, &SECRET).unwrap();
+    let big = "x".repeat(40_000);
+    s.append(format!(r#"{{"actor":"caf\u00e9","blob":"{big}"}}"#).as_bytes()).unwrap();
+    s.append(format!(r#"{{"blob":"{big}"}}"#).as_bytes()).unwrap();
+    drop(s);
+    // fresh sink must find the head with a tail read across several 8 KiB steps
+    let s = FileSink::open(&p, &SECRET).unwrap();
+    assert_eq!(s.append(b"{}").unwrap().seq, 2);
+    assert_eq!(full(&p, &keys).unwrap().entries, 3);
+}

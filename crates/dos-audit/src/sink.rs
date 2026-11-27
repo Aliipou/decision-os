@@ -76,7 +76,7 @@ impl FileSink {
     /// Current head from disk, `None` for an empty log. Errors if the tail is corrupt.
     pub fn head(&self) -> Result<Option<Head>, StoreError> {
         let bytes = fs::read(&self.path).map_err(|_| StoreError::Unavailable)?;
-        let st = scan_tail(&bytes)?;
+        let st = scan_tail(&bytes, bytes.len() as u64)?;
         Ok(st.next_seq.checked_sub(1).map(|seq| Head {
             seq,
             entry_hash: st.last_hash,
@@ -85,8 +85,7 @@ impl FileSink {
 }
 
 /// Finds the head of the log bytes. Fails closed on anything but a clean tail.
-fn scan_tail(bytes: &[u8]) -> Result<State, StoreError> {
-    let len = bytes.len() as u64;
+fn scan_tail(bytes: &[u8], len: u64) -> Result<State, StoreError> {
     if bytes.is_empty() {
         return Ok(State {
             len,
@@ -156,7 +155,10 @@ impl FileSink {
                 Some(s) if s.len == len => s.clone(),
                 _ => {
                     *guard = None;
-                    scan_tail(&fs::read(&self.path).map_err(|_| StoreError::Unavailable)?)?
+                    {
+                        let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
+                        scan_tail(&tail, len)?
+                    }
                 }
             };
             let (line, hash) = self.build_line(entry_jcs, &st)?;
@@ -190,5 +192,28 @@ impl FileSink {
 impl AuditSink for FileSink {
     fn append(&self, entry_jcs: &[u8]) -> Result<AuditReceipt, StoreError> {
         self.append_locked(entry_jcs)
+    }
+}
+
+/// Reads from the start of the last line to the end of the file, without reading the
+/// whole log: walks back in 8 KiB steps until a newline precedes the final line.
+fn read_tail(f: &mut File, len: u64) -> std::io::Result<Vec<u8>> {
+    use std::io::{Read as _, Seek as _, SeekFrom};
+    const STEP: u64 = 8192;
+    let mut start = len;
+    let mut buf: Vec<u8> = Vec::new();
+    loop {
+        let from = start.saturating_sub(STEP);
+        let mut chunk = vec![0u8; (start - from) as usize];
+        f.seek(SeekFrom::Start(from))?;
+        f.read_exact(&mut chunk)?;
+        chunk.extend_from_slice(&buf);
+        buf = chunk;
+        start = from;
+        // A newline before the final byte marks where the last line begins.
+        let body = buf.strip_suffix(b"\n").unwrap_or(&buf);
+        if start == 0 || body.contains(&b'\n') {
+            return Ok(buf);
+        }
     }
 }
