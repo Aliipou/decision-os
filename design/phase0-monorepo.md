@@ -7,7 +7,10 @@ running unchanged from its directory, and the AE conformance suite running again
 the decision-os-min oracle. Tag `oracle-v0` on merge.
 
 Done when: every oracle job is green in this repository's CI, except the known
-environment-dependent `test_tm_a_unsandboxed_probe_still_shows_ambient_risk`.
+environment-dependent `test_tm_a_unsandboxed_probe_still_shows_ambient_risk`, and
+except the sluicegate "Supply chain" job, which fails on wasmtime advisories published
+after sluicegate's last main run (KNOWN_GAPS SG-16). It tests dependencies, not
+behavior; the oracle is never shipped; it stays visible and is not a required check.
 
 Out of scope: any Rust code, any spec text beyond the gap register, any oracle edit.
 
