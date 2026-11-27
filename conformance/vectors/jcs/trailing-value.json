@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "trailing-value",
+  "input": {
+    "text": "1 2"
+  },
+  "expected": {
+    "error": "trailing_data"
+  },
+  "source": "RFC 8259 2"
+}

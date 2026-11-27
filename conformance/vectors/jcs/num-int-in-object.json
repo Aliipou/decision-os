@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-int-in-object",
+  "input": {
+    "text": "{\"amount\":9007199254740993}"
+  },
+  "expected": {
+    "error": "unsafe_integer"
+  },
+  "oracle_expected": {
+    "ok": "{\"amount\":9007199254740993}"
+  },
+  "gap": "DM-2",
+  "source": "spec/canon.md unsafe_integer"
+}

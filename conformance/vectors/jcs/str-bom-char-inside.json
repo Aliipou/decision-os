@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-bom-char-inside",
+  "input": {
+    "text": "\"\ufeff\""
+  },
+  "expected": {
+    "ok": "\"\ufeff\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\ufeff\""
+  },
+  "gap": "DM-2",
+  "source": "U+FEFF inside a string is an ordinary character"
+}

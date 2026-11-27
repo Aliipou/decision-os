@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "whitespace-only-allowed-kinds",
+  "input": {
+    "text": " \t\r\n1 \t\r\n"
+  },
+  "expected": {
+    "ok": "1"
+  },
+  "source": "RFC 8259 2"
+}

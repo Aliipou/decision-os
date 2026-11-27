@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "bom-text",
+  "input": {
+    "text": "\ufeff{}"
+  },
+  "expected": {
+    "error": "leading_bom"
+  },
+  "source": "RFC 8259 8.1; RFC 7493 2.1"
+}

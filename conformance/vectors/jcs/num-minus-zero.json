@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-minus-zero",
+  "input": {
+    "text": "-0"
+  },
+  "expected": {
+    "ok": "0"
+  },
+  "source": "ECMA-262 7.1.12.1 step 2"
+}

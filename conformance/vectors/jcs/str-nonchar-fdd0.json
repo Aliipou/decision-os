@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-nonchar-fdd0",
+  "input": {
+    "text": "\"\\ufdd0\""
+  },
+  "expected": {
+    "error": "noncharacter"
+  },
+  "oracle_expected": {
+    "ok": "\"\\ufdd0\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1; RFC 8785 3.1"
+}

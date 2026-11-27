@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-1e21",
+  "input": {
+    "text": "1e21"
+  },
+  "expected": {
+    "ok": "1e+21"
+  },
+  "source": "ECMA-262 7.1.12.1, n > 21"
+}

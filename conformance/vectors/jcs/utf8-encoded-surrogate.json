@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "utf8-encoded-surrogate",
+  "input": {
+    "bytes_hex": "22eda08022"
+  },
+  "expected": {
+    "error": "invalid_utf8"
+  },
+  "oracle_expected": {
+    "ok": "\"\\ud800\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 3629 3: surrogates are not UTF-8"
+}

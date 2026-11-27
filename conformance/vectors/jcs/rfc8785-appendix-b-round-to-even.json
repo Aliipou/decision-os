@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-round-to-even",
+  "input": {
+    "text": "1424953923781206.25"
+  },
+  "expected": {
+    "ok": "1424953923781206.2"
+  },
+  "source": "RFC 8785 Appendix B, row round-to-even"
+}

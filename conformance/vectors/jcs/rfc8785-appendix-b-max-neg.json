@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-max-neg",
+  "input": {
+    "text": "-1.7976931348623157e+308"
+  },
+  "expected": {
+    "ok": "-1.7976931348623157e+308"
+  },
+  "source": "RFC 8785 Appendix B, row max-neg"
+}

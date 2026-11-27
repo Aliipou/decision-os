@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-int-2pow68-exact",
+  "input": {
+    "text": "295147905179352825856"
+  },
+  "expected": {
+    "error": "unsafe_integer"
+  },
+  "oracle_expected": {
+    "ok": "295147905179352825856"
+  },
+  "gap": "DM-2",
+  "source": "spec/canon.md unsafe_integer"
+}

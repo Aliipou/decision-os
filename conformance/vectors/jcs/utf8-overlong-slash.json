@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "utf8-overlong-slash",
+  "input": {
+    "bytes_hex": "22c0af22"
+  },
+  "expected": {
+    "error": "invalid_utf8"
+  },
+  "source": "RFC 3629 3: overlong"
+}

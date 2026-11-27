@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-leading-zero",
+  "input": {
+    "text": "01"
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 6"
+}

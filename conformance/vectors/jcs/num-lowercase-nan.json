@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-lowercase-nan",
+  "input": {
+    "text": "nan"
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 3"
+}

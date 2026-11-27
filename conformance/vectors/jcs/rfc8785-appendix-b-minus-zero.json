@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-minus-zero",
+  "input": {
+    "text": "-0.0"
+  },
+  "expected": {
+    "ok": "0"
+  },
+  "oracle_expected": {
+    "ok": "-0.0"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 Appendix B, row minus-zero"
+}

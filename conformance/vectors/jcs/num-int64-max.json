@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-int64-max",
+  "input": {
+    "text": "9223372036854775807"
+  },
+  "expected": {
+    "error": "unsafe_integer"
+  },
+  "oracle_expected": {
+    "ok": "9223372036854775807"
+  },
+  "gap": "DM-2",
+  "source": "spec/canon.md unsafe_integer; RFC 8785 Appendix D"
+}

@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-min-neg",
+  "input": {
+    "text": "-5e-324"
+  },
+  "expected": {
+    "ok": "-5e-324"
+  },
+  "source": "RFC 8785 Appendix B, row min-neg"
+}

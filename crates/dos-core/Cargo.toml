@@ -10,3 +10,8 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
+
+[dev-dependencies]
+# Test oracles only; neither ships in dos-core (ryu-js has unsafe code, see design/canon.md).
+proptest = "1.12.0"
+ryu-js = "1.0.4"

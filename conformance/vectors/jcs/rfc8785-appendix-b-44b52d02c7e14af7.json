@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-44b52d02c7e14af7",
+  "input": {
+    "text": "1.0000000000000001e+23"
+  },
+  "expected": {
+    "ok": "1.0000000000000001e+23"
+  },
+  "source": "RFC 8785 Appendix B, row 44b52d02c7e14af7"
+}

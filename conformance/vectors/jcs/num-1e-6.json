@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-1e-6",
+  "input": {
+    "text": "1e-6"
+  },
+  "expected": {
+    "ok": "0.000001"
+  },
+  "oracle_expected": {
+    "ok": "1e-06"
+  },
+  "gap": "DM-2",
+  "source": "ECMA-262 7.1.12.1, -6 < n <= 0"
+}

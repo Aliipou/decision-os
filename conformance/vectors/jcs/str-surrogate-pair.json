@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-surrogate-pair",
+  "input": {
+    "text": "\"\\ud83d\\ude00\""
+  },
+  "expected": {
+    "ok": "\"\ud83d\ude00\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\ud83d\\ude00\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 8259 7"
+}
