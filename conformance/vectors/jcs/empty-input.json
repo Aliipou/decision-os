@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "empty-input",
+  "input": {
+    "text": ""
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 2"
+}

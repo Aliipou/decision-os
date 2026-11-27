@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-3.2.3-sort-example",
+  "input": {
+    "text": "{\n  \"\\u20ac\": \"Euro Sign\",\n  \"\\r\": \"Carriage Return\",\n  \"\\ufb33\": \"Hebrew Letter Dalet With Dagesh\",\n  \"1\": \"One\",\n  \"\\ud83d\\ude00\": \"Emoji: Grinning Face\",\n  \"\\u0080\": \"Control\",\n  \"\\u00f6\": \"Latin Small Letter O With Diaeresis\"\n}"
+  },
+  "expected": {
+    "ok": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\u0080\":\"Control\",\"\u00f6\":\"Latin Small Letter O With Diaeresis\",\"\u20ac\":\"Euro Sign\",\"\ud83d\ude00\":\"Emoji: Grinning Face\",\"\ufb33\":\"Hebrew Letter Dalet With Dagesh\"}"
+  },
+  "oracle_expected": {
+    "ok": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\\u0080\":\"Control\",\"\\u00f6\":\"Latin Small Letter O With Diaeresis\",\"\\u20ac\":\"Euro Sign\",\"\\ufb33\":\"Hebrew Letter Dalet With Dagesh\",\"\\ud83d\\ude00\":\"Emoji: Grinning Face\"}"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.3 sorting test data"
+}

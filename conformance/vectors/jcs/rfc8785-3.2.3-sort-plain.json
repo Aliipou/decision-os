@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-3.2.3-sort-plain",
+  "input": {
+    "text": "{\"ab\":0,\"aa\":0,\"a\":0,\"\":0}"
+  },
+  "expected": {
+    "ok": "{\"\":0,\"a\":0,\"aa\":0,\"ab\":0}"
+  },
+  "source": "RFC 8785 3.2.3 plain English example"
+}

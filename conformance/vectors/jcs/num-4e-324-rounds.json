@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-4e-324-rounds",
+  "input": {
+    "text": "4e-324"
+  },
+  "expected": {
+    "ok": "5e-324"
+  },
+  "source": "spec/canon.md numbers: nearest double"
+}

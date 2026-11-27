@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-fffd-is-fine",
+  "input": {
+    "text": "\"\\ufffd\\ufdcf\\ufdf0\""
+  },
+  "expected": {
+    "ok": "\"\ufffd\ufdcf\ufdf0\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\ufffd\\ufdcf\\ufdf0\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1 boundaries"
+}

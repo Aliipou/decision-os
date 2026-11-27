@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-reversed-pair",
+  "input": {
+    "text": "\"\\ude00\\ud83d\""
+  },
+  "expected": {
+    "error": "lone_surrogate"
+  },
+  "oracle_expected": {
+    "ok": "\"\\ude00\\ud83d\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1"
+}

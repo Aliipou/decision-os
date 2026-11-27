@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-exponent-plus",
+  "input": {
+    "text": "1E+2"
+  },
+  "expected": {
+    "ok": "100"
+  },
+  "oracle_expected": {
+    "ok": "100.0"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8259 6 grammar, ECMA-262 7.1.12.1"
+}

@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-vertical-tab-lowercase",
+  "input": {
+    "text": "\"\\u000B\""
+  },
+  "expected": {
+    "ok": "\"\\u000b\""
+  },
+  "source": "RFC 8785 3.2.2.2 lowercase hex"
+}

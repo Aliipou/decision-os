@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-trailing-dot",
+  "input": {
+    "text": "1."
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 6"
+}

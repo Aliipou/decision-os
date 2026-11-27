@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-del-007f",
+  "input": {
+    "text": "\"\\u007f\""
+  },
+  "expected": {
+    "ok": "\"\u007f\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\u007f\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.2.2: outside U+0000..U+001F, as is"
+}

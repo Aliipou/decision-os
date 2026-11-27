@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "obj-utf16-order-ff61",
+  "input": {
+    "text": "{\"\\uff61\":1,\"\\ud800\\udc00\":2}"
+  },
+  "expected": {
+    "ok": "{\"\ud800\udc00\":2,\"\uff61\":1}"
+  },
+  "oracle_expected": {
+    "ok": "{\"\\uff61\":1,\"\\ud800\\udc00\":2}"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.3"
+}

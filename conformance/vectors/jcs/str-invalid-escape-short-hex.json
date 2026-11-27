@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-invalid-escape-short-hex",
+  "input": {
+    "text": "\"\\u004\""
+  },
+  "expected": {
+    "error": "invalid_escape"
+  },
+  "source": "RFC 8259 7"
+}

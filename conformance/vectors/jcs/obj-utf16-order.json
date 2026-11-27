@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "obj-utf16-order",
+  "input": {
+    "text": "{\"\\ufb33\":3,\"\\ud83d\\ude00\":2,\"\\u20ac\":1}"
+  },
+  "expected": {
+    "ok": "{\"\u20ac\":1,\"\ud83d\ude00\":2,\"\ufb33\":3}"
+  },
+  "oracle_expected": {
+    "ok": "{\"\\u20ac\":1,\"\\ufb33\":3,\"\\ud83d\\ude00\":2}"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.3 UTF-16 code units"
+}

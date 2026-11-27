@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-unescaped-control",
+  "input": {
+    "text": "\"a\u0001b\""
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 7"
+}

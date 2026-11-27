@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "obj-literals-and-empties",
+  "input": {
+    "text": "[ null , true , false , \"\" , [ ] , { } ]"
+  },
+  "expected": {
+    "ok": "[null,true,false,\"\",[],{}]"
+  },
+  "source": "RFC 8785 3.2.1"
+}

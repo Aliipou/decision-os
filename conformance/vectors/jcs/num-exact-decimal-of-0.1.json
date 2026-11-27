@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-exact-decimal-of-0.1",
+  "input": {
+    "text": "0.1000000000000000055511151231257827021181583404541015625"
+  },
+  "expected": {
+    "ok": "0.1"
+  },
+  "source": "spec/canon.md numbers"
+}

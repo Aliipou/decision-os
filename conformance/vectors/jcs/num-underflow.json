@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-underflow",
+  "input": {
+    "text": "1e-400"
+  },
+  "expected": {
+    "ok": "0"
+  },
+  "oracle_expected": {
+    "ok": "0.0"
+  },
+  "gap": "DM-2",
+  "source": "spec/canon.md numbers: nearest double (underflow)"
+}

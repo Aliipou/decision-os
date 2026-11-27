@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-infinity",
+  "input": {
+    "text": "Infinity"
+  },
+  "expected": {
+    "error": "non_finite_number"
+  },
+  "oracle_expected": {
+    "ok": "Infinity"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 Appendix B note 3, 3.2.2.3"
+}

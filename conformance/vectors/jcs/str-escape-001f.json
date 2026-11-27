@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-escape-001f",
+  "input": {
+    "text": "\"\\u001f\""
+  },
+  "expected": {
+    "ok": "\"\\u001f\""
+  },
+  "source": "RFC 8785 3.2.2.2"
+}
