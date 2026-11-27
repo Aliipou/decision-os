@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "error-code",
+  "input": {"op": "error", "code": "selftest_refused"},
+  "expected": {"error": "selftest_refused"},
+  "source": "refusals travel as an error code"
+}

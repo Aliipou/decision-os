@@ -1,0 +1,6 @@
+{
+  "v": 1,
+  "command": ["./adapter"],
+  "required": ["selftest"],
+  "oracle": true
+}

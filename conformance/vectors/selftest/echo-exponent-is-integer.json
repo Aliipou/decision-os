@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-exponent-is-integer",
+  "input": {"op": "echo", "value": 1E2},
+  "expected": {"ok": 100},
+  "source": "numbers compare by value: 1E2 == 100 (spec/CONFORMANCE-notes.md)"
+}

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Oracle adapter for decision-os-min. -I: isolated (no PYTHONPATH, no user site, no cwd
+# or script dir on sys.path); -B: never write bytecode (nothing lands under oracle/).
+set -eu
+here="$(cd "$(dirname "$0")" && pwd)"
+exec "${DOS_PYTHON:-python3}" -I -B "$here/adapter.py"

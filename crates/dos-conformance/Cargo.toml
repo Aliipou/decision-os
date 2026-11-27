@@ -10,4 +10,23 @@ publish = false
 [lints]
 workspace = true
 
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "dos-conformance"
+path = "src/main.rs"
+
+# The deliberately broken adapter lives inside this test binary (see design note);
+# it needs its own main, so the libtest harness is off.
+[[test]]
+name = "adapter_failures"
+path = "tests/adapter_failures.rs"
+harness = false
+
 [dependencies]
+
+[dev-dependencies]
+# Differential oracle for the strict parser, and an independent JSON reader for the
+# test adapter. Never a runtime dependency (see design/conformance-runner.md).
+serde_json = "1"

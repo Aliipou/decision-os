@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-integer-beyond-f64",
+  "input": {"op": "echo", "value": 9007199254740993},
+  "expected": {"ok": 9007199254740993},
+  "source": "numbers compare exactly: 2^53 + 1 is not 2^53"
+}

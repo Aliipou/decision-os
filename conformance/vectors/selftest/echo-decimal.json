@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-decimal",
+  "input": {"op": "echo", "value": 0.1},
+  "expected": {"ok": 0.1},
+  "source": "pipe: a decimal fraction"
+}

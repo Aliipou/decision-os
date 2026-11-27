@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "unknown-op",
+  "input": {"op": "frobnicate"},
+  "expected": {"error": "unknown_op"},
+  "source": "selftest: an unknown op is refused"
+}

@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-integer-beyond-u64",
+  "input": {"op": "echo", "value": 18446744073709551617},
+  "expected": {"ok": 18446744073709551617},
+  "source": "numbers compare exactly: 2^64 + 1 must survive (no f64 or u64 step)"
+}

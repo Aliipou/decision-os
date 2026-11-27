@@ -1,0 +1,36 @@
+name: conformance
+
+# Every conformance vector through every adapter (conformance/adapters/*):
+# the decision-os-min oracle and the Rust core. See spec/CONFORMANCE.md and
+# spec/CONFORMANCE-notes.md. Any FAIL, missing or malformed answer, adapter crash, or
+# unsupported case in a required area fails the job.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Oracle adapter dependencies
+        run: python -m pip install "cryptography>=42"
+      - name: Runner and adapter tests
+        run: cargo test --locked -p dos-conformance -p dos-core-adapter
+      - name: All areas, all adapters
+        run: conformance/run.sh --all --json-dir "$RUNNER_TEMP/conformance"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-reports
+          path: ${{ runner.temp }}/conformance
+          if-no-files-found: ignore
