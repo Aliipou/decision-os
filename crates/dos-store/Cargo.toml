@@ -1,0 +1,32 @@
+[package]
+name = "dos-store"
+version = "0.1.0"
+description = "Decision OS stores: durable, atomic one-time spend of token ids (file, sqlite, memory)."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[features]
+# Single-process in-memory store. Off by default: it is not durable and not shared
+# across processes, so using it must be a deliberate choice (HB-1).
+memory = []
+
+[dependencies]
+dos-core = { path = "../dos-core" }
+rusqlite = { version = "0.43", features = ["bundled"] }
+sha2 = "0.10"
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1", default-features = false, features = ["std", "process"] }
+
+[dev-dependencies]
+proptest = "1"
+tempfile = "3"
+
+[[test]]
+name = "multiprocess"
+path = "tests/multiprocess.rs"
+harness = false
