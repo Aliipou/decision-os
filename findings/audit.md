@@ -41,3 +41,14 @@ Same principles hold in mine: append under an exclusive cross-process lock, re-r
 | A-3 | S2 | The sink refused to continue a Python log whose last entry has non-ASCII text (Python hashes the ASCII-escaped form, the sink checked only the JCS hash). | `scan_tail` accepts the legacy hash. Tests `rust_continues_a_python_log_with_non_ascii_tail`, `corrupt_python_tail_still_fails_closed`. |
 
 sluicegate's `AuditLog` is not safe across processes, has no fsync and an in-memory rotation; nothing in it is needed beyond what the gateway log already covers.
+
+## Adversarial round 2 (`tests/adversarial.rs`, 9 tests)
+
+| # | Sev | Finding | Result |
+|---|---|---|---|
+| A-4 | S3 | `head()` read the log without the lock and could see a half-written tail under concurrent appends. | Fixed: `head()` takes the same locks; test `head_during_concurrent_appends_is_always_consistent`. |
+| A-5 | S3 | No size limit on an entry; a huge entry made every later tail read huge. | Fixed: `MAX_ENTRY_BYTES` (1 MiB) -> `InvalidInput`; test `oversized_entry_is_refused`. |
+
+Held: 3000 randomized rounds of 1 to 4 stacked mutations (byte replace, delete, insert, line duplicate, drop, swap, truncate) of a 6-entry log never verified in strict mode with the anchor; entries the canonical form cannot carry (unsafe integers, 1e999, lone surrogates, noncharacters, duplicate keys) are refused with nothing written; odd valid entries (empty object, nested reserved names, escapes, U+2028, astral keys, extreme numbers) round-trip and verify; a deleted log is not recreated by `append` and fails against the anchor; a read-only log refuses and stays byte-identical; an anchor signature cannot stand in for an entry signature; CRLF (Python text mode on Windows) logs verify in compat mode and the sink either continues or refuses.
+
+Open design questions found, not changed: keys are looked up at verify time (`now`), not at entry time, so a key whose window has ended makes old entries fail; key rotation inside one log works only if the KeyStore trusts every kid for the whole log. Neither the log file nor the anchor's directory is fsynced after creation or rename.

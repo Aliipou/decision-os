@@ -14,6 +14,9 @@ use crate::entry::{
     GENESIS, RESERVED, field, hash_of, legacy_hash_of, seq_field, seq_value, signing_bytes, str_field,
 };
 
+/// Largest entry the sink accepts (bytes of input JCS); keeps the tail read bounded.
+pub const MAX_ENTRY_BYTES: usize = 1 << 20;
+
 /// The head of the log as read from disk.
 struct State {
     next_seq: u64,
@@ -82,14 +85,17 @@ impl FileSink {
 
     /// Current head from disk, `None` for an empty log. Errors if the tail is corrupt.
     pub fn head(&self) -> Result<Option<Head>, StoreError> {
-        let mut f = File::open(&self.path).map_err(|_| StoreError::Unavailable)?;
-        let len = f.metadata().map_err(|_| StoreError::Unavailable)?.len();
-        let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
-        let st = scan_tail(&tail)?;
-        Ok(st.next_seq.checked_sub(1).map(|seq| Head {
-            seq,
-            entry_hash: st.last_hash,
-        }))
+        // Under the lock, so a concurrent append is never seen half written.
+        self.locked(|| {
+            let mut f = File::open(&self.path).map_err(|_| StoreError::Unavailable)?;
+            let len = f.metadata().map_err(|_| StoreError::Unavailable)?.len();
+            let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
+            let st = scan_tail(&tail)?;
+            Ok(st.next_seq.checked_sub(1).map(|seq| Head {
+                seq,
+                entry_hash: st.last_hash,
+            }))
+        })
     }
 }
 
@@ -145,7 +151,8 @@ impl FileSink {
         Ok((line, hash))
     }
 
-    fn append_locked(&self, entry_jcs: &[u8]) -> Result<AuditReceipt, StoreError> {
+    /// Runs `f` holding the in-process mutex and the cross-process file lock.
+    fn locked<T>(&self, f: impl FnOnce() -> Result<T, StoreError>) -> Result<T, StoreError> {
         let _guard = self.state.lock().map_err(|_| StoreError::Unavailable)?;
         if let Some(dir) = self.lock_path.parent() {
             if !dir.as_os_str().is_empty() {
@@ -159,7 +166,16 @@ impl FileSink {
             .open(&self.lock_path)
             .map_err(|_| StoreError::Unavailable)?;
         lock.lock().map_err(|_| StoreError::Unavailable)?;
-        let result = (|| {
+        let result = f();
+        let _ = lock.unlock();
+        result
+    }
+
+    fn append_locked(&self, entry_jcs: &[u8]) -> Result<AuditReceipt, StoreError> {
+        if entry_jcs.len() > MAX_ENTRY_BYTES {
+            return Err(StoreError::InvalidInput);
+        }
+        self.locked(|| {
             let mut f = OpenOptions::new()
                 .append(true)
                 .read(true)
@@ -173,13 +189,11 @@ impl FileSink {
             let (line, hash) = self.build_line(entry_jcs, &st)?;
             f.write_all(&line).map_err(|_| StoreError::Unavailable)?;
             f.sync_all().map_err(|_| StoreError::Unavailable)?;
-            Ok(AuditReceipt {
+            let receipt = AuditReceipt {
                 seq: st.next_seq,
                 entry_hash: hash,
-            })
-        })();
-        // Publish under the lock so heads reach the anchor in order.
-        let result = result.and_then(|receipt| {
+            };
+            // Publish under the lock so heads reach the anchor in order.
             if let Some(a) = &self.anchor {
                 a.publish(&Head {
                     seq: receipt.seq,
@@ -187,9 +201,7 @@ impl FileSink {
                 })?;
             }
             Ok(receipt)
-        });
-        let _ = lock.unlock();
-        result
+        })
     }
 }
 
