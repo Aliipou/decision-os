@@ -65,8 +65,10 @@ fn kill_nine_mid_append_is_recoverable() {
             .spawn()
             .unwrap();
         std::thread::sleep(Duration::from_millis(150 + round * 37));
-        child.kill().unwrap();
-        child.wait().unwrap();
+        // A child that already exited (an append error) cannot be killed; recovery is checked either way.
+        let _ = child.kill();
+        let status = child.wait().unwrap();
+        eprintln!("round {round}: child status {status:?}");
 
         let opts = |a| VerifyOptions {
             keys: &keys,
