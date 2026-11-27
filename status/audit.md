@@ -10,11 +10,11 @@ Branch `task/audit`. Design: `design/audit.md`.
 | `crates/dos-audit/src/anchor.rs` | `Anchor` trait, `FileAnchor` (signed head file `<log>.anchor`, atomic replace, wired by default), `read_anchor_file` |
 | `crates/dos-audit/src/verify.rs` | `verify_file`, `verify_file_with_anchor_file`, typed errors with line index |
 | `crates/dos-audit/src/entry.rs` | hash and signing payloads; Python-compatible legacy hash |
-| `crates/dos-audit/tests/audit.rs` | 19 tests |
+| `crates/dos-audit/tests/audit.rs` | 20 tests |
 
 ## Evidence
 
-`cargo +stable-x86_64-pc-windows-gnu test --workspace --offline -j 2`: dos-audit `19 passed; 0 failed`; dos-core suites green; only failure is the known `orphan_holding_stderr_does_not_hang`.
+`cargo +stable-x86_64-pc-windows-gnu test --workspace --offline -j 2`: dos-audit `20 passed; 0 failed`; dos-core suites green; only failure is the known `orphan_holding_stderr_does_not_hang`.
 
 Covered: round trip, resume, empty log, reserved/bad input, field edit, rehash without key, wrong/unknown key, reorder, delete middle, delete head, insert, tail truncation (chain alone passes, anchor catches), fork vs anchor, forged/garbage/missing anchor, torn line, garbage line, blank line, non-canonical line, 4 threads x 2 sinks concurrent append (60 entries verify), anchor failure propagates, unwritable path, Python-recipe hash of Rust log, Python-style log verifies in `python_compat` (incl. non-ASCII ASCII-escaped hash), Rust sink extends a Python log.
 
@@ -23,7 +23,6 @@ Covered: round trip, resume, empty log, reserved/bad input, field edit, rehash w
 - clippy not installed for this toolchain; lints (no unwrap/indexing) were followed by hand, not checked.
 - No live Python-run cross check (python launcher broken on this box); Python's hash is reproduced with the documented recipe via `serde_json`.
 - No conformance vectors under `conformance/vectors/audit/`; no `dos-pep` wiring.
-- `scan_tail` reads the whole file when the cached length is stale (O(n) after another process appends).
 - Kani/fuzz not added.
 
 ## Open decisions
