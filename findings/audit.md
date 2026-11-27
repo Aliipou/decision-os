@@ -75,3 +75,7 @@ Test changes caused by the fixes (all visible in git): `empty_log_verifies` now 
 ## kill -9 (`tests/killnine.rs`)
 
 Six rounds of killing a child that appends 200 KB entries in a loop (TerminateProcess), each followed by verify, optional repair, one more append and verification with the anchor: the log was intact every round (no torn line occurred; a kill between the write and the anchor update leaves the anchor one entry behind, which the sink and verifier accept after a full signed re-verify). `FileSink::repair_torn_tail` (new) removes a last line without a newline, the only damage a crash can cause, and nothing else; `repair_only_touches_a_torn_last_line` covers a torn line, an intact log and other damage. Not covered: power loss with a lost fsync, disk full.
+
+## Random-garbage test (`tests/randombytes.rs`, stand-in for the libFuzzer target)
+
+20,000 pseudo-random and JSON-shaped inputs through `verify_bytes` (strict and compat): no panic, no hang, none verified except an empty log. 1,500 garbage files as the log: `append` refused every non-empty one and left the file byte-identical; `head()` and `repair_torn_tail()` did not panic. The real cargo-fuzz target `fuzz/fuzz_targets/audit.rs` still needs nightly and `libfuzzer-sys` (not run).
