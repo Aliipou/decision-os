@@ -1,0 +1,17 @@
+[package]
+name = "dos-audit"
+version = "0.1.0"
+description = "Decision OS audit log: append-only, hash-chained, signed JCS lines, with a verifier and anchors."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+dos-core = { path = "../dos-core" }
+sha2 = { version = "=0.10.9", default-features = false }
+
+[dev-dependencies]
+serde_json = "1"

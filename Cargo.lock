@@ -183,6 +183,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-audit"
+version = "0.1.0"
+dependencies = [
+ "dos-core",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "dos-conformance"
 version = "0.1.0"
 dependencies = [
