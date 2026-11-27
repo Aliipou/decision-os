@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-1",
+  "input": {
+    "op": "parse",
+    "text": "mode = \"loud\""
+  },
+  "expected": {
+    "error": "policy.toml: mode must be one of ('enforce', 'observe'), got 'loud'"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

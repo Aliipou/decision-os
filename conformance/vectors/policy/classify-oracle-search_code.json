@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-search_code",
+  "input": {
+    "op": "classify",
+    "name": "search_code",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

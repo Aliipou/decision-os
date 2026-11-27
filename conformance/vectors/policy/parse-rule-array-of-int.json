@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-array-of-int",
+  "input": {
+    "op": "parse",
+    "text": "rule = [1]"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1 must be a table"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

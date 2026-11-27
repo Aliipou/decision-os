@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-097",
+  "input": {
+    "op": "evaluate",
+    "policy": "profile = \"open\"\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "rm",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {
+      "c|s|rm": "allow"
+    }
+  },
+  "expected": {
+    "ok": {
+      "decision": "deny",
+      "purpose": "rule:1",
+      "reason": "denied by rule 1 (tool=rm)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,20 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "normalize-nt-14",
+  "input": {
+    "op": "normalize_path",
+    "path": "$PROJ$PROJ",
+    "flavor": "nt",
+    "env": {
+      "USERPROFILE": "C:\\Users\\Alice",
+      "USERNAME": "Alice",
+      "APPDATA": "C:\\Users\\Alice\\AppData\\Roaming",
+      "PROJ": "D:\\proj"
+    }
+  },
+  "expected": {
+    "ok": "d:/projd:/proj"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

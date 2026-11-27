@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-timeout-negative",
+  "input": {
+    "op": "parse",
+    "text": "ask_timeout_seconds = -1"
+  },
+  "expected": {
+    "error": "policy.toml: ask_timeout_seconds must be a positive number"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

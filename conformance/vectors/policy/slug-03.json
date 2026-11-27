@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "slug-03",
+  "input": {
+    "op": "slug",
+    "name": "a  //  b"
+  },
+  "expected": {
+    "ok": "a-b"
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

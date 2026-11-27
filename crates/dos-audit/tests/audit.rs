@@ -147,11 +147,9 @@ fn rehash_without_key_detected() {
     let mut v: serde_json::Value = serde_json::from_str(&l[1]).unwrap();
     v["verdict"] = "DENY".into();
     v.as_object_mut().unwrap().remove("entry_hash");
-    let h = hex_encode(&Sha256::digest(
-        serde_json::to_string(&v).unwrap().as_bytes(),
-    ));
+    let h = hex_encode(&Sha256::digest(ser(&v).as_bytes()));
     v["entry_hash"] = h.into();
-    l[1] = serde_json::to_string(&v).unwrap();
+    l[1] = ser(&v);
     write_lines(&p, &l);
     assert_eq!(
         kind(verify_file(&p, &opts(&keys))),
@@ -363,17 +361,10 @@ fn python_log(entries: &[serde_json::Value]) -> String {
         let mut e = e.clone();
         e["seq"] = i.into();
         e["prev_hash"] = prev.clone().into();
-        let h = hex_encode(&Sha256::digest(
-            serde_json::to_string(&e).unwrap().as_bytes(),
-        ));
+        let h = hex_encode(&Sha256::digest(ser(&e).as_bytes()));
         e["entry_hash"] = h.clone().into();
         // Python writes json.dumps(entry): spaces after separators
-        out.push_str(
-            &serde_json::to_string(&e)
-                .unwrap()
-                .replace("\":", "\": ")
-                .replace("\",", "\", "),
-        );
+        out.push_str(&ser(&e).replace("\":", "\": ").replace("\",", "\", "));
         out.push('\n');
         prev = h;
     }
@@ -425,9 +416,7 @@ fn rust_log_matches_python_recipe() {
         let mut v: serde_json::Value = serde_json::from_str(&l).unwrap();
         let stored = v["entry_hash"].as_str().unwrap().to_string();
         v.as_object_mut().unwrap().remove("entry_hash");
-        let h = hex_encode(&Sha256::digest(
-            serde_json::to_string(&v).unwrap().as_bytes(),
-        ));
+        let h = hex_encode(&Sha256::digest(ser(&v).as_bytes()));
         assert_eq!(h, stored);
     }
 }
@@ -490,4 +479,28 @@ fn cli_verify_exit_codes() {
     assert_eq!(run(&["verify", ps, "--key", &other]).status.code(), Some(1));
     assert_eq!(run(&["verify"]).status.code(), Some(2));
     assert_eq!(run(&["nope"]).status.code(), Some(2));
+}
+
+/// Sort object keys recursively. Other workspace crates (dos-install) enable serde_json's
+/// `preserve_order`, so serialisation order cannot be assumed.
+fn sorted(v: &serde_json::Value) -> serde_json::Value {
+    match v {
+        serde_json::Value::Object(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let mut out = serde_json::Map::new();
+            for k in keys {
+                if let Some(x) = m.get(k) {
+                    out.insert(k.clone(), sorted(x));
+                }
+            }
+            serde_json::Value::Object(out)
+        }
+        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
+        other => other.clone(),
+    }
+}
+
+fn ser(v: &serde_json::Value) -> String {
+    serde_json::to_string(&sorted(v)).unwrap()
 }

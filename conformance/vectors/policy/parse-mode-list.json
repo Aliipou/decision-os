@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-mode-list",
+  "input": {
+    "op": "parse",
+    "text": "mode = [\"enforce\"]"
+  },
+  "expected": {
+    "error": "policy.toml: mode must be one of ('enforce', 'observe'), got ['enforce']"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

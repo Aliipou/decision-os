@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-command-not-string",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\ncommand = [\"x\"]\n[mcp_servers.b]\ncommand = \"y\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "b"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "inline-transport"
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = [\"x\"]\n[mcp_servers.b]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"b\", \"--\", \"y\"]\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "b"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = [\"x\"]\n[mcp_servers.b]\ncommand = \"y\"\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer inline-transport"
+}

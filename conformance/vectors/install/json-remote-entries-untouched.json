@@ -1,0 +1,110 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-remote-entries-untouched",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"u\": {\n      \"url\": \"https://a\"\n    },\n    \"h\": {\n      \"type\": \"http\",\n      \"url\": \"https://b\"\n    },\n    \"s\": {\n      \"type\": \"SSE\",\n      \"command\": \"x\"\n    },\n    \"sh\": {\n      \"type\": \"streamable-http\",\n      \"command\": \"x\"\n    },\n    \"t\": {\n      \"transport\": \"Streamable_HTTP\",\n      \"command\": \"x\"\n    },\n    \"e\": {\n      \"type\": \"\",\n      \"transport\": \"remote\",\n      \"command\": \"x\"\n    },\n    \"su\": {\n      \"serverUrl\": \"https://c\"\n    },\n    \"hu\": {\n      \"httpUrl\": \"https://d\",\n      \"command\": \"x\"\n    },\n    \"n\": {\n      \"url\": null,\n      \"command\": \"x\"\n    },\n    \"num\": {\n      \"type\": 1,\n      \"transport\": \"http\",\n      \"command\": \"x\"\n    },\n    \"ok\": {\n      \"type\": \"stdio\",\n      \"command\": \"x\"\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "status",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "num",
+              "ok"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "u",
+              "h",
+              "s",
+              "sh",
+              "t",
+              "e",
+              "su",
+              "hu",
+              "n"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"u\": {\n      \"url\": \"https://a\"\n    },\n    \"h\": {\n      \"type\": \"http\",\n      \"url\": \"https://b\"\n    },\n    \"s\": {\n      \"type\": \"SSE\",\n      \"command\": \"x\"\n    },\n    \"sh\": {\n      \"type\": \"streamable-http\",\n      \"command\": \"x\"\n    },\n    \"t\": {\n      \"transport\": \"Streamable_HTTP\",\n      \"command\": \"x\"\n    },\n    \"e\": {\n      \"type\": \"\",\n      \"transport\": \"remote\",\n      \"command\": \"x\"\n    },\n    \"su\": {\n      \"serverUrl\": \"https://c\"\n    },\n    \"hu\": {\n      \"httpUrl\": \"https://d\",\n      \"command\": \"x\"\n    },\n    \"n\": {\n      \"url\": null,\n      \"command\": \"x\"\n    },\n    \"num\": {\n      \"type\": 1,\n      \"transport\": \"http\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"num\",\n        \"--\",\n        \"x\"\n      ]\n    },\n    \"ok\": {\n      \"type\": \"stdio\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"ok\",\n        \"--\",\n        \"x\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [
+              "num",
+              "ok"
+            ],
+            "plain": [],
+            "remote": [
+              "u",
+              "h",
+              "s",
+              "sh",
+              "t",
+              "e",
+              "su",
+              "hu",
+              "n"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"u\": {\n      \"url\": \"https://a\"\n    },\n    \"h\": {\n      \"type\": \"http\",\n      \"url\": \"https://b\"\n    },\n    \"s\": {\n      \"type\": \"SSE\",\n      \"command\": \"x\"\n    },\n    \"sh\": {\n      \"type\": \"streamable-http\",\n      \"command\": \"x\"\n    },\n    \"t\": {\n      \"transport\": \"Streamable_HTTP\",\n      \"command\": \"x\"\n    },\n    \"e\": {\n      \"type\": \"\",\n      \"transport\": \"remote\",\n      \"command\": \"x\"\n    },\n    \"su\": {\n      \"serverUrl\": \"https://c\"\n    },\n    \"hu\": {\n      \"httpUrl\": \"https://d\",\n      \"command\": \"x\"\n    },\n    \"n\": {\n      \"url\": null,\n      \"command\": \"x\"\n    },\n    \"num\": {\n      \"type\": 1,\n      \"transport\": \"http\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"num\",\n        \"--\",\n        \"x\"\n      ]\n    },\n    \"ok\": {\n      \"type\": \"stdio\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"ok\",\n        \"--\",\n        \"x\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "num",
+              "ok"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"u\": {\n      \"url\": \"https://a\"\n    },\n    \"h\": {\n      \"type\": \"http\",\n      \"url\": \"https://b\"\n    },\n    \"s\": {\n      \"type\": \"SSE\",\n      \"command\": \"x\"\n    },\n    \"sh\": {\n      \"type\": \"streamable-http\",\n      \"command\": \"x\"\n    },\n    \"t\": {\n      \"transport\": \"Streamable_HTTP\",\n      \"command\": \"x\"\n    },\n    \"e\": {\n      \"type\": \"\",\n      \"transport\": \"remote\",\n      \"command\": \"x\"\n    },\n    \"su\": {\n      \"serverUrl\": \"https://c\"\n    },\n    \"hu\": {\n      \"httpUrl\": \"https://d\",\n      \"command\": \"x\"\n    },\n    \"n\": {\n      \"url\": null,\n      \"command\": \"x\"\n    },\n    \"num\": {\n      \"type\": 1,\n      \"transport\": \"http\",\n      \"command\": \"x\"\n    },\n    \"ok\": {\n      \"type\": \"stdio\",\n      \"command\": \"x\"\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer is_remote"
+}

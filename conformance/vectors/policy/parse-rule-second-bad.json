@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-second-bad",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\n[[rule]]\ndecision = \"maybe\""
+  },
+  "expected": {
+    "error": "policy.toml: rule 2 needs decision = allow | ask | deny"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

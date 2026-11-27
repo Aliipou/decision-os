@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "pdp-18",
+  "input": {
+    "op": "pdp",
+    "policy": null,
+    "policy_error": "x.toml: invalid TOML: boom",
+    "action": {
+      "actor": "agent:c",
+      "tool": "fs/read_file",
+      "capability": "tool:fs/read_file",
+      "action_purpose": "profile:balanced:read",
+      "data_labels": [],
+      "payload": null,
+      "nonce": "n"
+    },
+    "learned": {},
+    "approved": true,
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": {
+      "verdict": "DENY",
+      "reason": "policy error (fail-closed): x.toml: invalid TOML: boom"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

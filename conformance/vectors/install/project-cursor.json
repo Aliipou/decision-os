@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "project-cursor",
+  "input": {
+    "kind": "run",
+    "client": "cursor",
+    "project": true,
+    "path": ".cursor/mcp.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"mcpServers\": {\"pg\": {\"command\": \"uvx\", \"args\": [\"pg-mcp\"]}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "pg"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"pg\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"cursor\",\n        \"--server\",\n        \"pg\",\n        \"--\",\n        \"uvx\",\n        \"pg-mcp\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "pg"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\"mcpServers\": {\"pg\": {\"command\": \"uvx\", \"args\": [\"pg-mcp\"]}}}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_project_install"
+}

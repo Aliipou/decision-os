@@ -1,0 +1,20 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "normalize-nt-36",
+  "input": {
+    "op": "normalize_path",
+    "path": "/x/\u00c9t\u00e9",
+    "flavor": "nt",
+    "env": {
+      "USERPROFILE": "C:\\Users\\Alice",
+      "USERNAME": "Alice",
+      "APPDATA": "C:\\Users\\Alice\\AppData\\Roaming",
+      "PROJ": "D:\\proj"
+    }
+  },
+  "expected": {
+    "ok": "/x/\u00e9t\u00e9"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

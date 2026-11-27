@@ -1,0 +1,105 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-already-wrapped-by-rust",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"w\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"/h\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"w\",\n        \"--\",\n        \"npx\",\n        \"w\"\n      ]\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [
+              "w"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"w\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"/h\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"w\",\n        \"--\",\n        \"npx\",\n        \"w\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "w"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"w\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"w\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "w"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"w\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"w\",\n        \"--\",\n        \"/opt/decision-os/bin/decision-os\",\n        \"mcp-proxy\",\n        \"--home\",\n        \"/h\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"w\",\n        \"--\",\n        \"npx\",\n        \"w\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "w"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"w\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"/h\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"w\",\n        \"--\",\n        \"npx\",\n        \"w\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle does not know the Rust shape and wraps the entry a second time; Rust reports it as already governed and unwraps it",
+  "source": "spec/install.md wrapped entry shape"
+}

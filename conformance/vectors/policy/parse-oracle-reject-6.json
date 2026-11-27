@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-6",
+  "input": {
+    "op": "parse",
+    "text": "[guardrails]\nprotected_paths = \"maybe\""
+  },
+  "expected": {
+    "error": "policy.toml: guardrails.protected_paths must be one of ('deny', 'ask', 'off')"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

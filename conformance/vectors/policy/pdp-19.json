@@ -1,0 +1,38 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "pdp-19",
+  "input": {
+    "op": "pdp",
+    "policy": "[[rule]]\nmodel = \"gpt*\"\ntool = \"Bash\"\ndecision = \"deny\"\n",
+    "policy_error": null,
+    "action": {
+      "actor": "agent:c",
+      "tool": "llm/Bash",
+      "capability": "tool:llm/Bash",
+      "action_purpose": "rule:1",
+      "data_labels": [
+        "hint:x",
+        "model:gpt-4o",
+        "model:other"
+      ],
+      "payload": null,
+      "nonce": "n"
+    },
+    "learned": {},
+    "approved": true,
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": {
+      "verdict": "DENY",
+      "reason": "denied by rule 1 (tool=Bash, model=gpt*)"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

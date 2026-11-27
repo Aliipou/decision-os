@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-llm-not-table",
+  "input": {
+    "op": "parse",
+    "text": "llm = 1"
+  },
+  "expected": {
+    "error": "policy.toml: [llm] must be a table"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

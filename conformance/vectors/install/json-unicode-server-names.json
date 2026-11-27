@@ -1,0 +1,78 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-unicode-server-names",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"файлы\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"ü\"\n      ]\n    },\n    \"🔧 tools\": {\n      \"command\": \"t\"\n    },\n    \"名前\": {\n      \"command\": \"n\",\n      \"env\": {\n        \"ключ\": \"значение\"\n      }\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"файлы\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"файлы\",\n        \"--\",\n        \"npx\",\n        \"ü\"\n      ]\n    },\n    \"🔧 tools\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"🔧 tools\",\n        \"--\",\n        \"t\"\n      ]\n    },\n    \"名前\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"env\": {\n        \"ключ\": \"значение\"\n      },\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"名前\",\n        \"--\",\n        \"n\"\n      ]\n    }\n  }\n}\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "файлы",
+              "🔧 tools",
+              "名前"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"файлы\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"файлы\",\n        \"--\",\n        \"npx\",\n        \"ü\"\n      ]\n    },\n    \"🔧 tools\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"🔧 tools\",\n        \"--\",\n        \"t\"\n      ]\n    },\n    \"名前\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"env\": {\n        \"ключ\": \"значение\"\n      },\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"名前\",\n        \"--\",\n        \"n\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "файлы",
+              "🔧 tools",
+              "名前"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"файлы\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"ü\"\n      ]\n    },\n    \"🔧 tools\": {\n      \"command\": \"t\"\n    },\n    \"名前\": {\n      \"command\": \"n\",\n      \"env\": {\n        \"ключ\": \"значение\"\n      }\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "task: unicode server names"
+}

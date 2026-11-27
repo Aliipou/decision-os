@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-reason-bool",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\nreason = false"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1: reason must be a string"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

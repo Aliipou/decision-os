@@ -276,11 +276,9 @@ fn anchor_cannot_be_used_as_an_entry_signature() {
     let mut e: serde_json::Value = serde_json::from_str(&lines[1]).unwrap();
     e["sig"] = anchor["sig"].clone();
     e.as_object_mut().unwrap().remove("entry_hash");
-    let h = hex_encode(&Sha256::digest(
-        serde_json::to_string(&e).unwrap().as_bytes(),
-    ));
+    let h = hex_encode(&Sha256::digest(ser(&e).as_bytes()));
     e["entry_hash"] = h.into();
-    lines[1] = serde_json::to_string(&e).unwrap();
+    lines[1] = ser(&e);
     let k = keys();
     let log = format!("{}\n{}\n", lines[0], lines[1]);
     let r = verify_bytes(log.as_bytes(), &opts(&k, false, None));
@@ -299,4 +297,28 @@ fn python_line_break_characters_are_refused() {
     }
     assert_eq!(std::fs::read(&p).unwrap().len(), 0);
     assert_eq!(s.append(b"{}").unwrap().seq, 0);
+}
+
+/// Sort object keys recursively. Other workspace crates (dos-install) enable serde_json's
+/// `preserve_order`, so serialisation order cannot be assumed.
+fn sorted(v: &serde_json::Value) -> serde_json::Value {
+    match v {
+        serde_json::Value::Object(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let mut out = serde_json::Map::new();
+            for k in keys {
+                if let Some(x) = m.get(k) {
+                    out.insert(k.clone(), sorted(x));
+                }
+            }
+            serde_json::Value::Object(out)
+        }
+        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
+        other => other.clone(),
+    }
+}
+
+fn ser(v: &serde_json::Value) -> String {
+    serde_json::to_string(&sorted(v)).unwrap()
 }

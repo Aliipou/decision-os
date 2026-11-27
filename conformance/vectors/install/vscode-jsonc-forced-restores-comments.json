@@ -1,0 +1,68 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "vscode-jsonc-forced-restores-comments",
+  "input": {
+    "kind": "run",
+    "client": "vscode",
+    "project": false,
+    "path": ".config/Code/User/mcp.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  // my servers\n  \"servers\": {\n    \"playwright\": { \"type\": \"stdio\", \"command\": \"npx\", \"args\": [\"@playwright/mcp@latest\"], },\n    \"remote\": { \"type\": \"http\", \"url\": \"https://example.com/mcp\" }\n  },\n  \"inputs\": []\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": true
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "playwright"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "remote"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"servers\": {\n    \"playwright\": {\n      \"type\": \"stdio\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"vscode\",\n        \"--server\",\n        \"playwright\",\n        \"--\",\n        \"npx\",\n        \"@playwright/mcp@latest\"\n      ]\n    },\n    \"remote\": {\n      \"type\": \"http\",\n      \"url\": \"https://example.com/mcp\"\n    }\n  },\n  \"inputs\": []\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "playwright"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  // my servers\n  \"servers\": {\n    \"playwright\": { \"type\": \"stdio\", \"command\": \"npx\", \"args\": [\"@playwright/mcp@latest\"], },\n    \"remote\": { \"type\": \"http\", \"url\": \"https://example.com/mcp\" }\n  },\n  \"inputs\": []\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_force_jsonc_and_dry_run"
+}

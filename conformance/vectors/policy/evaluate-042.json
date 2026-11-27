@@ -1,0 +1,36 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-042",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"filesystem\"\ntool = \"write_file\"\nargs = { path = \"~/projects/*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"*delete*\"\ndecision = \"deny\"\nreason = \"nothing gets deleted by an agent\"\n\n[[rule]]\nclient = \"claude-code\"\nserver = \"llm\"\ntool = \"Bash\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"send_*\"\ndecision = \"ask\"\nredact = [\"token\"]\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "mail",
+    "tool": "send_email",
+    "model": null,
+    "args": {
+      "token": "x"
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "rule:4",
+      "reason": "needs approval by rule 4 (tool=send_*)",
+      "redact": [
+        "token"
+      ],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

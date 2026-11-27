@@ -1,0 +1,68 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-disabled-entries",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"off\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"off\"\n      ],\n      \"disabled\": true\n    },\n    \"on\": {\n      \"command\": \"npx\",\n      \"disabled\": false\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "off",
+              "on"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"off\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"off\",\n        \"--\",\n        \"npx\",\n        \"off\"\n      ],\n      \"disabled\": true\n    },\n    \"on\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"disabled\": false,\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"on\",\n        \"--\",\n        \"npx\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "off",
+              "on"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"off\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"off\"\n      ],\n      \"disabled\": true\n    },\n    \"on\": {\n      \"command\": \"npx\",\n      \"disabled\": false\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "task: disabled entries"
+}

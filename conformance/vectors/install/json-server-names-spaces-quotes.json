@@ -1,0 +1,82 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-server-names-spaces-quotes",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"my server\": {\n      \"command\": \"a\"\n    },\n    \"say \\\"hi\\\"\": {\n      \"command\": \"b\"\n    },\n    \"back\\\\slash\": {\n      \"command\": \"c\"\n    },\n    \"tab\\tname\": {\n      \"command\": \"d\"\n    },\n    \"-\": {\n      \"command\": \"e\"\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"mcpServers\": {\n    \"my server\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"my server\",\n        \"--\",\n        \"a\"\n      ]\n    },\n    \"say \\\"hi\\\"\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"say \\\"hi\\\"\",\n        \"--\",\n        \"b\"\n      ]\n    },\n    \"back\\\\slash\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"back\\\\slash\",\n        \"--\",\n        \"c\"\n      ]\n    },\n    \"tab\\tname\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"tab\\tname\",\n        \"--\",\n        \"d\"\n      ]\n    },\n    \"-\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"-\",\n        \"--\",\n        \"e\"\n      ]\n    }\n  }\n}\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "my server",
+              "say \"hi\"",
+              "back\\slash",
+              "tab\tname",
+              "-"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"my server\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"my server\",\n        \"--\",\n        \"a\"\n      ]\n    },\n    \"say \\\"hi\\\"\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"say \\\"hi\\\"\",\n        \"--\",\n        \"b\"\n      ]\n    },\n    \"back\\\\slash\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"back\\\\slash\",\n        \"--\",\n        \"c\"\n      ]\n    },\n    \"tab\\tname\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"tab\\tname\",\n        \"--\",\n        \"d\"\n      ]\n    },\n    \"-\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"-\",\n        \"--\",\n        \"e\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "my server",
+              "say \"hi\"",
+              "back\\slash",
+              "tab\tname",
+              "-"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"my server\": {\n      \"command\": \"a\"\n    },\n    \"say \\\"hi\\\"\": {\n      \"command\": \"b\"\n    },\n    \"back\\\\slash\": {\n      \"command\": \"c\"\n    },\n    \"tab\\tname\": {\n      \"command\": \"d\"\n    },\n    \"-\": {\n      \"command\": \"e\"\n    }\n  }\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "task: server names with spaces and quotes"
+}

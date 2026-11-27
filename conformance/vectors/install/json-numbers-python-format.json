@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-numbers-python-format",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"n\": [0, -0, 1, -1, 12345678901234567890123, 1.0, 1.50, -0.0, 0.1, 1e5, 1E-5, 2.5e-7, 1e16, 1e17, 123456789012345678.0, 5e-324, 1.7976931348623157e308, 0.0001, 0.00001, 1e-400, 3.141592653589793, 100, 1e2, 9007199254740993, 0.30000000000000004], \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"n\": [\n    0,\n    0,\n    1,\n    -1,\n    12345678901234567890123,\n    1.0,\n    1.5,\n    -0.0,\n    0.1,\n    100000.0,\n    1e-05,\n    2.5e-07,\n    1e+16,\n    1e+17,\n    1.2345678901234568e+17,\n    5e-324,\n    1.7976931348623157e+308,\n    0.0001,\n    1e-05,\n    0.0,\n    3.141592653589793,\n    100,\n    100.0,\n    9007199254740993,\n    0.30000000000000004\n  ],\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"x\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\"n\": [0, -0, 1, -1, 12345678901234567890123, 1.0, 1.50, -0.0, 0.1, 1e5, 1E-5, 2.5e-7, 1e16, 1e17, 123456789012345678.0, 5e-324, 1.7976931348623157e308, 0.0001, 0.00001, 1e-400, 3.141592653589793, 100, 1e2, 9007199254740993, 0.30000000000000004], \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "Python float repr and int formatting"
+}

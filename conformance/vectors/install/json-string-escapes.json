@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-string-escapes",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\\u0001\\b\\f\\n\\r\\t\\\"\\\\\\/\\u007f\\u2028\\u00e9\\ud83d\\ude00\"}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"x\\u0001\\b\\f\\n\\r\\t\\\"\\\\/ é😀\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\"mcpServers\": {\"a\": {\"command\": \"x\\u0001\\b\\f\\n\\r\\t\\\"\\\\\\/\\u007f\\u2028\\u00e9\\ud83d\\ude00\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "Python json.dumps ensure_ascii=False escapes"
+}

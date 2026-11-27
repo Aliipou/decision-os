@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-llm-unknown",
+  "input": {
+    "op": "parse",
+    "text": "[llm]\nproxies = {}"
+  },
+  "expected": {
+    "error": "policy.toml: [llm] only supports upstreams"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

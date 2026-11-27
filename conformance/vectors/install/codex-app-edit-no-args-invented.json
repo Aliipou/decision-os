@@ -1,0 +1,80 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-app-edit-no-args-invented",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"npx\"   # docs\nargs = [\n  \"-y\",\n  \"@upstash/context7-mcp\",\n]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/usr/local/bin/shell-mcp\"\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"context7\", \"--\", \"npx\", \"-y\", \"@upstash/context7-mcp\"]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"my-shell\", \"--\", \"/usr/local/bin/shell-mcp\"]\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n\n# touched\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "context7",
+              "my-shell"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "remote"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"context7\", \"--\", \"npx\", \"-y\", \"@upstash/context7-mcp\"]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"my-shell\", \"--\", \"/usr/local/bin/shell-mcp\"]\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "remote"
+            ],
+            "unwrapped": [
+              "context7",
+              "my-shell"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "# Codex config\nmodel = \"gpt-5\"\n\n[mcp_servers.context7]\ncommand = \"npx\"\nargs = [\"-y\", \"@upstash/context7-mcp\"]\n\n[mcp_servers.context7.env]\nDEBUG = \"1\"\n\n[mcp_servers.\"my-shell\"]\ncommand = \"/usr/local/bin/shell-mcp\"\n\n[mcp_servers.remote]\nurl = \"https://mcp.example.com/mcp\"\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n\n# touched\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_cursor_command_string_and_codex_args_absent_round_trip"
+}

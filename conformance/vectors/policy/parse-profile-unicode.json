@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-profile-unicode",
+  "input": {
+    "op": "parse",
+    "text": "profile = \"str\\u0131ct\""
+  },
+  "expected": {
+    "error": "policy.toml: profile must be one of ('balanced', 'strict', 'open'), got 'str\u0131ct'"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

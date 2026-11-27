@@ -1,0 +1,62 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-uninstall-without-install",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+    },
+    "steps": [
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "uninstall with nothing wrapped"
+}

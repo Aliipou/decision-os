@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-8",
+  "input": {
+    "op": "parse",
+    "text": "this is not toml"
+  },
+  "expected": {
+    "error_prefix": "policy.toml: invalid TOML: "
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

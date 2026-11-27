@@ -1,0 +1,78 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-quoted-names",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.\"my server\"]\ncommand = \"a\"\n[mcp_servers.'lit']\ncommand = \"b\"\n[ mcp_servers . \"ü\" ] # c\ncommand = \"c\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "[mcp_servers.\"my server\"]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"my server\", \"--\", \"a\"]\n[mcp_servers.'lit']\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"lit\", \"--\", \"b\"]\n[ mcp_servers . \"ü\" ] # c\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"ü\", \"--\", \"c\"]\n\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "my server",
+              "lit",
+              "ü"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.\"my server\"]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"my server\", \"--\", \"a\"]\n[mcp_servers.'lit']\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"lit\", \"--\", \"b\"]\n[ mcp_servers . \"ü\" ] # c\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"ü\", \"--\", \"c\"]\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "my server",
+              "lit",
+              "ü"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.\"my server\"]\ncommand = \"a\"\n[mcp_servers.'lit']\ncommand = \"b\"\n[ mcp_servers . \"ü\" ] # c\ncommand = \"c\"\n\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _header_rx"
+}

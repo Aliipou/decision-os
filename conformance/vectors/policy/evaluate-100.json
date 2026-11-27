@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-100",
+  "input": {
+    "op": "evaluate",
+    "policy": "profile = \"strict\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "read_file",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {
+      "c|s|read_file": "allow"
+    }
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "profile:strict:read",
+      "reason": "you chose 'always allow' for s/read_file",
+      "redact": [],
+      "source": "learned"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

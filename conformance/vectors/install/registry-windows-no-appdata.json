@@ -1,0 +1,175 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "registry-windows-no-appdata",
+  "input": {
+    "kind": "registry",
+    "os": "windows",
+    "env": {
+      "HOME": "<root>/u",
+      "USERPROFILE": "<root>/u"
+    },
+    "files": []
+  },
+  "expected": {
+    "ok": {
+      "clients": {
+        "claude-desktop": {
+          "name": "Claude Desktop",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/AppData/Roaming/Claude/claude_desktop_config.json"
+          ],
+          "project": [],
+          "restart_hint": "quit and reopen Claude Desktop"
+        },
+        "claude-code": {
+          "name": "Claude Code",
+          "fmt": "claude-code",
+          "paths": [
+            "<root>/u/.claude.json"
+          ],
+          "project": [
+            [
+              ".mcp.json",
+              "mcpServers"
+            ]
+          ],
+          "restart_hint": "start a new Claude Code session"
+        },
+        "cursor": {
+          "name": "Cursor",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.cursor/mcp.json"
+          ],
+          "project": [
+            [
+              ".cursor/mcp.json",
+              "mcpServers"
+            ]
+          ],
+          "restart_hint": "Cursor reloads MCP config automatically"
+        },
+        "vscode": {
+          "name": "VS Code",
+          "fmt": "servers",
+          "paths": [
+            "<root>/u/AppData/Roaming/Code/User/mcp.json",
+            "<root>/u/AppData/Roaming/Code - Insiders/User/mcp.json",
+            "<root>/u/AppData/Roaming/VSCodium/User/mcp.json"
+          ],
+          "project": [
+            [
+              ".vscode/mcp.json",
+              "servers"
+            ]
+          ],
+          "restart_hint": "run 'MCP: List Servers' and restart them"
+        },
+        "copilot": {
+          "name": "GitHub Copilot CLI",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.copilot/mcp-config.json"
+          ],
+          "project": [],
+          "restart_hint": ""
+        },
+        "windsurf": {
+          "name": "Windsurf",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.codeium/windsurf/mcp_config.json"
+          ],
+          "project": [],
+          "restart_hint": "refresh MCP servers in Windsurf"
+        },
+        "gemini-cli": {
+          "name": "Gemini CLI",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.gemini/settings.json"
+          ],
+          "project": [
+            [
+              ".gemini/settings.json",
+              "mcpServers"
+            ]
+          ],
+          "restart_hint": ""
+        },
+        "codex": {
+          "name": "OpenAI Codex",
+          "fmt": "codex",
+          "paths": [
+            "<root>/u/.codex/config.toml"
+          ],
+          "project": [
+            [
+              ".codex/config.toml",
+              "codex"
+            ]
+          ],
+          "restart_hint": ""
+        },
+        "lm-studio": {
+          "name": "LM Studio",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.lmstudio/mcp.json",
+            "<root>/u/.cache/lm-studio/mcp.json"
+          ],
+          "project": [],
+          "restart_hint": ""
+        },
+        "kiro": {
+          "name": "Kiro",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.kiro/settings/mcp.json"
+          ],
+          "project": [
+            [
+              ".kiro/settings/mcp.json",
+              "mcpServers"
+            ]
+          ],
+          "restart_hint": ""
+        },
+        "amazon-q": {
+          "name": "Amazon Q Developer",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/.aws/amazonq/mcp.json"
+          ],
+          "project": [],
+          "restart_hint": ""
+        },
+        "cline": {
+          "name": "Cline",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/AppData/Roaming/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+            "<root>/u/AppData/Roaming/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+            "<root>/u/AppData/Roaming/VSCodium/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+          ],
+          "project": [],
+          "restart_hint": ""
+        },
+        "roo-code": {
+          "name": "Roo Code",
+          "fmt": "mcpServers",
+          "paths": [
+            "<root>/u/AppData/Roaming/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+            "<root>/u/AppData/Roaming/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json",
+            "<root>/u/AppData/Roaming/VSCodium/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json"
+          ],
+          "project": [],
+          "restart_hint": ""
+        }
+      }
+    }
+  },
+  "source": "oracle clients.py"
+}
