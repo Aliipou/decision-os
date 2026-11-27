@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-s-plus-l-malleability",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "584f808f7921f2247af1eb49f337cc75b19b60aecdce8d6db46bc15509976cb195a6390cc47275bdafcaae1b495bf392c8d6d51d33f6cfe3244912d2c74b4317"
+  },
+  "expected": {
+    "error": "non_canonical_signature"
+  },
+  "source": "spec/sign.md signature checks",
+  "gap": "SG-8"
+}

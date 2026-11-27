@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-revocation-empty",
+  "input": {
+    "op": "sign",
+    "domain": "revocation",
+    "payload_hex": ""
+  },
+  "expected": {
+    "ok": {
+      "sig": "973ee759e33f7b1916b04ee820b8ee51d03ce7018d347637bff88354d40fd9b9e58e0655a6d12694fe4a740df77d0a2ec2bd8fd6afebd6101583f8b6c281f30f",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md reserved domain",
+  "gap": "SG-9"
+}

@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "kid-small-order-key-7",
+  "input": {
+    "op": "kid",
+    "public_key": "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac03fa"
+  },
+  "expected": {
+    "error": "weak_key"
+  },
+  "source": "spec/sign.md public key checks; the 8 torsion points",
+  "gap": "SG-8"
+}

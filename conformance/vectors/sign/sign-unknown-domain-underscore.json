@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-unknown-domain-underscore",
+  "input": {
+    "op": "sign",
+    "domain": "audit_head",
+    "payload_hex": ""
+  },
+  "expected": {
+    "error": "unknown_domain"
+  },
+  "source": "spec/sign.md domains"
+}

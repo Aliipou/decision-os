@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-oracle-style-untagged-signature",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "7b22616374696f6e5f66696e6765727072696e74223a226162222c2276223a312c2276657264696374223a225045524d4954227d",
+    "sig": "9ac25d8f4f98b47c80ae25cfbe2fe149a018ef2795c34307bcc4e50d79d048fb9fdaa1005567ba8e930e881bf337f37ae8e96ad8b4d0194197f234720178e407"
+  },
+  "expected": {
+    "error": "bad_signature"
+  },
+  "source": "oracle kernel.py signs untagged JSON bytes; deliberately incompatible",
+  "gap": "DM-4"
+}

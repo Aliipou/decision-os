@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-audit-head-empty",
+  "input": {
+    "op": "sign",
+    "domain": "audit-head",
+    "payload_hex": ""
+  },
+  "expected": {
+    "ok": {
+      "sig": "e811ef56b63caea28eaa9ba2f16519c9e01081b3a67863067674adda49a86b798555ca3ea6c2803d942b1559a5960583fedd0f4b2a03c3d32bade4362dc3db06",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md reserved domain",
+  "gap": "SG-9"
+}

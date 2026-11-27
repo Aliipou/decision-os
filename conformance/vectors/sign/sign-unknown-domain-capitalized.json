@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-unknown-domain-capitalized",
+  "input": {
+    "op": "sign",
+    "domain": "Decision",
+    "payload_hex": ""
+  },
+  "expected": {
+    "error": "unknown_domain"
+  },
+  "source": "spec/sign.md domains"
+}

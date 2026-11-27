@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-payload-uppercase-hex",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "AB"
+  },
+  "expected": {
+    "error": "bad_hex"
+  },
+  "source": "spec/sign.md text encoding"
+}

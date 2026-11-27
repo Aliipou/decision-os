@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-decision-payload-mimics-other-domain",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "6465636973696f6e2d6f732f76312f6361706162696c6974790078"
+  },
+  "expected": {
+    "ok": {
+      "sig": "b2a0622ad252593c9c122257cf39eca064042d14a8ae244ab9df05109ec40664f07543b1fd9e7abfe66f2adca363711aa916c2e7a6c5876147493b736c9c7f07",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md; payload that looks like another domain's message",
+  "gap": "SG-9"
+}

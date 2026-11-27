@@ -1,0 +1,9 @@
+# Select the Fiat-Crypto (formally verified) field backend of curve25519-dalek
+# for every build in this workspace. dos-core has a test that fails if the flag
+# is not applied (for example when RUSTFLAGS in the environment overrides this
+# file). See design/sign.md.
+[build]
+rustflags = [
+  "--cfg", 'curve25519_dalek_backend="fiat"',
+  "--check-cfg", 'cfg(curve25519_dalek_backend, values("fiat", "serial", "simd"))',
+]
