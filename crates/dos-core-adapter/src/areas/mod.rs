@@ -6,10 +6,12 @@
 
 use dos_conformance::protocol::Handler;
 
+mod audit;
 mod selftest;
 
 pub const AREAS: &[(&str, Handler)] = &[
     ("selftest", selftest::handle),
+    ("audit", audit::handle),
     // ("canon", canon::handle),
     // ("verdict", verdict::handle),
     // ("sign", sign::handle),

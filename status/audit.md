@@ -57,3 +57,8 @@ New tests in `crates/dos-audit/tests/redteam.rs` (11): every single-bit flip (tw
 Evidence: `cargo test -p dos-audit --offline -j 2`, run 6 times, all green (21 + 11 + 1 + 1 tests); workspace run: only the known `orphan_holding_stderr_does_not_hang` fails.
 
 Known limits (by design, not defects): a writer holding the key can rewrite the whole log and anchor together; rolling back log and anchor to an older matching pair is undetectable without an external anchor; `python_compat` mode lets an attacker strip signatures and rehash.
+
+## Conformance wiring (done)
+
+`audit` area added to `dos-core-adapter` (`areas/audit.rs`, one line in `areas/mod.rs`, deps `dos-audit`, `dos-core`) and to `required` in `conformance/adapters/rust-dos-core/manifest.json`. Evidence: `dos-conformance --adapter dos-core-adapter.exe --area audit --require audit` -> `summary: 16 cases (ok 16, FAIL 0, unsupported 0 ...) result: PASS`. The oracle adapter answers `unsupported` for `audit` (it needs Python, which does not run here, and the oracle writes no signatures); it does not require the area.
+Merge note: `areas/mod.rs` and the adapter `Cargo.toml` are also edited by sibling branches; resolve by keeping every area line and dependency.
