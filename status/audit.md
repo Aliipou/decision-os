@@ -31,3 +31,16 @@ Covered: round trip, resume, empty log, reserved/bad input, field edit, rehash w
 2. A Rust log is verifiable by Python's `verify()` only for ASCII entries (JCS vs ASCII-escaped hash, DM-3). Python cannot check `sig`.
 3. Default anchor is a local file next to the log (same trust domain); real tamper evidence needs an external anchor.
 4. Sink continues a Python log (hash-checked tail) though its lines are not JCS; strict verify then reports `non_canonical`, compat mode accepts.
+
+## TODO (remaining phases, independent unless noted)
+
+- [ ] Conformance area `audit`: vectors in `conformance/vectors/audit/` (op `verify` over an inline log, expected `ok` or `{error: <VerifyErrorKind code>}`), adapter op in `dos-core-adapter` or a `dos-audit` adapter, oracle adapter for `audit.py` (`oracle_expected` for DM-3 non-ASCII). Closes CS-1 audit part.
+- [ ] `dos-pep` wiring: call `AuditSink::append` before every effect, every refusal path (DM-1); fail closed on `StoreError`.
+- [ ] Live cross-check with Python `HashLog.verify()` on a Rust log and Rust verify on a Python log (needs a working Python).
+- [ ] Dedicated `audit-entry` sign domain (spec/sign.md change, Ali's decision).
+- [ ] External anchor implementation (WORM or remote) behind the `Anchor` trait.
+- [ ] Fuzz target for `verify_bytes` and sink tail scan; Kani not needed (no unsafe).
+- [ ] Run `cargo clippy -p dos-audit` where clippy is installed.
+- [ ] CLI: `dos audit verify <log> [--anchor]`.
+
+Phases are sequential only where they touch shared files: vectors and pep wiring both need the `dos-audit` API, which is stable now, so they can run in parallel worktrees.
