@@ -74,3 +74,8 @@ Merge note: `areas/mod.rs` and the adapter `Cargo.toml` are also edited by sibli
 - `cargo fmt --check -p dos-audit -p dos-core-adapter`: clean. `cargo clippy -p dos-audit -p dos-core-adapter --all-targets --no-deps -- -D warnings`: clean after fixing 4 findings (3 collapsible ifs, one `set_readonly(false)` in a test). Not mine: `cargo clippy` with deps fails in `crates/dos-core/src/sign.rs:157` (`chunks_exact` with a constant size) under `-D warnings`; the sign task owns it.
 
 `#print axioms` (confirmed afterwards): every theorem depends on at most `propext` and `Quot.sound`, the standard Lean axioms; none uses `sorryAx`. The collision-resistance assumption is a hypothesis of `Model`, not a Lean axiom.
+
+## Wiring into the executor (dos-exec)
+
+`crates/dos-exec/src/core_audit.rs`: `CoreAudit<S>` implements the executor's `AuditSink` over any `dos_core::store::AuditSink` (the signed log). Entries carry the oracle's `HashLog` fields (`ts` in Python `isoformat`, `actor`, `tool`, `verdict`, `reason`, `executed`, `payload_digest`). A failed write is an `Err`, so the proxy refuses the call (its existing fail-closed path); characters the log refuses (U+2028, U+2029, U+0085) are replaced with spaces so a refusal is still audited. Tests: `crates/dos-exec/tests/core_audit.rs` (chain verifies with the anchor, failed write is an error, odd text still records) and a unit test for the timestamp format. Not done: the proxy's CLI does not pick `CoreAudit` yet (no dos-cli crate).
+Merged `rust/integrate` into this branch; the integrator's `preserve_order` fix for test hashing (`ser`/`sorted`) is applied to the audit tests.

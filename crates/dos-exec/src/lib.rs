@@ -7,12 +7,14 @@
 #![forbid(unsafe_code)]
 
 pub mod approvals;
+pub mod core_audit;
 pub mod decision;
 pub mod launch;
 pub mod proxy;
 pub mod strict;
 
 pub use approvals::{MemoryApprovals, NonInteractive, PendingApproval};
+pub use core_audit::CoreAudit;
 pub use decision::{
     ApprovalOutcome, Approvals, AuditEvent, AuditSink, CallRequest, CancelToken, DecisionEngine,
     EngineError, NoAudit, StaticVerdict, Verdict,

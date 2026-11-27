@@ -234,6 +234,8 @@ dependencies = [
 name = "dos-exec"
 version = "0.1.0"
 dependencies = [
+ "dos-audit",
+ "dos-core",
  "serde",
  "serde_json",
 ]
