@@ -10,4 +10,5 @@ extern crate alloc;
 pub mod canon;
 pub mod fingerprint;
 pub mod sign;
+pub mod store;
 pub mod verdict;

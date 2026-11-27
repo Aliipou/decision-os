@@ -9,3 +9,7 @@ version = "0.1.0"
 [[package]]
 name = "dos-core"
 version = "0.1.0"
+
+[[patch.unused]]
+name = "creusot-std"
+version = "0.16.0-dev"
