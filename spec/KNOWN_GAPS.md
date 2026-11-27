@@ -29,7 +29,7 @@ Sources: sluicegate at `c731f31`, decision-os-min at `5ee36cb` (both imported un
 | SG-13 | Extension and plugin exceptions are caught and logged instead of denying. | PLUGIN_MODEL.md:91 | Any evaluator or extension failure is DENY and is audited. | open |
 | SG-14 | Signed-result canonical form differs between spec (big-endian) and code (little-endian, different field order). | SPEC.md:241-246; crypto.rs:47-72 | One canonical form (JCS), one definition in `spec/`. | open |
 | SG-15 | TCB size is stated seven different ways; real non-test TCB is about 2,000 lines. | see docs digest | TCB lines measured by a script in CI against one budget. | open |
-| SG-16 | The kernel's optional `sandbox` feature pins wasmtime with eight advisories (RUSTSEC-2026-0566..0573: host aborts, panics, unbounded memory). The oracle's supply-chain job fails, here and on sluicegate main. | authgate-kernel/Cargo.lock; job "Supply chain" in oracle-sluicegate-ci.yml | No dos-* crate ships a dependency with an open advisory: `cargo deny` and `cargo audit` block the workspace CI. Any sandbox uses a patched wasmtime. | open |
+| SG-16 | The kernel's optional `sandbox` feature pins wasmtime with eight advisories (RUSTSEC-2026-0566..0573: host aborts, panics, unbounded memory). The supply-chain job fails here and on every sluicegate PR since 2026-11-19; it passed on sluicegate main's last run (c731f31, 2026-11-15), before the advisories were published. | authgate-kernel/Cargo.lock; job "Supply chain" in oracle-sluicegate-ci.yml | No dos-* crate ships a dependency with an open advisory: `cargo deny` and `cargo audit` block the workspace CI. Any sandbox uses a patched wasmtime. | open |
 
 ## decision-os-min (oracle/decision-os-min)
 
@@ -41,6 +41,15 @@ Sources: sluicegate at `c731f31`, decision-os-min at `5ee36cb` (both imported un
 | DM-4 | Decisions carry no `v` and no `kid`; `issued_by` is a fixed string. | kernel.py:147-156,549 | `v` and `kid` in every decision; verification picks the key by `kid`. | open |
 | DM-5 | `DecisionOS` never wires an audit anchor, so tail truncation goes undetected by default. | audit.py:123-148 | Anchor trait wired by default; `verify_against_anchor` in the standard path. | open |
 | DM-6 | The token view is unsigned and unused by the PEP; contracts.py types are stale. | kernel.py:551-560; contracts.py | Spec defines the decision as the only authority object; the token view is derived, never trusted. | open |
+
+## Reproducibility of the frozen oracles
+
+| ID | Gap | Requirement | Status |
+|---|---|---|---|
+| OR-1 | The oracles are not hermetic: Python dependencies are lower bounds with no lock file, toolchains are `@stable`, runners are `*-latest`. Results already drift (cargo-deny green then red; contracts-spec failed at its source commit, passes here). | Oracle CI pins a lock file and toolchain per oracle, kept outside `oracle/` (e.g. `conformance/oracle-locks/`). A drift is a CI failure, not a silent change of the reference. | open |
+| OR-2 | Inherited gates that pass on nothing: sluicegate sandbox `--exact sandbox::tests::...` steps match 0 tests (the path is `sandbox::inner::tests::...`), "Run all lib tests" has `continue-on-error`, the TLC check accepts any "distinct states" line, rust-check runs no `cargo test`. Same as the source workflows. | Rust CI never counts a step that ran zero tests as a pass; every gate asserts a non-zero count. | open |
+| OR-3 | Dropped with `deployment-testimony.yml`: an FDK to M4 integration check and a live HTTP `/v1/decide` ALLOW/DENY plus audit probe. Both failed at the source. | The HTTP decide probe returns as a dos-cli service test. | open |
+| OR-4 | Imported history carries build outputs: 96 Rust `target/` files (6.3 MB), a 7 MB PDF, a `.coverage` database, local Windows user paths. No secrets (gitleaks: 8 hits, all test data). | Nothing to do in the oracle; the workspace `.gitignore` keeps build outputs out of new history. | accepted |
 
 ## Product layer (gateway, found this session)
 

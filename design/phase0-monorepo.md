@@ -63,3 +63,21 @@ so oracle tags never collide with this repository's releases.
 - sluicegate: 1371 passed, 1 skipped, coverage 99.36 %, ruff clean.
 - contracts-spec: 28 passed, ruff and mypy clean, both authority rules clean.
 - AE-1..AE-10 against decision-os-min: 10 pass, 0 fail, 0 N/A; probes 0 broken.
+
+## Red-team round 1 (findings/phase0.md) and what changed
+
+- F3 (oracle tags could be moved): repository ruleset "oracle tags are immutable" now
+  blocks creating, updating and deleting `refs/tags/oracle-v*` for everyone but the
+  repository admin.
+- F4 (new workflows not required): `main` now requires the oracle test jobs and the AE
+  job besides `protected-paths` and `full-gate` (13 checks). Protecting the workflow
+  files themselves needs a CODEOWNERS change: escalated.
+- F5: the SG-16 wording claimed the job fails on sluicegate main; corrected.
+- F6 (a squash merge drops the imported history): squash and rebase merges are now
+  disabled for the repository. Phase 0 merges with a merge commit.
+- F8 to F11: recorded as OR-1 to OR-4 in `spec/KNOWN_GAPS.md`.
+- F1 (single owner means every merge is an admin bypass), F7 (`oracle-change/*`
+  exemption) and the CODEOWNERS part of F4 change the agent kit or who reviews:
+  escalated in `ESCALATION.md`.
+- F2 (the freeze is not in force until the tag exists): the tag is pushed in the same
+  step as the merge; until then `oracle/` is protected only by review.
