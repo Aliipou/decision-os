@@ -14,10 +14,8 @@ use crate::entry::{
     GENESIS, RESERVED, field, hash_of, seq_field, seq_value, signing_bytes, str_field,
 };
 
-#[derive(Clone)]
+/// The head of the log as read from disk.
 struct State {
-    /// Log length in bytes the cached head describes.
-    len: u64,
     next_seq: u64,
     last_hash: String,
 }
@@ -28,7 +26,8 @@ pub struct FileSink {
     lock_path: PathBuf,
     key: SigningKey,
     anchor: Option<Box<dyn Anchor>>,
-    state: Mutex<Option<State>>,
+    /// Serializes appends within the process; the file lock does it across processes.
+    state: Mutex<()>,
 }
 
 fn with_suffix(path: &Path, suffix: &str) -> PathBuf {
@@ -69,7 +68,7 @@ impl FileSink {
             path,
             key: SigningKey::from_bytes(secret),
             anchor,
-            state: Mutex::new(None),
+            state: Mutex::new(()),
         })
     }
 
@@ -78,7 +77,7 @@ impl FileSink {
         let mut f = File::open(&self.path).map_err(|_| StoreError::Unavailable)?;
         let len = f.metadata().map_err(|_| StoreError::Unavailable)?.len();
         let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
-        let st = scan_tail(&tail, len)?;
+        let st = scan_tail(&tail)?;
         Ok(st.next_seq.checked_sub(1).map(|seq| Head {
             seq,
             entry_hash: st.last_hash,
@@ -87,10 +86,9 @@ impl FileSink {
 }
 
 /// Finds the head of the log bytes. Fails closed on anything but a clean tail.
-fn scan_tail(bytes: &[u8], len: u64) -> Result<State, StoreError> {
+fn scan_tail(bytes: &[u8]) -> Result<State, StoreError> {
     if bytes.is_empty() {
         return Ok(State {
-            len,
             next_seq: 0,
             last_hash: GENESIS.into(),
         });
@@ -107,7 +105,6 @@ fn scan_tail(bytes: &[u8], len: u64) -> Result<State, StoreError> {
         return Err(StoreError::Unavailable);
     }
     Ok(State {
-        len,
         next_seq: seq.checked_add(1).ok_or(StoreError::Unavailable)?,
         last_hash: hash.to_string(),
     })
@@ -138,7 +135,7 @@ impl FileSink {
     }
 
     fn append_locked(&self, entry_jcs: &[u8]) -> Result<AuditReceipt, StoreError> {
-        let mut guard = self.state.lock().map_err(|_| StoreError::Unavailable)?;
+        let _guard = self.state.lock().map_err(|_| StoreError::Unavailable)?;
         let lock = File::options()
             .create(true)
             .write(true)
@@ -153,24 +150,13 @@ impl FileSink {
                 .open(&self.path)
                 .map_err(|_| StoreError::Unavailable)?;
             let len = f.metadata().map_err(|_| StoreError::Unavailable)?.len();
-            let st = match guard.as_ref() {
-                Some(s) if s.len == len => s.clone(),
-                _ => {
-                    *guard = None;
-                    {
-                        let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
-                        scan_tail(&tail, len)?
-                    }
-                }
-            };
+            // Always re-read the tail: a cached head could be stale, or the file swapped
+            // for another of the same length.
+            let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
+            let st = scan_tail(&tail)?;
             let (line, hash) = self.build_line(entry_jcs, &st)?;
             f.write_all(&line).map_err(|_| StoreError::Unavailable)?;
             f.sync_all().map_err(|_| StoreError::Unavailable)?;
-            *guard = Some(State {
-                len: st.len + line.len() as u64,
-                next_seq: st.next_seq + 1,
-                last_hash: hash.clone(),
-            });
             Ok(AuditReceipt {
                 seq: st.next_seq,
                 entry_hash: hash,
