@@ -194,6 +194,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-exec"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "ed25519"
 version = "2.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
