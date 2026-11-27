@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-limit",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "LIMIT"
+    ]
+  },
+  "expected": {
+    "ok": "LIMIT"
+  },
+  "source": "oracle tests/test_compose_properties.py every element reachable"
+}

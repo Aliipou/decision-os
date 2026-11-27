@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-dotless-i-limit",
+  "input": {
+    "op": "parse",
+    "s": "l\u0131m\u0131t"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Turkish dotless i (upper() folds to LIMIT)"
+}

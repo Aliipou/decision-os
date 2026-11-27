@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-fullwidth-allow",
+  "input": {
+    "op": "parse",
+    "s": "\uff21\uff2c\uff2c\uff2f\uff37"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "fullwidth lookalike (NFKC folds to ALLOW)"
+}

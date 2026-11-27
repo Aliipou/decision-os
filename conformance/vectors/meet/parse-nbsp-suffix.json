@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-nbsp-suffix",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\u00a0"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "no-break space suffix"
+}

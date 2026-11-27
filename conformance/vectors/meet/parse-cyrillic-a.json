@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-cyrillic-a",
+  "input": {
+    "op": "parse",
+    "s": "\u0410LLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Cyrillic A homoglyph"
+}

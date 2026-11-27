@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-lower-contain",
+  "input": {
+    "op": "parse",
+    "s": "contain"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variant"
+}

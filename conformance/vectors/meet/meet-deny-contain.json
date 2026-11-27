@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-deny-contain",
+  "input": {
+    "op": "meet",
+    "a": "DENY",
+    "b": "CONTAIN"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "spec 5x5 meet table"
+}

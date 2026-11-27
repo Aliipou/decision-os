@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-offlattice-offlattice",
+  "input": {
+    "op": "meet",
+    "a": "allow",
+    "b": "permit"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "two foreign dialects"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-contain-cr",
+  "input": {
+    "op": "parse",
+    "s": "CONTAIN\r"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "carriage return"
+}

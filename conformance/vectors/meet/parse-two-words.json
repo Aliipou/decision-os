@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-two-words",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW DENY"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "two words"
+}

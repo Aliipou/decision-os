@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-allow-offlattice",
+  "input": {
+    "op": "meet",
+    "a": "ALLOW",
+    "b": "allow"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py ALLOW with off-lattice is DENY"
+}

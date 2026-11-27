@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-fullwidth-limit-mix",
+  "input": {
+    "op": "parse",
+    "s": "\uff2cIMIT"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "partly fullwidth"
+}

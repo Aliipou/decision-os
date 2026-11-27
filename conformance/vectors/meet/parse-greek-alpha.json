@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-greek-alpha",
+  "input": {
+    "op": "parse",
+    "s": "\u0391LLOW"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Greek Alpha homoglyph"
+}

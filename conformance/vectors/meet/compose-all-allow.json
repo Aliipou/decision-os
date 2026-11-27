@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-all-allow",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "ALLOW",
+      "ALLOW"
+    ]
+  },
+  "expected": {
+    "ok": "ALLOW"
+  },
+  "source": "identity"
+}

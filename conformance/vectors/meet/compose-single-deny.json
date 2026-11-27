@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-deny",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "DENY"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py every element reachable"
+}

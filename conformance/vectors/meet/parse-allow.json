@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-allow",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW"
+  },
+  "expected": {
+    "ok": "ALLOW"
+  },
+  "source": "spec wire string"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-nul",
+  "input": {
+    "op": "parse",
+    "s": "\u0000"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "NUL only"
+}

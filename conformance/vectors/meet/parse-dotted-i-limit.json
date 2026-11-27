@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-dotted-i-limit",
+  "input": {
+    "op": "parse",
+    "s": "L\u0130M\u0130T"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "Turkish dotted capital I"
+}

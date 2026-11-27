@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-lower-limit",
+  "input": {
+    "op": "parse",
+    "s": "limit"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variant"
+}

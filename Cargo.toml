@@ -12,6 +12,8 @@ repository = "https://github.com/Aliipou/decision-os"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
+# Kani harnesses live under #[cfg(kani)] next to the code they prove.
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(kani)"] }
 
 [workspace.lints.clippy]
 unwrap_used = "deny"
