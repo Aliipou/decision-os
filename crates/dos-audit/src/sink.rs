@@ -98,6 +98,28 @@ impl FileSink {
         })
     }
 
+    /// Recovers from a crash in the middle of a write (kill -9, power loss): removes a last
+    /// line that has no newline and so was never complete, never anchored and never
+    /// acknowledged to a caller. Returns the number of bytes removed. Any other damage is
+    /// left alone, and appends keep refusing it.
+    pub fn repair_torn_tail(&self) -> Result<u64, StoreError> {
+        self.locked(|| {
+            let bytes = fs::read(&self.path).map_err(|_| StoreError::Unavailable)?;
+            if bytes.is_empty() || bytes.last() == Some(&b'\n') {
+                return Ok(0);
+            }
+            let keep = bytes.iter().rposition(|b| *b == b'\n').map_or(0, |i| i + 1);
+            let f = OpenOptions::new()
+                .write(true)
+                .open(&self.path)
+                .map_err(|_| StoreError::Unavailable)?;
+            f.set_len(keep as u64)
+                .map_err(|_| StoreError::Unavailable)?;
+            f.sync_all().map_err(|_| StoreError::Unavailable)?;
+            Ok((bytes.len() - keep) as u64)
+        })
+    }
+
     /// Current head from disk, `None` for an empty log. Errors if the tail is corrupt.
     pub fn head(&self) -> Result<Option<Head>, StoreError> {
         // Under the lock, so a concurrent append is never seen half written.

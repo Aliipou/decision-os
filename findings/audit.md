@@ -71,3 +71,7 @@ Open design questions found, not changed: keys are looked up at verify time (`no
 
 Not fixed, from reading only: Python writes some floats differently (`1e-07`), so entries with non-integer numbers may not verify in the Python oracle; the secret passed to `FileSink::open` is the caller's copy to wipe.
 Test changes caused by the fixes (all visible in git): `empty_log_verifies` now expects `anchor_missing` with the anchor demanded; `fork_detected_by_anchor` forges with an anchor-less sink; `sink_follows_the_disk_not_a_cache` now expects refusal (and uses different content, the old one swapped in an identical file); Python-continuation tests use `adopt_unanchored(true)`; red-team-2 tests h09 and a04 assert the fixed behavior, four tests are `#[ignore]` for E-A1 to E-A3.
+
+## kill -9 (`tests/killnine.rs`)
+
+Six rounds of killing a child that appends 200 KB entries in a loop (TerminateProcess), each followed by verify, optional repair, one more append and verification with the anchor: the log was intact every round (no torn line occurred; a kill between the write and the anchor update leaves the anchor one entry behind, which the sink and verifier accept after a full signed re-verify). `FileSink::repair_torn_tail` (new) removes a last line without a newline, the only damage a crash can cause, and nothing else; `repair_only_touches_a_torn_last_line` covers a torn line, an intact log and other damage. Not covered: power loss with a lost fsync, disk full.
