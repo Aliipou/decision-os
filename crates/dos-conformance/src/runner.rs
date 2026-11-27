@@ -385,11 +385,20 @@ fn execute(cfg: &Config, cases: &[&Vector]) -> Session {
     }
 
     // After the last response: only EOF may follow.
+    // A grandchild that inherited the stdout pipe (on Windows every inheritable handle is
+    // passed on) keeps it open after the adapter exited. That is not the adapter's fault:
+    // once the adapter itself has exited and nothing more is queued, stop waiting.
+    let slice = Duration::from_millis(50);
+    let started = Instant::now();
     while !ended {
         let (wait, _) = budget(cfg.case_timeout, deadline);
-        match rx.recv_timeout(wait) {
+        let exited = matches!(child.try_wait(), Ok(Some(_)));
+        let step = if exited { Duration::from_millis(100) } else { wait.min(slice) };
+        match rx.recv_timeout(step) {
             Ok(Msg::Line(_) | Msg::Partial | Msg::TooLong) => s.extra += 1,
             Ok(Msg::Eof | Msg::ReadError(_)) | Err(RecvTimeoutError::Disconnected) => ended = true,
+            Err(RecvTimeoutError::Timeout) if exited => ended = true,
+            Err(RecvTimeoutError::Timeout) if started.elapsed() < wait => {}
             Err(RecvTimeoutError::Timeout) => {
                 s.adapter_error = Some(
                     "adapter did not exit (stdout still open) after the last response; killed"
