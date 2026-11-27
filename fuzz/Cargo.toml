@@ -11,6 +11,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 dos-core = { path = "../crates/dos-core" }
+dos-audit = { path = "../crates/dos-audit" }
 
 # Not a member of the main workspace: it needs nightly and libFuzzer.
 [workspace]
@@ -19,6 +20,13 @@ members = ["."]
 [[bin]]
 name = "canon"
 path = "fuzz_targets/canon.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "audit"
+path = "fuzz_targets/audit.rs"
 test = false
 doc = false
 bench = false

@@ -75,8 +75,10 @@ impl FileSink {
 
     /// Current head from disk, `None` for an empty log. Errors if the tail is corrupt.
     pub fn head(&self) -> Result<Option<Head>, StoreError> {
-        let bytes = fs::read(&self.path).map_err(|_| StoreError::Unavailable)?;
-        let st = scan_tail(&bytes, bytes.len() as u64)?;
+        let mut f = File::open(&self.path).map_err(|_| StoreError::Unavailable)?;
+        let len = f.metadata().map_err(|_| StoreError::Unavailable)?.len();
+        let tail = read_tail(&mut f, len).map_err(|_| StoreError::Unavailable)?;
+        let st = scan_tail(&tail, len)?;
         Ok(st.next_seq.checked_sub(1).map(|seq| Head {
             seq,
             entry_hash: st.last_hash,
