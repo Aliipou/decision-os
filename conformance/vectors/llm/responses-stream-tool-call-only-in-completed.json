@@ -1,0 +1,44 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-stream-tool-call-only-in-completed",
+  "input": {
+    "shape": "responses",
+    "stream": true,
+    "body": "event: response.created\ndata: {\"type\":\"response.created\",\"sequence_number\":0,\"response\":{\"id\":\"r3\",\"output\":[]}}\n\nevent: response.completed\ndata: {\"type\":\"response.completed\",\"sequence_number\":1,\"response\":{\"id\":\"r3\",\"output\":[{\"type\":\"function_call\",\"id\":\"fc1\",\"call_id\":\"c1\",\"name\":\"delete_repo\",\"arguments\":\"{\\\"repo\\\":\\\"a\\\"}\"}]}}\n\n",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "event: response.created\ndata: {\"type\":\"response.created\",\"sequence_number\":0,\"response\":{\"id\":\"r3\",\"output\":[]}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"output_index\": 0, \"item\": {\"type\": \"message\", \"id\": \"msg_dos_00000000000000000001\", \"status\": \"in_progress\", \"role\": \"assistant\", \"content\": [{\"type\": \"output_text\", \"text\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\", \"annotations\": []}]}, \"sequence_number\": 1}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"output_index\": 0, \"item\": {\"type\": \"message\", \"id\": \"msg_dos_00000000000000000001\", \"status\": \"completed\", \"role\": \"assistant\", \"content\": [{\"type\": \"output_text\", \"text\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\", \"annotations\": []}]}, \"sequence_number\": 2}\n\nevent: response.completed\ndata: {\"type\": \"response.completed\", \"sequence_number\": 3, \"response\": {\"id\": \"r3\", \"output\": [{\"type\": \"message\", \"id\": \"msg_dos_00000000000000000001\", \"status\": \"completed\", \"role\": \"assistant\", \"content\": [{\"type\": \"output_text\", \"text\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\", \"annotations\": []}]}]}}\n\n",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "repo": "a"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "red team: a call present only in response.completed is relayed ungated by the oracle"
+}

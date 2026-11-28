@@ -1,0 +1,50 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-json-deny-one",
+  "input": {
+    "shape": "responses",
+    "stream": false,
+    "body": "{\"id\": \"r1\", \"object\": \"response\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}, {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"r1\", \"object\": \"response\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}, {\"type\": \"message\", \"id\": \"msg_dos_00000000000000000001\", \"status\": \"completed\", \"role\": \"assistant\", \"content\": [{\"type\": \"output_text\", \"text\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\", \"annotations\": []}]}]}",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "repo": "a"
+          }
+        ],
+        [
+          "get_weather",
+          {
+            "city": "Oulu"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_responses_non_stream_and_stream (non-stream)"
+}

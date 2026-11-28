@@ -1,0 +1,45 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-limit-rewrites-arguments",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body": "{\"id\": \"c4\", \"object\": \"chat.completion\", \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"t1\", \"type\": \"function\", \"function\": {\"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"hunter2\\\"}\"}}]}}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"c4\", \"object\": \"chat.completion\", \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"t1\", \"type\": \"function\", \"function\": {\"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"[REDACTED]\\\"}\"}}]}}]}",
+      "calls": [
+        [
+          "send_email",
+          {
+            "to": "a@b.c",
+            "password": "hunter2"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle gate_chat_completion LIMIT path"
+}

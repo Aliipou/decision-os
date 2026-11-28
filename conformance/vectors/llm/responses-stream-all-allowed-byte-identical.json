@@ -1,0 +1,47 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-stream-all-allowed-byte-identical",
+  "input": {
+    "shape": "responses",
+    "stream": true,
+    "body": "event: response.created\ndata: {\"type\": \"response.created\", \"sequence_number\": 0, \"response\": {\"id\": \"r2\", \"output\": []}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"sequence_number\": 1, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"\"}}\n\nevent: response.function_call_arguments.delta\ndata: {\"type\": \"response.function_call_arguments.delta\", \"sequence_number\": 2, \"output_index\": 0, \"item_id\": \"fc1\", \"delta\": \"{\\\"repo\\\":\\\"a\\\"}\"}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 3, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"sequence_number\": 4, \"output_index\": 1, \"item\": {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"\"}}\n\nevent: response.function_call_arguments.delta\ndata: {\"type\": \"response.function_call_arguments.delta\", \"sequence_number\": 5, \"output_index\": 1, \"item_id\": \"fc2\", \"delta\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 6, \"output_index\": 1, \"item\": {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}}\n\nevent: response.completed\ndata: {\"type\": \"response.completed\", \"sequence_number\": 7, \"response\": {\"id\": \"r2\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}, {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}]}}\n\n",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "allow": true
+      },
+      "Bash": {
+        "allow": true
+      },
+      "shell": {
+        "allow": true
+      },
+      "send_email": {
+        "allow": true
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "event: response.created\ndata: {\"type\": \"response.created\", \"sequence_number\": 0, \"response\": {\"id\": \"r2\", \"output\": []}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"sequence_number\": 1, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"\"}}\n\nevent: response.function_call_arguments.delta\ndata: {\"type\": \"response.function_call_arguments.delta\", \"sequence_number\": 2, \"output_index\": 0, \"item_id\": \"fc1\", \"delta\": \"{\\\"repo\\\":\\\"a\\\"}\"}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 3, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"sequence_number\": 4, \"output_index\": 1, \"item\": {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"\"}}\n\nevent: response.function_call_arguments.delta\ndata: {\"type\": \"response.function_call_arguments.delta\", \"sequence_number\": 5, \"output_index\": 1, \"item_id\": \"fc2\", \"delta\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 6, \"output_index\": 1, \"item\": {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}}\n\nevent: response.completed\ndata: {\"type\": \"response.completed\", \"sequence_number\": 7, \"response\": {\"id\": \"r2\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}, {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}]}}\n\n",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "repo": "a"
+          }
+        ],
+        [
+          "get_weather",
+          {
+            "city": "Oulu"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "spec: byte-identical when nothing is refused"
+}

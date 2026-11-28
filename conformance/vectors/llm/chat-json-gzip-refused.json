@@ -1,0 +1,54 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-gzip-refused",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body_b64": "H4sIAAAAAAAC/5WQ3WrDMAyFXyXoOut+LvsSfYBlBM1REw/ZCrFMU0LefZbLCoXeDHwh60jnO2gDP8CxAfcObQPy/UNO639CPTgJM5N6iSYGGYhNG2d9Wa3jJvGOUul9buDjQGsp34pw9tGnqV8IU9ktKyrCvUPmVJ0oJRypCBsswlYApuSTYtRqLFEpWpCYmduH/RushtYaWq9zdTjn6P6y3mtDRAx1YCTtL4Q60WIzuIw5FIpZwtaB83rt4NjBKXPuYId9b5s76uNfqHIpUioHmOUZyvoVFeh1vaG+7P0ChCvIEY4BAAA=",
+    "content_encoding": "gzip",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "error": "unsupported_encoding"
+  },
+  "oracle_expected": {
+    "ok": {
+      "body": "{\"id\": \"c1\", \"object\": \"chat.completion\", \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\", \"tool_calls\": [{\"id\": \"t1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}}]}}]}",
+      "calls": [
+        [
+          "get_weather",
+          {
+            "city": "Oulu"
+          }
+        ],
+        [
+          "delete_repo",
+          {
+            "repo": "me/x"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_gzip_upstream_is_decoded_and_gated; Rust refuses (no inflater, fail closed)"
+}

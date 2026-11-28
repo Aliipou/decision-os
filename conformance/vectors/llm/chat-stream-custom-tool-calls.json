@@ -1,0 +1,50 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-stream-custom-tool-calls",
+  "input": {
+    "shape": "chat",
+    "stream": true,
+    "body": "data: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"index\": 0, \"id\": \"a\", \"type\": \"custom\", \"custom\": {\"name\": \"get_weather\", \"input\": \"Ou\"}}]}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"custom\": {\"input\": \"lu\"}}]}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 1, \"id\": \"b\", \"type\": \"custom\", \"custom\": {\"name\": \"delete_repo\", \"input\": \"me/x\"}}]}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {}, \"finish_reason\": \"tool_calls\"}]}\n\ndata: [DONE]\n\n",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "data: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"index\": 0, \"id\": \"a\", \"type\": \"custom\", \"custom\": {\"name\": \"get_weather\", \"input\": \"Oulu\"}}]}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"delta\": {}, \"finish_reason\": \"tool_calls\"}]}\n\ndata: [DONE]\n\n",
+      "calls": [
+        [
+          "get_weather",
+          {
+            "input": "Oulu"
+          }
+        ],
+        [
+          "delete_repo",
+          {
+            "input": "me/x"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_streamed_custom_tool_calls"
+}

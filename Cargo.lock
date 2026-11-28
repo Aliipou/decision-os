@@ -267,6 +267,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-llm"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "dos-store"
 version = "0.1.0"
 dependencies = [

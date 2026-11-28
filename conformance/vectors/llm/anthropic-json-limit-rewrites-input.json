@@ -1,0 +1,46 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "anthropic-json-limit-rewrites-input",
+  "input": {
+    "shape": "anthropic",
+    "stream": false,
+    "body": "{\"id\": \"m1\", \"type\": \"message\", \"role\": \"assistant\", \"model\": \"claude-x\", \"stop_reason\": \"tool_use\", \"content\": [{\"type\": \"text\", \"text\": \"Cleaning up.\"}, {\"type\": \"tool_use\", \"id\": \"tu1\", \"name\": \"send_email\", \"input\": {\"to\": \"a@b.c\", \"password\": \"hunter2\"}}]}",
+    "model": "claude-x",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"m1\", \"type\": \"message\", \"role\": \"assistant\", \"model\": \"claude-x\", \"stop_reason\": \"tool_use\", \"content\": [{\"type\": \"text\", \"text\": \"Cleaning up.\"}, {\"type\": \"tool_use\", \"id\": \"tu1\", \"name\": \"send_email\", \"input\": {\"to\": \"a@b.c\", \"password\": \"[REDACTED]\"}}]}",
+      "calls": [
+        [
+          "send_email",
+          {
+            "to": "a@b.c",
+            "password": "hunter2"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle gate_anthropic_message LIMIT path"
+}
