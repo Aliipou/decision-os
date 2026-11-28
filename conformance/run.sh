@@ -10,8 +10,8 @@
 #
 # Each adapter directory must hold manifest.json ({"v":1,"command":[...],"required":[...],
 # "oracle":bool}, see crates/dos-conformance/src/manifest.rs); a directory without one
-# is an error, never skipped. An area an adapter answers "unsupported" passes unless the
-# manifest lists it in "required". Exit 0 only if every adapter run passed.
+# is an error, never skipped. An "unsupported" answer fails the run unless the manifest lists
+# the area in "unsupported_ok" (and never in "required"). Exit 0 only if every adapter passed.
 set -uo pipefail
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "conformance: not in a git checkout" >&2; exit 2; }

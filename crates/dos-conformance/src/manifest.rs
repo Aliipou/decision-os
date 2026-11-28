@@ -4,10 +4,13 @@
 //! {"v": 1, "command": ["./adapter"], "required": ["selftest"], "oracle": false}
 //! ```
 //!
-//! All four fields are required and no other field is allowed. `command` is an argv
+//! `v`, `command`, `required` and `oracle` are required; `unsupported_ok` is optional
+//! (default empty) and no other field is allowed. `command` is an argv
 //! (never split by a shell); a first element starting with `./` is resolved against the
 //! manifest's directory, which is also the adapter's working directory. `required`
-//! lists areas the adapter must fully support whenever they are selected. `oracle`
+//! lists areas the adapter must fully support whenever they are selected.
+//! `unsupported_ok` lists the only areas where `unsupported` answers are tolerated; an
+//! `unsupported` answer in any other area fails the run. `oracle`
 //! selects `oracle_expected` when a vector has one.
 
 use crate::json::{self, Json};
@@ -21,6 +24,10 @@ pub struct Manifest {
     pub args: Vec<String>,
     pub dir: PathBuf,
     pub required: Vec<String>,
+    /// Areas whose `unsupported` answers are tolerated (the adapter does not implement
+    /// them yet). With a manifest, an `unsupported` answer in any other area fails the
+    /// run, so a dropped handler cannot pass silently.
+    pub unsupported_ok: Vec<String>,
     pub oracle: bool,
 }
 
@@ -28,7 +35,13 @@ pub fn load(path: &Path) -> Result<Manifest, String> {
     let at = |e: String| format!("{}: {e}", path.display());
     let text = std::fs::read_to_string(path).map_err(|e| at(e.to_string()))?;
     let j = json::parse(&text).map_err(|e| at(format!("invalid JSON: {e}")))?;
-    exact_keys(&j, &["v", "command", "required", "oracle"]).map_err(at)?;
+    // `unsupported_ok` is optional; every other member is required.
+    let keys: &[&str] = if j.get("unsupported_ok").is_some() {
+        &["v", "command", "required", "unsupported_ok", "oracle"]
+    } else {
+        &["v", "command", "required", "oracle"]
+    };
+    exact_keys(&j, keys).map_err(at)?;
     if j.get("v") != Some(&Json::uint(1)) {
         return Err(at("\"v\" must be the number 1".into()));
     }
@@ -47,6 +60,11 @@ pub fn load(path: &Path) -> Result<Manifest, String> {
     };
     let command = strings("command")?;
     let required = strings("required")?;
+    let unsupported_ok = if j.get("unsupported_ok").is_some() {
+        strings("unsupported_ok")?
+    } else {
+        Vec::new()
+    };
     let oracle = j
         .get("oracle")
         .and_then(Json::as_bool)
@@ -60,6 +78,19 @@ pub fn load(path: &Path) -> Result<Manifest, String> {
         }
         if required.iter().take(i).any(|b| b == a) {
             return Err(at(format!("area {a:?} listed twice in \"required\"")));
+        }
+    }
+    for (i, a) in unsupported_ok.iter().enumerate() {
+        if !valid_ident(a) {
+            return Err(at(format!("invalid area {a:?} in \"unsupported_ok\"")));
+        }
+        if unsupported_ok.iter().take(i).any(|b| b == a) {
+            return Err(at(format!("area {a:?} listed twice in \"unsupported_ok\"")));
+        }
+        if required.contains(a) {
+            return Err(at(format!(
+                "area {a:?} is both \"required\" and \"unsupported_ok\""
+            )));
         }
     }
     let dir = path.parent().map(Path::to_path_buf).unwrap_or_default();
@@ -80,6 +111,7 @@ pub fn load(path: &Path) -> Result<Manifest, String> {
         args: rest.to_vec(),
         dir,
         required,
+        unsupported_ok,
         oracle,
     })
 }

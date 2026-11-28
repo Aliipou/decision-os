@@ -1,4 +1,4 @@
-//! Red team (findings/sign.md): runs conformance/vectors/redteam/*.json (area
+//! Red team (findings/sign.md): runs conformance/vectors/sign/redteam-sign-*.json (area
 //! "sign") through the library's own entry points in their natural order:
 //! parse domain, payload, key, kid, signature, then `verify_with_kid` or
 //! `verify`. No hand-written check is added on top of the library, so this
@@ -22,7 +22,7 @@ fn verify(input: &Value) -> Result<(), SignError> {
 
 #[test]
 fn redteam_sign_vectors_through_library_order() -> Result<(), String> {
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../conformance/vectors/redteam");
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../conformance/vectors/sign");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&dir)
         .map_err(|e| format!("{}: {e}", dir.display()))?
         .filter_map(|e| e.ok().map(|e| e.path()))

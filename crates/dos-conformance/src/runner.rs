@@ -37,6 +37,9 @@ pub struct Config {
     pub require: Vec<String>,
     /// Required by a manifest: fully supported when selected; absent ones are noted.
     pub manifest_required: Vec<String>,
+    /// `Some` when the adapter comes from a manifest: `unsupported` is tolerated only in
+    /// these areas (and never in required ones). `None` for a bare `--adapter`.
+    pub unsupported_ok: Option<Vec<String>>,
     pub oracle: bool,
     pub json: Option<PathBuf>,
     pub case_timeout: Duration,
@@ -119,6 +122,18 @@ pub fn run(cfg: &Config) -> i32 {
             required.insert(a.clone());
         }
     }
+    if let Some(ok) = &cfg.unsupported_ok {
+        for a in ok {
+            if !all.contains_key(a) {
+                // A typo here would silently tolerate nothing; refuse instead.
+                eprintln!(
+                    "error: the manifest tolerates unsupported area {a:?}, which has no directory under {}",
+                    cfg.vectors.display()
+                );
+                return EXIT_USAGE;
+            }
+        }
+    }
     let mut cases: Vec<&Vector> = Vec::new();
     for a in &selected {
         let v = all.get(a).map(Vec::as_slice).unwrap_or_default();
@@ -135,7 +150,14 @@ pub fn run(cfg: &Config) -> i32 {
     let mut statuses = std::mem::take(&mut session.statuses);
     for (v, st) in cases.iter().zip(statuses.iter_mut()) {
         if let Status::Unsupported { required: r } = st {
-            *r = required.contains(&v.area);
+            // `required` here means "this unsupported answer fails the run": the area is
+            // required, or a manifest is in use and does not tolerate it (red team H1,
+            // H2, H12: an adapter that drops a handler must not pass).
+            let tolerated = cfg
+                .unsupported_ok
+                .as_ref()
+                .is_none_or(|ok| ok.contains(&v.area));
+            *r = required.contains(&v.area) || !tolerated;
         }
     }
 
@@ -159,7 +181,15 @@ pub fn run(cfg: &Config) -> i32 {
                 show(&json::write(&v.want(cfg.oracle).to_json())),
                 show(&json::write(&got.to_json()))
             ),
-            Status::Unsupported { required: true } => format!("  (area {:?} is required)", v.area),
+            Status::Unsupported { required: true } if required.contains(&v.area) => {
+                format!("  (area {:?} is required)", v.area)
+            }
+            Status::Unsupported { required: true } => {
+                format!(
+                    "  (area {:?} is not listed in the manifest's unsupported_ok)",
+                    v.area
+                )
+            }
             Status::Malformed { why } => format!("  {}", show(why)),
             Status::Timeout { which } => format!("  ({which} timeout)"),
             _ => String::new(),

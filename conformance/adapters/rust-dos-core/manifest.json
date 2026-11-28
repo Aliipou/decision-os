@@ -1,6 +1,7 @@
 {
   "v": 1,
   "command": ["./adapter"],
-  "required": ["selftest", "audit"],
+  "required": ["selftest", "audit", "jcs", "meet", "sign"],
+  "unsupported_ok": ["install", "llm", "policy"],
   "oracle": false
 }

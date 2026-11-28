@@ -1,20 +1,23 @@
 //! Dispatch table: vector area name -> handler.
 //!
-//! To add an area (e.g. `canon`): create `areas/canon.rs` with
+//! To add an area (e.g. `policy`): create `areas/policy.rs` with
 //! `pub fn handle(input: &Json) -> Output`, add `mod canon;` below and one line to
 //! `AREAS`. Nothing else in the adapter or the runner changes.
 
 use dos_conformance::protocol::Handler;
 
 mod audit;
+mod jcs;
+mod meet;
 mod selftest;
+mod sign;
 
 pub const AREAS: &[(&str, Handler)] = &[
     ("selftest", selftest::handle),
     ("audit", audit::handle),
-    // ("canon", canon::handle),
-    // ("verdict", verdict::handle),
-    // ("sign", sign::handle),
+    ("jcs", jcs::handle),
+    ("meet", meet::handle),
+    ("sign", sign::handle),
 ];
 
 #[cfg(test)]

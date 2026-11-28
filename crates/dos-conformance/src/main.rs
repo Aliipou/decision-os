@@ -61,15 +61,21 @@ fn parse(args: Vec<String>) -> Result<runner::Config, String> {
             other => return Err(format!("unknown argument {other:?}")),
         }
     }
-    let (program, args, cwd, manifest_required) = match (adapter, manifest_path) {
-        (Some(p), None) => (p, extra_args, None, Vec::new()),
+    let (program, args, cwd, manifest_required, unsupported_ok) = match (adapter, manifest_path) {
+        (Some(p), None) => (p, extra_args, None, Vec::new(), None),
         (None, Some(m)) => {
             if !extra_args.is_empty() {
                 return Err("--arg goes with --adapter; a manifest has its own command".into());
             }
             let m = manifest::load(&m)?;
             oracle |= m.oracle;
-            (m.program, m.args, Some(m.dir), m.required)
+            (
+                m.program,
+                m.args,
+                Some(m.dir),
+                m.required,
+                Some(m.unsupported_ok),
+            )
         }
         (Some(_), Some(_)) => return Err("give --adapter or --manifest, not both".into()),
         (None, None) => return Err("--adapter or --manifest is required".into()),
@@ -82,6 +88,7 @@ fn parse(args: Vec<String>) -> Result<runner::Config, String> {
         areas,
         require,
         manifest_required,
+        unsupported_ok,
         oracle,
         json,
         case_timeout,

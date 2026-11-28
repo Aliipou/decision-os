@@ -30,6 +30,11 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 
+# Python refuses to parse or print an integer of more than 4300 digits. A legitimate echo
+# vector with one must not take the adapter down for every later case (red team H14).
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(0)
+
 ROOT = Path(__file__).resolve().parents[3]
 ORACLE = ROOT / "oracle" / "decision-os-min"
 COMPOSE_PY = ORACLE / "decision_os_min" / "compose.py"
