@@ -24,6 +24,7 @@ mod approvals;
 mod engine;
 mod home;
 mod install_cmd;
+mod learned;
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -113,6 +114,8 @@ struct Settings {
     lock: Option<PathBuf>,
     /// Where `Ask` approvals live; `None` refuses every `Ask`.
     approvals: Option<PathBuf>,
+    /// Remembered "always allow/deny" choices.
+    learned: Option<PathBuf>,
     client: String,
     server_name: String,
     server: Vec<String>,
@@ -143,11 +146,12 @@ fn serve(s: Settings) -> ExitCode {
         sink = sink.with_lock_path(lock);
     }
     let ask_timeout = Duration::from_secs_f64(s.policy.ask_timeout_seconds.clamp(1.0, 86_400.0));
-    let mut proxy = Proxy::new(
-        Arc::new(PolicyEngine::new(s.policy, s.client)),
-        &s.server_name,
-    )
-    .with_audit(Arc::new(CoreAudit::new(sink)));
+    let mut engine = PolicyEngine::new(s.policy, s.client);
+    if let Some(l) = s.learned {
+        engine = engine.with_learned_file(l);
+    }
+    let mut proxy =
+        Proxy::new(Arc::new(engine), &s.server_name).with_audit(Arc::new(CoreAudit::new(sink)));
     if let Some(dir) = s.approvals {
         proxy = proxy.with_approvals(Arc::new(FileApprovals::new(dir, ask_timeout)));
     }
@@ -232,6 +236,7 @@ fn proxy(args: impl Iterator<Item = String>) -> ExitCode {
         audit: PathBuf::from(flag(&flags, "--audit").unwrap_or("decision-os-audit.jsonl")),
         lock: None,
         approvals: flag(&flags, "--approvals-dir").map(PathBuf::from),
+        learned: flag(&flags, "--learned-file").map(PathBuf::from),
         client: flag(&flags, "--client").unwrap_or("decision-os").to_owned(),
         server_name,
         server,
@@ -274,6 +279,7 @@ fn mcp_proxy(args: impl Iterator<Item = String>) -> ExitCode {
         audit: home.audit(),
         lock: Some(home.lock()),
         approvals: Some(home.approvals()),
+        learned: Some(home.learned()),
         client: flag(&flags, "--client").unwrap_or("decision-os").to_owned(),
         server_name: flag(&flags, "--server").unwrap_or("server").to_owned(),
         server,
@@ -284,9 +290,11 @@ fn mcp_proxy(args: impl Iterator<Item = String>) -> ExitCode {
 fn approvals_cmd(resolve: Option<bool>, mut args: impl Iterator<Item = String>) -> ExitCode {
     let mut id: Option<String> = None;
     let mut home: Option<PathBuf> = None;
+    let mut always = false;
     while let Some(a) = args.next() {
         match a.as_str() {
             "--home" => home = args.next().map(PathBuf::from),
+            "--always" if resolve.is_some() => always = true,
             _ if !a.starts_with("--") && id.is_none() && resolve.is_some() => id = Some(a),
             _ => return usage(),
         }
@@ -304,8 +312,16 @@ fn approvals_cmd(resolve: Option<bool>, mut args: impl Iterator<Item = String>) 
             ExitCode::SUCCESS
         }
         (Some(approve), Some(id)) => {
-            if approvals::resolve(&dir, &id, approve) {
+            if let Some((server, tool)) = approvals::resolve(&dir, &id, approve) {
                 println!("{} {id}", if approve { "approved" } else { "denied" });
+                if always {
+                    let choice = if approve { "allow" } else { "deny" };
+                    if let Err(e) = learned::record(&home.learned(), &server, &tool, choice) {
+                        eprintln!("decision-os: could not remember the choice: {e}");
+                        return ExitCode::from(1);
+                    }
+                    println!("remembered: always {choice} {server}/{tool}");
+                }
                 ExitCode::SUCCESS
             } else {
                 eprintln!("decision-os: no pending approval {id}");

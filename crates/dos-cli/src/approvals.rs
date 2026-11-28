@@ -133,24 +133,24 @@ pub fn pending(dir: &Path) -> Vec<(String, String, String, String)> {
     out.into_iter().map(|(_, r)| r).collect()
 }
 
-/// Sets a pending record to approved or denied. `false` if there is no such pending approval.
-pub fn resolve(dir: &Path, id: &str, approve: bool) -> bool {
+/// Sets a pending record to approved or denied and returns its `(server, tool)`; `None` if
+/// there is no such pending approval.
+pub fn resolve(dir: &Path, id: &str, approve: bool) -> Option<(String, String)> {
     if !valid_id(id) {
-        return false;
+        return None;
     }
     let path = record_path(dir, id);
-    let Some(mut v) = read(&path) else {
-        return false;
-    };
+    let mut v = read(&path)?;
     if v.get("state").and_then(Value::as_str) != Some("pending") {
-        return false;
+        return None;
     }
-    let Some(obj) = v.as_object_mut() else {
-        return false;
-    };
+    let field = |k: &str| v.get(k).and_then(Value::as_str).unwrap_or("").to_owned();
+    let (server, tool) = (field("server"), field("tool"));
+    let obj = v.as_object_mut()?;
     obj.insert(
         "state".into(),
         json!(if approve { "approved" } else { "denied" }),
     );
-    write_atomic(&path, &v).is_ok()
+    write_atomic(&path, &v).ok()?;
+    Some((server, tool))
 }

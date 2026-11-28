@@ -19,6 +19,9 @@ impl Home {
     pub fn approvals(&self) -> PathBuf {
         self.0.join("approvals")
     }
+    pub fn learned(&self) -> PathBuf {
+        self.0.join("learned.json")
+    }
     pub fn lock(&self) -> PathBuf {
         self.0.join("locks").join("audit.lock")
     }

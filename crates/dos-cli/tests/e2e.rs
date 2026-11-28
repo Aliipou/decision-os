@@ -639,3 +639,131 @@ fn garbage_approval_records_never_approve() {
         .unwrap();
     assert!(o.stdout.is_empty());
 }
+
+/// One `write_file` call through `mcp-proxy` on `home`. If `answer` is `Some((approve, always))`
+/// the pending approval is resolved from outside. Returns the reply and the audit entries.
+fn one_write(
+    home: &std::path::Path,
+    server_log: &std::path::Path,
+    content: &str,
+    answer: Option<(bool, bool)>,
+) -> (serde_json::Value, Vec<serde_json::Value>) {
+    let mut child = Command::new(BIN)
+        .args(["mcp-proxy", "--home"])
+        .arg(home)
+        .args(["--client", "t", "--server", "fake", "--"])
+        .arg(fake_server())
+        .arg(server_log)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut si = child.stdin.take().unwrap();
+    writeln!(si, r#"{{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{{"name":"write_file","arguments":{{"path":"/tmp/x","content":"{content}"}}}}}}"#).unwrap();
+    si.flush().unwrap();
+    if let Some((approve, always)) = answer {
+        let mut id = None;
+        for _ in 0..200 {
+            let o = Command::new(BIN)
+                .arg("approvals")
+                .arg("--home")
+                .arg(home)
+                .output()
+                .unwrap();
+            if let Some(first) = String::from_utf8_lossy(&o.stdout).lines().next() {
+                id = first.split_whitespace().next().map(str::to_owned);
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+        let id = id.expect("the proxy never asked");
+        let mut c = Command::new(BIN);
+        c.args([if approve { "approve" } else { "deny" }, &id]);
+        if always {
+            c.arg("--always");
+        }
+        let o = c.arg("--home").arg(home).output().unwrap();
+        assert_eq!(
+            o.status.code(),
+            Some(0),
+            "{}",
+            String::from_utf8_lossy(&o.stderr)
+        );
+    }
+    drop(si);
+    let out = child.wait_with_output().unwrap();
+    let reply = String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .filter_map(|l| serde_json::from_str::<serde_json::Value>(l).ok())
+        .find(|v| v["id"] == 7)
+        .unwrap_or_else(|| panic!("no reply: {}", String::from_utf8_lossy(&out.stderr)));
+    let audit = std::fs::read_to_string(home.join("audit.jsonl"))
+        .unwrap_or_default()
+        .lines()
+        .map(|l| serde_json::from_str(l).unwrap())
+        .collect();
+    (reply, audit)
+}
+
+#[test]
+fn always_allow_is_remembered_and_a_deny_rule_still_wins() {
+    let d = tmpdir("always");
+    let home = d.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 30\n").unwrap();
+    let log = d.join("server.log");
+    // First call asks; the user answers "always allow".
+    let (r1, _) = one_write(&home, &log, "one", Some((true, true)));
+    assert!(!blocked(&r1), "{r1}");
+    assert!(
+        std::fs::read_to_string(home.join("learned.json"))
+            .unwrap()
+            .contains("allow")
+    );
+    // A later call, other arguments, new process: no question, allowed, audited as chosen.
+    let (r2, audit) = one_write(&home, &log, "two", None);
+    assert!(!blocked(&r2), "{r2}");
+    let last = audit.last().unwrap();
+    assert_eq!(last["verdict"], "ALLOW");
+    assert!(
+        last["reason"].as_str().unwrap().contains("always allow"),
+        "{last}"
+    );
+    let served = std::fs::read_to_string(&log).unwrap();
+    assert!(served.contains("one") && served.contains("two"), "{served}");
+    // A deny rule in the policy beats the remembered choice.
+    std::fs::write(
+        home.join("policy.toml"),
+        "[[rule]]\ntool = \"write_file\"\ndecision = \"deny\"\nreason = \"frozen\"\n",
+    )
+    .unwrap();
+    let (r3, audit) = one_write(&home, &log, "three", None);
+    assert!(blocked(&r3), "{r3}");
+    assert_eq!(audit.last().unwrap()["verdict"], "DENY");
+    assert!(!std::fs::read_to_string(&log).unwrap().contains("three"));
+}
+
+#[test]
+fn always_deny_is_remembered_and_a_broken_learned_file_grants_nothing() {
+    let d = tmpdir("alwaysdeny");
+    let home = d.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 30\n").unwrap();
+    let log = d.join("server.log");
+    let (r1, _) = one_write(&home, &log, "one", Some((false, true)));
+    assert!(blocked(&r1), "{r1}");
+    let (r2, audit) = one_write(&home, &log, "two", None);
+    assert!(blocked(&r2), "{r2}");
+    assert_eq!(audit.last().unwrap()["verdict"], "DENY");
+    assert!(
+        !std::fs::read_to_string(&log)
+            .unwrap_or_default()
+            .contains("write_file")
+    );
+    // A corrupt learned file means no remembered choices: the call asks again (and here is
+    // answered "no" once).
+    std::fs::write(home.join("learned.json"), "{ not json").unwrap();
+    let (r3, _) = one_write(&home, &log, "three", Some((false, false)));
+    assert!(blocked(&r3), "{r3}");
+}

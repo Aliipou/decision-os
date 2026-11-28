@@ -11,6 +11,7 @@ pub struct PolicyEngine {
     policy: GatewayPolicy,
     client: String,
     env: FixedEnv,
+    learned_file: Option<std::path::PathBuf>,
 }
 
 impl PolicyEngine {
@@ -28,7 +29,21 @@ impl PolicyEngine {
                 flavor,
                 vars: std::env::vars().collect(),
             },
+            learned_file: None,
         }
+    }
+
+    /// Reads remembered "always allow/deny" choices from `path` on every decision.
+    pub fn with_learned_file(mut self, path: impl Into<std::path::PathBuf>) -> Self {
+        self.learned_file = Some(path.into());
+        self
+    }
+
+    fn learned(&self) -> Vec<(String, String)> {
+        self.learned_file
+            .as_deref()
+            .map(crate::learned::load)
+            .unwrap_or_default()
     }
 
     fn observing(&self) -> bool {
@@ -76,7 +91,7 @@ impl DecisionEngine for PolicyEngine {
             args: Some(&args),
             hints: &req.hints,
         };
-        let m = evaluate(&self.policy, &call, &[], &self.env);
+        let m = evaluate(&self.policy, &call, &self.learned(), &self.env);
         if self.observing() && m.decision != Decision::Allow {
             return Ok(Verdict::Allow {
                 reason: format!(
@@ -120,7 +135,7 @@ impl DecisionEngine for PolicyEngine {
             args: None,
             hints,
         };
-        let m = evaluate(&self.policy, &call, &[], &self.env);
+        let m = evaluate(&self.policy, &call, &self.learned(), &self.env);
         if self.observing() {
             return Ok(StaticVerdict::Allow);
         }
