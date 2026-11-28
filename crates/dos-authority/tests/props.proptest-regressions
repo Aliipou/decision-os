@@ -1,0 +1,10 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc f72cac247919f40f67dc5f243259dd2652e9035fe0586f076e14b03bc73c390a # shrinks to p_res = ["*"], p_rights = RightSet(0), p_exp = 1000001, p_epoch = 0, c_res = ["*"], c_rights = RightSet(0), c_exp = 0, c_epoch = 0
+cc f35abff3aa16d3144a3db07d546068d0f6b7cd1e9fa47664be61d301f5122500 # shrinks to edits = [(Index(0), 0)]
+cc 62e389e2bebe14d23089a71a86de1071169614ff5227679311bdc8127a29f35c # shrinks to hops = [(["*"], RightSet(0), 0, 0)]
+cc 5ea4ce657fea633fe08cd246b20b90b22091d3b72f862a176b71a90b3100bd0f # shrinks to p_res = ["*"], p_rights = RightSet(192), p_exp = 2210914, p_epoch = 0, c_res = ["*"], c_rights = RightSet(192), c_exp = 1000001, c_epoch = 0
