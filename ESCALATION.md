@@ -89,3 +89,26 @@ Options (any of them closes it; 1 is the root cause, shared with E1):
 3. `check-protected.sh` fails closed after Phase 0 when the tag is missing (for
    example, when `oracle/` exists and no `oracle-v*` tag is found, exit 1 unless the
    branch is the Phase 0 import).
+
+## E8 (PR #2, executor): Rust drops client lines the oracle forwards raw
+
+`dos-exec` drops any client line that is not strict JSON (duplicate keys, NaN, lone
+surrogates). The oracle forwards such lines to the upstream unparsed. Reason for the
+deviation: a lenient upstream parser could read a tool call the gateway never saw
+(parser differential). Rust refuses; the oracle fails open.
+
+Needs: your acceptance of the deviation, then a disagreement vector (new file, with
+`oracle_expected`) before merge. Recommended: accept. Fail closed is the point.
+
+## E9 (PR #2, supply chain): RUSTSEC-2026-0573 in `wasmtime 49.0.5` (oracle)
+
+`cargo-deny` fails on the advisory. The only path is `authgate-kernel` (frozen under
+`oracle/`), so agents cannot bump it or add an ignore. The wasmtime fix is in
+49.0.6, 48.0.9 and 50.0.2.
+
+Options:
+1. Oracle change: bump to `wasmtime >= 49.0.6` (a new oracle tag, Phase 1c style).
+2. A time-boxed `ignore` for the advisory in `deny.toml` with an expiry date.
+3. Scope the supply-chain job to the Rust crates and keep oracles out of it.
+
+Recommended: 1 if the oracle's tests pass on 49.0.6, else 2 with a 30-day expiry.
