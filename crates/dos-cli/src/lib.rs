@@ -20,6 +20,7 @@
 //! `Ask` is refused (there is no interactive approval in this binary yet). Exit codes: the
 //! server's for the proxies; 0, 1 or 2 (usage) otherwise.
 
+mod approvals;
 mod engine;
 mod home;
 mod install_cmd;
@@ -27,11 +28,14 @@ mod install_cmd;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::sync::Arc;
+use std::time::Duration;
 
 use dos_audit::FileSink;
 use dos_core::sign::SigningKey;
 use dos_decision::{GatewayPolicy, parse_policy};
 use dos_exec::{CoreAudit, Proxy};
+
+use approvals::FileApprovals;
 use dos_install::Action;
 
 pub use engine::{PolicyEngine, to_py};
@@ -58,6 +62,9 @@ pub fn run(mut args: impl Iterator<Item = String>) -> ExitCode {
         Some("status") => install_cmd::command(Action::Status, args),
         Some("proxy") => proxy(args),
         Some("mcp-proxy") => mcp_proxy(args),
+        Some("approvals") => approvals_cmd(None, args),
+        Some("approve") => approvals_cmd(Some(true), args),
+        Some("deny") => approvals_cmd(Some(false), args),
         _ => usage(),
     }
 }
@@ -104,6 +111,8 @@ struct Settings {
     policy: GatewayPolicy,
     audit: PathBuf,
     lock: Option<PathBuf>,
+    /// Where `Ask` approvals live; `None` refuses every `Ask`.
+    approvals: Option<PathBuf>,
     client: String,
     server_name: String,
     server: Vec<String>,
@@ -133,11 +142,15 @@ fn serve(s: Settings) -> ExitCode {
     if let Some(lock) = s.lock {
         sink = sink.with_lock_path(lock);
     }
-    let proxy = Proxy::new(
+    let ask_timeout = Duration::from_secs_f64(s.policy.ask_timeout_seconds.clamp(1.0, 86_400.0));
+    let mut proxy = Proxy::new(
         Arc::new(PolicyEngine::new(s.policy, s.client)),
         &s.server_name,
     )
     .with_audit(Arc::new(CoreAudit::new(sink)));
+    if let Some(dir) = s.approvals {
+        proxy = proxy.with_approvals(Arc::new(FileApprovals::new(dir, ask_timeout)));
+    }
     let code = proxy.run_stdio(&s.server);
     u8::try_from(code).map_or(ExitCode::from(1), ExitCode::from)
 }
@@ -218,6 +231,7 @@ fn proxy(args: impl Iterator<Item = String>) -> ExitCode {
         policy,
         audit: PathBuf::from(flag(&flags, "--audit").unwrap_or("decision-os-audit.jsonl")),
         lock: None,
+        approvals: flag(&flags, "--approvals-dir").map(PathBuf::from),
         client: flag(&flags, "--client").unwrap_or("decision-os").to_owned(),
         server_name,
         server,
@@ -259,8 +273,45 @@ fn mcp_proxy(args: impl Iterator<Item = String>) -> ExitCode {
         policy,
         audit: home.audit(),
         lock: Some(home.lock()),
+        approvals: Some(home.approvals()),
         client: flag(&flags, "--client").unwrap_or("decision-os").to_owned(),
         server_name: flag(&flags, "--server").unwrap_or("server").to_owned(),
         server,
     })
+}
+
+/// `decision-os approvals` lists pending approvals; `approve <id>` and `deny <id>` resolve one.
+fn approvals_cmd(resolve: Option<bool>, mut args: impl Iterator<Item = String>) -> ExitCode {
+    let mut id: Option<String> = None;
+    let mut home: Option<PathBuf> = None;
+    while let Some(a) = args.next() {
+        match a.as_str() {
+            "--home" => home = args.next().map(PathBuf::from),
+            _ if !a.starts_with("--") && id.is_none() && resolve.is_some() => id = Some(a),
+            _ => return usage(),
+        }
+    }
+    let Some(home) = home.or_else(default_home).map(Home) else {
+        eprintln!("decision-os: no home directory (set HOME or pass --home)");
+        return ExitCode::from(2);
+    };
+    let dir = home.approvals();
+    match (resolve, id) {
+        (None, None) => {
+            for (id, server, tool, reason) in approvals::pending(&dir) {
+                println!("{id}  {server}/{tool}  {reason}");
+            }
+            ExitCode::SUCCESS
+        }
+        (Some(approve), Some(id)) => {
+            if approvals::resolve(&dir, &id, approve) {
+                println!("{} {id}", if approve { "approved" } else { "denied" });
+                ExitCode::SUCCESS
+            } else {
+                eprintln!("decision-os: no pending approval {id}");
+                ExitCode::from(1)
+            }
+        }
+        _ => usage(),
+    }
 }

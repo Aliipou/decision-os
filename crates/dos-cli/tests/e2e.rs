@@ -390,3 +390,237 @@ fn install_wraps_a_project_server_the_wrapped_entry_runs_and_uninstall_restores_
     );
     assert_eq!(std::fs::read_to_string(&cfg).unwrap(), original);
 }
+
+/// Runs `mcp-proxy` on the home, sends one `write_file` call (policy: Ask) and resolves the
+/// approval from the outside (`resolve`: Some(true) approve, Some(false) deny, None leave it).
+fn ask_round(
+    name: &str,
+    resolve: Option<bool>,
+    ask_timeout: u32,
+) -> (serde_json::Value, String, Vec<serde_json::Value>) {
+    let d = tmpdir(name);
+    let home = d.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    std::fs::write(
+        home.join("policy.toml"),
+        format!("ask_timeout_seconds = {ask_timeout}\n"),
+    )
+    .unwrap();
+    let server_log = d.join("server.log");
+    let mut child = Command::new(BIN)
+        .args(["mcp-proxy", "--home"])
+        .arg(&home)
+        .args(["--client", "t", "--server", "fake", "--"])
+        .arg(fake_server())
+        .arg(&server_log)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut si = child.stdin.take().unwrap();
+    writeln!(si, r#"{{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{{"name":"write_file","arguments":{{"path":"/tmp/x","content":"hi"}}}}}}"#).unwrap();
+    si.flush().unwrap();
+    // wait for the pending approval to show up, then resolve it like a user would
+    let mut id = None;
+    for _ in 0..100 {
+        let o = Command::new(BIN)
+            .arg("approvals")
+            .arg("--home")
+            .arg(&home)
+            .output()
+            .unwrap();
+        let text = String::from_utf8_lossy(&o.stdout).into_owned();
+        if let Some(first) = text.lines().next() {
+            id = first.split_whitespace().next().map(str::to_owned);
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    let id = id.expect("the proxy never asked for approval");
+    assert!(id.starts_with("ask-"));
+    if let Some(approve) = resolve {
+        let verb = if approve { "approve" } else { "deny" };
+        let o = Command::new(BIN)
+            .args([verb, &id, "--home"])
+            .arg(&home)
+            .output()
+            .unwrap();
+        assert_eq!(
+            o.status.code(),
+            Some(0),
+            "{}",
+            String::from_utf8_lossy(&o.stderr)
+        );
+        // a second resolution of the same approval is refused
+        let again = Command::new(BIN)
+            .args(["approve", &id, "--home"])
+            .arg(&home)
+            .output()
+            .unwrap();
+        assert_eq!(again.status.code(), Some(1));
+    }
+    drop(si);
+    let out = child.wait_with_output().unwrap();
+    let reply: serde_json::Value = String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .filter_map(|l| serde_json::from_str::<serde_json::Value>(l).ok())
+        .find(|v| v["id"] == 7)
+        .unwrap_or_else(|| panic!("no reply: {}", String::from_utf8_lossy(&out.stderr)));
+    let served = std::fs::read_to_string(&server_log).unwrap_or_default();
+    let audit: Vec<serde_json::Value> = std::fs::read_to_string(home.join("audit.jsonl"))
+        .unwrap_or_default()
+        .lines()
+        .map(|l| serde_json::from_str(l).unwrap())
+        .collect();
+    // the approval record is gone afterwards: it is single use
+    assert!(
+        Command::new(BIN)
+            .arg("approvals")
+            .arg("--home")
+            .arg(&home)
+            .output()
+            .unwrap()
+            .stdout
+            .is_empty(),
+        "approval record left behind"
+    );
+    (reply, served, audit)
+}
+
+#[test]
+fn ask_approved_from_outside_runs_once_and_is_audited() {
+    let (reply, served, audit) = ask_round("ask-yes", Some(true), 20);
+    assert!(!blocked(&reply), "{reply}");
+    assert!(served.contains("write_file"), "{served}");
+    let last = audit.last().unwrap();
+    assert_eq!(last["verdict"], "ALLOW");
+    assert_eq!(last["executed"], true);
+    assert!(
+        last["reason"].as_str().unwrap().contains("approved"),
+        "{last}"
+    );
+}
+
+#[test]
+fn ask_denied_from_outside_is_refused_and_never_runs() {
+    let (reply, served, audit) = ask_round("ask-no", Some(false), 20);
+    assert!(blocked(&reply), "{reply}");
+    assert!(!served.contains("write_file"), "{served}");
+    assert_eq!(audit.last().unwrap()["verdict"], "DENY");
+    assert_eq!(audit.last().unwrap()["executed"], false);
+}
+
+#[test]
+fn ask_nobody_answers_expires_and_is_refused() {
+    let (reply, served, audit) = ask_round("ask-timeout", None, 1);
+    assert!(blocked(&reply), "{reply}");
+    assert!(!served.contains("write_file"), "{served}");
+    assert_eq!(audit.last().unwrap()["verdict"], "DENY");
+}
+
+#[test]
+fn approval_ids_cannot_name_other_files() {
+    let d = tmpdir("approve-id");
+    for bad in ["../x", "a/b", r"a\b", "", "x.json"] {
+        let o = Command::new(BIN)
+            .args(["approve", bad, "--home"])
+            .arg(&d)
+            .output()
+            .unwrap();
+        assert_ne!(o.status.code(), Some(0), "{bad:?}");
+    }
+}
+
+#[test]
+fn a_planted_approval_does_not_pre_approve_a_call() {
+    // Someone who can write the approvals directory plants an approved record for the exact
+    // id before the proxy asks. The proxy replaces it with a pending one and waits for a real
+    // decision (here: none, so the call expires and is refused).
+    let d = tmpdir("planted");
+    let home = d.join("home");
+    std::fs::create_dir_all(home.join("approvals")).unwrap();
+    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 1\n").unwrap();
+    let server_log = d.join("server.log");
+    let start = |planted: Option<&str>| {
+        if let Some(id) = planted {
+            std::fs::write(
+                home.join("approvals").join(format!("{id}.json")),
+                format!(r#"{{"id":"{id}","server":"fake","tool":"write_file","reason":"x","state":"approved","created_unix":1}}"#),
+            )
+            .unwrap();
+        }
+        let mut child = Command::new(BIN)
+            .args(["mcp-proxy", "--home"])
+            .arg(&home)
+            .args(["--client", "t", "--server", "fake", "--"])
+            .arg(fake_server())
+            .arg(&server_log)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let mut si = child.stdin.take().unwrap();
+        writeln!(si, r#"{{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{{"name":"write_file","arguments":{{"path":"/tmp/x","content":"hi"}}}}}}"#).unwrap();
+        si.flush().unwrap();
+        let mut id = None;
+        for _ in 0..100 {
+            let o = Command::new(BIN)
+                .arg("approvals")
+                .arg("--home")
+                .arg(&home)
+                .output()
+                .unwrap();
+            if let Some(first) = String::from_utf8_lossy(&o.stdout).lines().next() {
+                id = first.split_whitespace().next().map(str::to_owned);
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(30));
+        }
+        drop(si);
+        let out = child.wait_with_output().unwrap();
+        (id, String::from_utf8_lossy(&out.stdout).into_owned())
+    };
+    // first run only to learn the deterministic id of this exact call
+    let (id, _) = start(None);
+    let id = id.expect("no approval requested");
+    // second run with a planted approved record for that id
+    let (_, stdout) = start(Some(&id));
+    assert!(
+        stdout.contains("isError"),
+        "planted approval let the call through: {stdout}"
+    );
+    assert!(
+        !std::fs::read_to_string(&server_log)
+            .unwrap_or_default()
+            .contains("write_file")
+    );
+}
+
+#[test]
+fn garbage_approval_records_never_approve() {
+    let d = tmpdir("garbage");
+    let dir = d.join("approvals");
+    std::fs::create_dir_all(&dir).unwrap();
+    for (i, body) in ["", "not json", "{}", r#"{"state":"approved"}"#, "[1]"]
+        .iter()
+        .enumerate()
+    {
+        std::fs::write(dir.join(format!("ask-{i}.json")), body).unwrap();
+        // none of these is a pending approval to resolve, and listing never panics
+        let o = Command::new(BIN)
+            .args(["approve", &format!("ask-{i}"), "--home"])
+            .arg(&d)
+            .output()
+            .unwrap();
+        assert_eq!(o.status.code(), Some(1), "{body:?}");
+    }
+    let o = Command::new(BIN)
+        .arg("approvals")
+        .arg("--home")
+        .arg(&d)
+        .output()
+        .unwrap();
+    assert!(o.stdout.is_empty());
+}

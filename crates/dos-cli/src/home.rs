@@ -16,6 +16,9 @@ impl Home {
     pub fn audit(&self) -> PathBuf {
         self.0.join("audit.jsonl")
     }
+    pub fn approvals(&self) -> PathBuf {
+        self.0.join("approvals")
+    }
     pub fn lock(&self) -> PathBuf {
         self.0.join("locks").join("audit.lock")
     }
