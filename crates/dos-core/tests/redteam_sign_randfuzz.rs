@@ -8,9 +8,7 @@
 
 use curve25519_dalek::edwards::CompressedEdwardsY;
 use curve25519_dalek::scalar::Scalar;
-use dos_core::sign::{
-    Domain, Kid, Signature, SigningKey, VerifyingKey, hex_decode, hex_encode,
-};
+use dos_core::sign::{Domain, Kid, Signature, SigningKey, VerifyingKey, hex_decode, hex_encode};
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
@@ -27,7 +25,11 @@ impl Rng {
         (self.next() >> 32) as u8
     }
     fn below(&mut self, n: usize) -> usize {
-        if n == 0 { 0 } else { (self.next() % n as u64) as usize }
+        if n == 0 {
+            0
+        } else {
+            (self.next() % n as u64) as usize
+        }
     }
     fn bytes(&mut self, n: usize) -> Vec<u8> {
         (0..n).map(|_| self.byte()).collect()
@@ -76,9 +78,14 @@ fn mutate(rng: &mut Rng, base: &[u8]) -> Vec<u8> {
                 v.truncate(n);
             }
             _ => {
-                let interesting = [0u8, 0x7f, 0x80, 0xff, 0xed, 0xec, 0x10, b'0', b'a', b'f', b'g', b'A'];
+                let interesting = [
+                    0u8, 0x7f, 0x80, 0xff, 0xed, 0xec, 0x10, b'0', b'a', b'f', b'g', b'A',
+                ];
                 let i = rng.below(v.len() + 1);
-                let b = interesting.get(rng.below(interesting.len())).copied().unwrap_or(0);
+                let b = interesting
+                    .get(rng.below(interesting.len()))
+                    .copied()
+                    .unwrap_or(0);
                 v.insert(i, b);
             }
         }
@@ -242,7 +249,12 @@ fn run(target: &str, seed: u64, max_len: usize, case: fn(&[u8])) {
 #[test]
 #[ignore = "time-bounded fuzz; run with --ignored"]
 fn randfuzz_sign_from_bytes() {
-    run("sign_from_bytes", 0x0123_4567_89ab_cdef, 256, from_bytes_case);
+    run(
+        "sign_from_bytes",
+        0x0123_4567_89ab_cdef,
+        256,
+        from_bytes_case,
+    );
 }
 
 #[test]
@@ -261,7 +273,12 @@ fn randfuzz_sign_verify() {
 fn randfuzz_smoke() {
     // A short non-ignored pass so these invariants run in the normal suite.
     for (t, s, l, f) in [
-        ("sign_from_bytes", 1u64, 256usize, from_bytes_case as fn(&[u8])),
+        (
+            "sign_from_bytes",
+            1u64,
+            256usize,
+            from_bytes_case as fn(&[u8]),
+        ),
         ("sign_from_hex", 2, 200, from_hex_case),
         ("sign_verify", 3, 256, verify_case),
     ] {

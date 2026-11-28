@@ -150,7 +150,11 @@ fn runner_manifest(t: &Tmp, script: &str, required: &str, oracle: bool, extra: &
         ),
     );
     let mut cmd = Command::new(RUNNER);
-    cmd.arg("--vectors").arg(t.vectors()).arg("--manifest").arg(m).args(extra);
+    cmd.arg("--vectors")
+        .arg(t.vectors())
+        .arg("--manifest")
+        .arg(m)
+        .args(extra);
     started(run(cmd))
 }
 
@@ -179,7 +183,12 @@ fn selftest_only() -> String {
 fn rt_h1_redteam_lock_in_vectors_are_inert() {
     let t = Tmp::new();
     t.echo_vector("selftest", "a", "1", "1");
-    t.echo_vector("redteam", "impossible", "1", "\"this expected value is wrong\"");
+    t.echo_vector(
+        "redteam",
+        "impossible",
+        "1",
+        "\"this expected value is wrong\"",
+    );
     let o = runner_manifest(&t, &selftest_only(), "[\"selftest\"]", false, &[]);
     assert!(
         o.code != Some(0),
@@ -270,7 +279,11 @@ printf 'ok          t/a\nsummary: 1 cases (ok 1, FAIL 0, unsupported 0, MISSING 
     );
     let o = runner_sh(&t, &script, &[]);
     assert_eq!(o.code, Some(1), "{}", o.show());
-    let verdicts = o.stdout.lines().filter(|l| l.starts_with("result: ")).count();
+    let verdicts = o
+        .stdout
+        .lines()
+        .filter(|l| l.starts_with("result: "))
+        .count();
     let oks = o.stdout.lines().filter(|l| l.starts_with("ok ")).count();
     assert!(
         verdicts == 1 && oks == 0,
@@ -366,12 +379,21 @@ fn rt_h10_slow_loris_hits_overall_timeout() {
 #[test]
 fn rt_h11_framing_attacks_fail() {
     let lines: &[(&str, &str)] = &[
-        ("two answers on one line", r#"{"name":"a","output":{"ok":1}}{"name":"b","output":{"ok":1}}"#),
+        (
+            "two answers on one line",
+            r#"{"name":"a","output":{"ok":1}}{"name":"b","output":{"ok":1}}"#,
+        ),
         ("BOM", "\u{feff}{\"name\":\"a\",\"output\":{\"ok\":1}}"),
         ("NUL", "{\"name\":\"a\",\"output\":{\"ok\":1}}\u{0}"),
         ("answer for b at a", r#"{"name":"b","output":{"ok":1}}"#),
-        ("echo of the request", r#"{"area":"t","name":"a","input":{"op":"echo","value":1}}"#),
-        ("CR only", "{\"name\":\"a\",\"output\":{\"ok\":1}}\r{\"name\":\"b\",\"output\":{\"ok\":1}}"),
+        (
+            "echo of the request",
+            r#"{"area":"t","name":"a","input":{"op":"echo","value":1}}"#,
+        ),
+        (
+            "CR only",
+            "{\"name\":\"a\",\"output\":{\"ok\":1}}\r{\"name\":\"b\",\"output\":{\"ok\":1}}",
+        ),
     ];
     for (what, line) in lines {
         let t = Tmp::new();
@@ -437,7 +459,10 @@ fn rt_h13_junction_area_is_an_error() {
         .arg(&link)
         .arg(&outside)
         .output();
-    assert!(o.map(|o| o.status.success()).unwrap_or(false), "mklink /J failed");
+    assert!(
+        o.map(|o| o.status.success()).unwrap_or(false),
+        "mklink /J failed"
+    );
     let o = runner_sh(&t, &selftest_only(), &[]);
     assert_eq!(o.code, Some(2), "{}", o.show());
 }
@@ -513,7 +538,10 @@ fn changed_since_repo() -> Tmp {
         "{\n  \"v\": 1,\n  \"area\": \"selftest\",\n  \"name\": \"a\",\n  \"input\": {\"op\": \"echo\", \"value\": 1},\n  \"expected\": {\"ok\": 1},\n  \"source\": \"rt\"\n}\n",
     );
     t.file(".gitignore", "fakebin/\n");
-    t.file("fakebin/cargo", "#!/bin/sh\necho FAKE-CARGO \"$@\"\nexit 1\n");
+    t.file(
+        "fakebin/cargo",
+        "#!/bin/sh\necho FAKE-CARGO \"$@\"\nexit 1\n",
+    );
     git(&t, &["init", "-q"]);
     git(&t, &["add", "-A"]);
     git(&t, &["commit", "-q", "-m", "base"]);
@@ -522,14 +550,24 @@ fn changed_since_repo() -> Tmp {
 
 fn git(t: &Tmp, args: &[&str]) {
     let s = Command::new("git")
-        .args(["-c", "user.name=rt", "-c", "user.email=rt@example.invalid", "-c", "core.autocrlf=false"])
+        .args([
+            "-c",
+            "user.name=rt",
+            "-c",
+            "user.email=rt@example.invalid",
+            "-c",
+            "core.autocrlf=false",
+        ])
         .args(args)
         .current_dir(t.path())
         .env_remove("GIT_DIR")
         .env_remove("GIT_WORK_TREE")
         .env_remove("GIT_INDEX_FILE")
         .output();
-    assert!(s.as_ref().map(|o| o.status.success()).unwrap_or(false), "git {args:?}: {s:?}");
+    assert!(
+        s.as_ref().map(|o| o.status.success()).unwrap_or(false),
+        "git {args:?}: {s:?}"
+    );
 }
 
 fn changed_since(t: &Tmp, base: &str) -> Out {
@@ -569,7 +607,11 @@ fn rt_h3_changed_since_control_new_vector_runs() {
     let base = base_rev(&t);
     t.file("conformance/vectors/selftest/b.json", "{}");
     let o = changed_since(&t, &base);
-    assert!(o.stdout.contains("FAKE-CARGO") || o.stderr.contains("FAKE-CARGO"), "{}", o.show());
+    assert!(
+        o.stdout.contains("FAKE-CARGO") || o.stderr.contains("FAKE-CARGO"),
+        "{}",
+        o.show()
+    );
 }
 
 #[test]
@@ -602,5 +644,8 @@ fn rt_h3_changed_since_gitattributes() {
     let t = changed_since_repo();
     let base = base_rev(&t);
     t.file(".gitattributes", "*.json text eol=crlf\n");
-    assert_not_skipped(".gitattributes (vectors become CRLF on checkout)", &changed_since(&t, &base));
+    assert_not_skipped(
+        ".gitattributes (vectors become CRLF on checkout)",
+        &changed_since(&t, &base),
+    );
 }

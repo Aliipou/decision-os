@@ -35,7 +35,10 @@ fn rt_numbers_equal_forms() {
         ("1e999999999999999", "10e999999999999998"),
         ("1e-999999999999999", "0.1e-999999999999998"),
         ("-1.5", "-15e-1"),
-        ("123456789012345678901234567890", "1.2345678901234567890123456789e29"),
+        (
+            "123456789012345678901234567890",
+            "1.2345678901234567890123456789e29",
+        ),
     ];
     for (a, b) in equal {
         assert_eq!(p(a), p(b), "{a} == {b}");
@@ -75,7 +78,21 @@ fn rt_number_limits() {
     ] {
         assert_eq!(kind(bad), Some(ErrorKind::NumberRange), "{bad}");
     }
-    for bad in ["01", "-", "1.", ".1", "+1", "1e", "1e+", "--1", "0x10", "1_0", "NaN", "Infinity", "-Infinity"] {
+    for bad in [
+        "01",
+        "-",
+        "1.",
+        ".1",
+        "+1",
+        "1e",
+        "1e+",
+        "--1",
+        "0x10",
+        "1_0",
+        "NaN",
+        "Infinity",
+        "-Infinity",
+    ] {
         assert!(json::parse(bad).is_err(), "{bad}");
     }
 }
@@ -113,7 +130,10 @@ fn rt_duplicate_keys_via_escapes_refused_at_depth() {
 
 #[test]
 fn rt_key_order_and_lossy_keys() {
-    assert_eq!(p(r#"{"a":1,"b":[1,{"c":2,"d":3}]}"#), p(r#"{"b":[1,{"d":3,"c":2}],"a":1}"#));
+    assert_eq!(
+        p(r#"{"a":1,"b":[1,{"c":2,"d":3}]}"#),
+        p(r#"{"b":[1,{"d":3,"c":2}],"a":1}"#)
+    );
     // Two objects whose keys differ only by lone surrogates must not compare equal.
     assert_ne!(p(r#"{"\ud800":1}"#), p(r#"{"\ud801":1}"#));
     // A response whose key is a lone surrogate must not satisfy exact_keys.
@@ -123,7 +143,15 @@ fn rt_key_order_and_lossy_keys() {
 
 #[test]
 fn rt_types_never_cross() {
-    for (a, b) in [("1", "true"), ("0", "false"), ("null", "0"), ("\"1\"", "1"), ("[]", "{}"), ("[1]", "1"), ("\"\"", "null")] {
+    for (a, b) in [
+        ("1", "true"),
+        ("0", "false"),
+        ("null", "0"),
+        ("\"1\"", "1"),
+        ("[]", "{}"),
+        ("[1]", "1"),
+        ("\"\"", "null"),
+    ] {
         assert_ne!(p(a), p(b), "{a} != {b}");
     }
 }

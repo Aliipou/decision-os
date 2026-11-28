@@ -52,7 +52,10 @@ fn rt_h1_every_code_point_around_a_wire_string_is_deny() {
                 let got = parse(&buf);
                 assert_eq!(got, want(&buf), "parse({buf:?})");
                 if got.is_permitting() {
-                    assert!(buf == "ALLOW" || buf == "LIMIT" || buf == "CONTAIN", "{buf:?}");
+                    assert!(
+                        buf == "ALLOW" || buf == "LIMIT" || buf == "CONTAIN",
+                        "{buf:?}"
+                    );
                 }
                 checked += 1;
             }
@@ -69,7 +72,13 @@ fn rt_h1_case_variants() {
             let s: String = w
                 .chars()
                 .enumerate()
-                .map(|(i, c)| if mask & (1 << i) != 0 { c.to_ascii_lowercase() } else { c })
+                .map(|(i, c)| {
+                    if mask & (1 << i) != 0 {
+                        c.to_ascii_lowercase()
+                    } else {
+                        c
+                    }
+                })
                 .collect();
             assert_eq!(parse(&s), want(&s), "{s:?}");
         }
@@ -99,15 +108,15 @@ fn rt_h1_confusables_and_normalization_forms() {
         "\u{1d400}\u{1d40b}\u{1d40b}\u{1d40e}\u{1d416}", // math bold, NFKC -> ALLOW
         "\u{24b6}\u{24c1}\u{24c1}\u{24c4}\u{24cc}", // circled letters
         "\u{e0041}\u{e004c}\u{e004c}\u{e004f}\u{e0057}", // tag characters
-        "A\u{34f}LLOW",                              // combining grapheme joiner
-        "AL\u{ad}LOW",                               // soft hyphen
-        "ALL\u{2060}OW",                             // word joiner
-        "\u{202e}WOLLA",                             // RTL override + reversed
-        "ALLOW\u{fe0f}",                             // variation selector
-        "LIM\u{131}T",                               // dotless i
-        "\u{1e9e}",                                  // capital sharp s
-        "\u{212a}",                                  // Kelvin sign (folds to k)
-        "\u{fffd}ALLOW",                             // lossy-decoder residue
+        "A\u{34f}LLOW",                             // combining grapheme joiner
+        "AL\u{ad}LOW",                              // soft hyphen
+        "ALL\u{2060}OW",                            // word joiner
+        "\u{202e}WOLLA",                            // RTL override + reversed
+        "ALLOW\u{fe0f}",                            // variation selector
+        "LIM\u{131}T",                              // dotless i
+        "\u{1e9e}",                                 // capital sharp s
+        "\u{212a}",                                 // Kelvin sign (folds to k)
+        "\u{fffd}ALLOW",                            // lossy-decoder residue
     ];
     for s in cases {
         assert_eq!(parse(s), Verdict::Deny, "{s:?}");
@@ -121,7 +130,10 @@ fn rt_h4_huge_iterators_keep_the_laws() {
     let allows = || std::iter::repeat_n(Verdict::Allow, N);
     assert_eq!(compose(allows()), Verdict::Allow);
     assert_eq!(compose(allows().chain([Verdict::Deny])), Verdict::Deny);
-    assert_eq!(compose([Verdict::Defer].into_iter().chain(allows())), Verdict::Defer);
+    assert_eq!(
+        compose([Verdict::Defer].into_iter().chain(allows())),
+        Verdict::Defer
+    );
     assert_eq!(compose_with(Verdict::Deny, allows()), Verdict::Deny);
     assert_eq!(compose_with(Verdict::Contain, allows()), Verdict::Contain);
 }
@@ -142,18 +154,26 @@ impl Iterator for Liar {
 #[test]
 fn rt_h4_lying_size_hint_is_ignored() {
     assert_eq!(compose(Liar(Some(Verdict::Deny))), Verdict::Deny);
-    assert_eq!(compose_with(Verdict::Allow, Liar(Some(Verdict::Defer))), Verdict::Defer);
+    assert_eq!(
+        compose_with(Verdict::Allow, Liar(Some(Verdict::Defer))),
+        Verdict::Defer
+    );
 }
 
 /// H4: a panicking iterator (caller code) unwinds out of compose; no verdict, and in
 /// particular no ALLOW, is produced. The caller must treat the unwind as DENY.
 #[test]
 fn rt_h4_panicking_iterator_yields_no_verdict() {
-    let it = [Verdict::Allow, Verdict::Allow].into_iter().chain(std::iter::from_fn(|| -> Option<Verdict> {
-        panic!("evaluator iterator exploded")
-    }));
+    let it = [Verdict::Allow, Verdict::Allow]
+        .into_iter()
+        .chain(std::iter::from_fn(|| -> Option<Verdict> {
+            panic!("evaluator iterator exploded")
+        }));
     let r = catch_unwind(AssertUnwindSafe(|| compose_with(Verdict::Allow, it)));
-    assert!(r.is_err(), "compose returned a verdict past a panicking iterator: {r:?}");
+    assert!(
+        r.is_err(),
+        "compose returned a verdict past a panicking iterator: {r:?}"
+    );
 }
 
 /// H7: derived Debug is not the wire string; reading Debug back through parse can only
@@ -171,7 +191,10 @@ fn rt_h7_debug_is_not_wire_and_fails_closed() {
 /// H12: derived Hash/Eq agree; a permitting set built from wire strings has exactly 3.
 #[test]
 fn rt_h12_hash_eq_consistent() {
-    let permitting: HashSet<Verdict> = Verdict::ALL.into_iter().filter(|v| v.is_permitting()).collect();
+    let permitting: HashSet<Verdict> = Verdict::ALL
+        .into_iter()
+        .filter(|v| v.is_permitting())
+        .collect();
     assert_eq!(permitting.len(), 3);
     for s in ["ALLOW", "LIMIT", "CONTAIN"] {
         assert!(permitting.contains(&parse(s)));

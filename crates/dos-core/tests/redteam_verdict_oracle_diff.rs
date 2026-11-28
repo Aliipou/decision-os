@@ -56,7 +56,10 @@ fn parse_and_meet_agree_with_oracle() -> Result<(), String> {
             diverge.push(format!("parse {ha}: rust {}, oracle {pa}", va.as_str()));
         }
         if meet(va, vb).as_str() != *m {
-            diverge.push(format!("meet {ha} {hb}: rust {}, oracle {m}", meet(va, vb).as_str()));
+            diverge.push(format!(
+                "meet {ha} {hb}: rust {}, oracle {m}",
+                meet(va, vb).as_str()
+            ));
         }
         // A lossy decoder (U+FFFD substitution) must not create a permission either.
         let lossy = parse(&String::from_utf16_lossy(&ua));
@@ -65,9 +68,21 @@ fn parse_and_meet_agree_with_oracle() -> Result<(), String> {
         }
         n += 1;
     }
-    println!("{n} pairs, {lone} with lone surrogates, {} divergences", diverge.len());
+    println!(
+        "{n} pairs, {lone} with lone surrogates, {} divergences",
+        diverge.len()
+    );
     assert!(n >= 1_000_000, "only {n} pairs");
     assert!(lone > 0, "no lone-surrogate inputs exercised");
-    assert!(diverge.is_empty(), "divergences:\n{}", diverge.iter().take(50).cloned().collect::<Vec<_>>().join("\n"));
+    assert!(
+        diverge.is_empty(),
+        "divergences:\n{}",
+        diverge
+            .iter()
+            .take(50)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join("\n")
+    );
     Ok(())
 }

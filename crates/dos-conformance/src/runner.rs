@@ -393,7 +393,11 @@ fn execute(cfg: &Config, cases: &[&Vector]) -> Session {
     while !ended {
         let (wait, _) = budget(cfg.case_timeout, deadline);
         let exited = matches!(child.try_wait(), Ok(Some(_)));
-        let step = if exited { Duration::from_millis(100) } else { wait.min(slice) };
+        let step = if exited {
+            Duration::from_millis(100)
+        } else {
+            wait.min(slice)
+        };
         match rx.recv_timeout(step) {
             Ok(Msg::Line(_) | Msg::Partial | Msg::TooLong) => s.extra += 1,
             Ok(Msg::Eof | Msg::ReadError(_)) | Err(RecvTimeoutError::Disconnected) => ended = true,

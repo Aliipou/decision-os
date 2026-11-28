@@ -22,8 +22,8 @@ fn rust_result(c: &Value) -> Result<(), SignError> {
 #[test]
 fn differential_rust_equals_spec_reference_and_is_never_looser_than_openssl() -> Result<(), String>
 {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../tests/redteam/sign_diff/cases.jsonl");
+    let path =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/redteam/sign_diff/cases.jsonl");
     let text = std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
     let mut n = 0usize;
     let mut spec_mismatch = Vec::new();

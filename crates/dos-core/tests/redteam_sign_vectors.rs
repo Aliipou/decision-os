@@ -27,7 +27,10 @@ fn redteam_sign_vectors_through_library_order() -> Result<(), String> {
         .map_err(|e| format!("{}: {e}", dir.display()))?
         .filter_map(|e| e.ok().map(|e| e.path()))
         .filter(|p| p.extension().is_some_and(|x| x == "json"))
-        .filter(|p| p.file_name().is_some_and(|n| n.to_string_lossy().starts_with("redteam-sign-")))
+        .filter(|p| {
+            p.file_name()
+                .is_some_and(|n| n.to_string_lossy().starts_with("redteam-sign-"))
+        })
         .collect();
     paths.sort();
     let mut n = 0;
@@ -49,7 +52,10 @@ fn redteam_sign_vectors_through_library_order() -> Result<(), String> {
             Err(e) => json!({"error": e.code()}),
         };
         if Some(&got) != v.get("expected") {
-            failures.push(format!("{name}: expected {:?} got {got}", v.get("expected")));
+            failures.push(format!(
+                "{name}: expected {:?} got {got}",
+                v.get("expected")
+            ));
         }
     }
     println!("{n} redteam sign vectors, {} failed", failures.len());

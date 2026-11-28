@@ -21,7 +21,9 @@ const L_LE: [u8; 32] = [
 ];
 
 fn test_key() -> Result<SigningKey, SignError> {
-    Ok(SigningKey::from_bytes(&hex_decode_array::<32>(TEST1_SECRET)?))
+    Ok(SigningKey::from_bytes(&hex_decode_array::<32>(
+        TEST1_SECRET,
+    )?))
 }
 
 fn concat_sig(r: &[u8; 32], s: &[u8; 32]) -> [u8; 64] {
@@ -280,7 +282,10 @@ fn h5_r_plus_torsion_and_r_encodings_never_verify() -> Result<(), SignError> {
             for e in all_encodings(&(rp + t)) {
                 let forged = concat_sig(&e, &s);
                 if let Ok(fs) = Signature::from_bytes(&forged) {
-                    assert_eq!(vk.verify(Domain::Decision, msg, &fs), Err(SignError::BadSignature));
+                    assert_eq!(
+                        vk.verify(Domain::Decision, msg, &fs),
+                        Err(SignError::BadSignature)
+                    );
                 }
             }
         }
@@ -288,7 +293,10 @@ fn h5_r_plus_torsion_and_r_encodings_never_verify() -> Result<(), SignError> {
         for e in all_encodings(&rp) {
             if e != r {
                 let fs = Signature::from_bytes(&concat_sig(&e, &s))?;
-                assert_eq!(vk.verify(Domain::Decision, msg, &fs), Err(SignError::BadSignature));
+                assert_eq!(
+                    vk.verify(Domain::Decision, msg, &fs),
+                    Err(SignError::BadSignature)
+                );
             }
         }
     }
@@ -409,7 +417,8 @@ fn h7_kid_matches_spec_formula_and_binds_key() -> Result<(), SignError> {
 /// `kid_mismatch`. (The conformance test had to re-implement the kid check by
 /// hand before parsing the signature.) Expected to FAIL on bc9a265.
 #[test]
-fn h17_wrong_kid_with_non_canonical_s_through_public_api_is_kid_mismatch() -> Result<(), SignError> {
+fn h17_wrong_kid_with_non_canonical_s_through_public_api_is_kid_mismatch() -> Result<(), SignError>
+{
     let sk = test_key()?;
     let vk = sk.verifying_key();
     let wrong = Kid::from_bytes(&[0u8; 16]);
@@ -420,7 +429,11 @@ fn h17_wrong_kid_with_non_canonical_s_through_public_api_is_kid_mismatch() -> Re
     let sig_hex = hex_encode(&sig);
     // The wire path applies the spec order: kid before the signature is parsed.
     let got = vk.verify_wire(Domain::Decision, b"x", Some(&wrong.to_hex()), &sig_hex);
-    assert_eq!(got, Err(SignError::KidMismatch), "spec check order: kid before S");
+    assert_eq!(
+        got,
+        Err(SignError::KidMismatch),
+        "spec check order: kid before S"
+    );
     // The two-step typed path still refuses the signature first (documented on verify_wire).
     let typed = Signature::from_hex(&sig_hex)
         .and_then(|s| vk.verify_with_kid(Domain::Decision, b"x", &s, &wrong));
@@ -433,19 +446,43 @@ fn h17_wrong_kid_with_non_canonical_s_through_public_api_is_kid_mismatch() -> Re
 #[test]
 fn h9_hex_rejects_every_non_lowercase_form() {
     let bad = [
-        "0A", "A0", "0x00", "0X00", "+0", "-0", " 0", "0 ", "00\n", "\t0", "0\u{0}",
+        "0A",
+        "A0",
+        "0x00",
+        "0X00",
+        "+0",
+        "-0",
+        " 0",
+        "0 ",
+        "00\n",
+        "\t0",
+        "0\u{0}",
         "\u{ff10}\u{ff10}", // fullwidth digits
         "\u{0660}\u{0660}", // arabic-indic digits
         "\u{00e9}",         // 2 bytes, one char
-        "g0", "0g", "z", "..", "0_", "1,", "\u{1d7ce}0", "%0", "ab\r",
+        "g0",
+        "0g",
+        "z",
+        "..",
+        "0_",
+        "1,",
+        "\u{1d7ce}0",
+        "%0",
+        "ab\r",
     ];
     for s in bad {
         assert_eq!(hex_decode(s), Err(SignError::BadHex), "{s:?}");
     }
     // Odd length with valid chars is bad_hex, not bad_length.
     assert_eq!(Kid::from_hex(&"0".repeat(31)), Err(SignError::BadHex));
-    assert_eq!(Signature::from_hex(&"0".repeat(127)), Err(SignError::BadHex));
-    assert_eq!(VerifyingKey::from_hex(&"0".repeat(63)), Err(SignError::BadHex));
+    assert_eq!(
+        Signature::from_hex(&"0".repeat(127)),
+        Err(SignError::BadHex)
+    );
+    assert_eq!(
+        VerifyingKey::from_hex(&"0".repeat(63)),
+        Err(SignError::BadHex)
+    );
     // Every accepted string is exactly the canonical encoding of its bytes.
     for b in 0u8..=255 {
         for c in 0u8..=255 {
@@ -490,7 +527,10 @@ fn h11_debug_does_not_print_secret_or_expanded_secret() -> Result<(), SignError>
     let h = Sha512::digest(secret);
     let mut needles: Vec<String> = vec![hex_encode(&secret), hex_encode(h.as_slice())];
     // Decimal and hex byte lists as printed by derived Debug of arrays.
-    for chunk in [secret.get(..4), h.get(..4), h.get(32..36)].into_iter().flatten() {
+    for chunk in [secret.get(..4), h.get(..4), h.get(32..36)]
+        .into_iter()
+        .flatten()
+    {
         needles.push(format!("{chunk:?}").trim_matches(['[', ']']).to_string());
         needles.push(hex_encode(chunk));
     }
