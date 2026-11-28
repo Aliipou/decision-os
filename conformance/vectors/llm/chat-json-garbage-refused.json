@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-garbage-refused",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body": "{not json",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "error": "unparseable_body"
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_unparseable_model_response_is_not_delivered"
+}

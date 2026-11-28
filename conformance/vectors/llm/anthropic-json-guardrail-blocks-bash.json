@@ -1,0 +1,45 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "anthropic-json-guardrail-blocks-bash",
+  "input": {
+    "shape": "anthropic",
+    "stream": false,
+    "body": "{\"id\": \"m1\", \"type\": \"message\", \"role\": \"assistant\", \"model\": \"claude-x\", \"stop_reason\": \"tool_use\", \"content\": [{\"type\": \"text\", \"text\": \"Cleaning up.\"}, {\"type\": \"tool_use\", \"id\": \"tu1\", \"name\": \"Bash\", \"input\": {\"command\": \"rm -rf /\"}}]}",
+    "model": "claude-x",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"m1\", \"type\": \"message\", \"role\": \"assistant\", \"model\": \"claude-x\", \"stop_reason\": \"end_turn\", \"content\": [{\"type\": \"text\", \"text\": \"Cleaning up.\"}, {\"type\": \"text\", \"text\": \"[Decision OS] Blocked the `Bash` tool call: guardrail: recursive delete of / or home\"}]}",
+      "calls": [
+        [
+          "Bash",
+          {
+            "command": "rm -rf /"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_anthropic_guardrail_blocks_catastrophic_bash"
+}

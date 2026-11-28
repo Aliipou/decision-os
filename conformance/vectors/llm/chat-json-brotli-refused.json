@@ -1,0 +1,35 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-brotli-refused",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body_b64": "CwKAe30D",
+    "content_encoding": "br",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "error": "unsupported_encoding"
+  },
+  "source": "spec: fail closed on unknown encodings"
+}

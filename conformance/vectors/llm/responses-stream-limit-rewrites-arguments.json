@@ -1,0 +1,45 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-stream-limit-rewrites-arguments",
+  "input": {
+    "shape": "responses",
+    "stream": true,
+    "body": "event: response.created\ndata: {\"type\": \"response.created\", \"sequence_number\": 0, \"response\": {\"id\": \"r2\", \"output\": []}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"sequence_number\": 1, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"\"}}\n\nevent: response.function_call_arguments.delta\ndata: {\"type\": \"response.function_call_arguments.delta\", \"sequence_number\": 2, \"output_index\": 0, \"item_id\": \"fc1\", \"delta\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"hunter2\\\"}\"}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 3, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"hunter2\\\"}\"}}\n\nevent: response.completed\ndata: {\"type\": \"response.completed\", \"sequence_number\": 4, \"response\": {\"id\": \"r2\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"hunter2\\\"}\"}]}}\n\n",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "event: response.created\ndata: {\"type\": \"response.created\", \"sequence_number\": 0, \"response\": {\"id\": \"r2\", \"output\": []}}\n\nevent: response.output_item.added\ndata: {\"type\": \"response.output_item.added\", \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"[REDACTED]\\\"}\", \"status\": \"in_progress\"}, \"sequence_number\": 1}\n\nevent: response.output_item.done\ndata: {\"type\": \"response.output_item.done\", \"sequence_number\": 2, \"output_index\": 0, \"item\": {\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"[REDACTED]\\\"}\"}}\n\nevent: response.completed\ndata: {\"type\": \"response.completed\", \"sequence_number\": 3, \"response\": {\"id\": \"r2\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"send_email\", \"arguments\": \"{\\\"to\\\": \\\"a@b.c\\\", \\\"password\\\": \\\"[REDACTED]\\\"}\"}]}}\n\n",
+      "calls": [
+        [
+          "send_email",
+          {
+            "to": "a@b.c",
+            "password": "hunter2"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle stream_responses transformed-item path"
+}

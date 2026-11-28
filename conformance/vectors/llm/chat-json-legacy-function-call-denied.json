@@ -1,0 +1,44 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-legacy-function-call-denied",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body": "{\"id\": \"c3\", \"object\": \"chat.completion\", \"choices\": [{\"index\": 0, \"finish_reason\": \"function_call\", \"message\": {\"role\": \"assistant\", \"content\": null, \"function_call\": {\"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"me/x\\\"}\"}}}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"c3\", \"object\": \"chat.completion\", \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\"}}]}",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "repo": "me/x"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle gate_chat_completion legacy function_call path"
+}

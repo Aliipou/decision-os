@@ -1,0 +1,45 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-stream-unparseable-chunk-refused",
+  "input": {
+    "shape": "chat",
+    "stream": true,
+    "body": "data: {\"id\":\"x\",\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"t\",\"type\":\"function\",\"function\":{\"name\":\"delete_repo\",\"arguments\":\"{}\"}}]},\"finish_reason\":null}],\"z\":NaN}\n\ndata: [DONE]\n\n",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "error": "malformed_stream"
+  },
+  "oracle_expected": {
+    "ok": {
+      "body": "data: {\"id\": \"x\", \"object\": \"chat.completion.chunk\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"x\", \"object\": \"chat.completion.chunk\", \"choices\": [{\"index\": 0, \"delta\": {}, \"finish_reason\": \"stop\"}]}\n\ndata: [DONE]\n\n",
+      "calls": [
+        [
+          "delete_repo",
+          {}
+        ]
+      ]
+    }
+  },
+  "source": "red team: Python clients parse NaN, the oracle relays the unparseable chunk raw; Rust fails closed"
+}
