@@ -112,3 +112,15 @@ Options:
 3. Scope the supply-chain job to the Rust crates and keep oracles out of it.
 
 Recommended: 1 if the oracle's tests pass on 49.0.6, else 2 with a 30-day expiry.
+
+## E10 (dos-audit red team 2): S0 found and fixed, three decisions for Ali (E-A1, E-A2, E-A3)
+
+Raised 2026-11-27 from `findings/audit-redteam2.md` (independent red team, 34 tests).
+
+**R2-1 (S0), fixed:** `append` re-read only the last line and overwrote the anchor, so an attacker who could write the log could delete the last entries (or wipe the file) and the next normal append hid it; strict verification with the anchor then passed. Fix: the sink checks the log against the anchor before every append (truncated, wiped, replaced or forged logs are refused; a log longer than the anchor must verify in full with the sink's own key), chains the last line to its predecessor, and rolls the entry back if the anchor cannot be published. Permanent tests: `h01*`, `h02`, `h05*`, `h06*`. No decision needed unless you disagree with the fix.
+
+Open decisions (accepted limits, their tests are `#[ignore]` with this reference, not deleted):
+
+- **E-A1:** a key holder or file-level attacker who rolls back log AND anchor together to an older matching pair, or substitutes a log and anchor from another log under the same key, is undetectable with the file anchor (a02b, a03b, h04). Only an external anchor (WORM store, another host, a transparency log) closes it. Decide where the anchor goes before production. Also: an empty log without an anchor (never used, or wiped with the anchor deleted) cannot be told apart; verification with an anchor file now fails closed (`anchor_missing`).
+- **E-A2:** two paths to one log through a hard link get two lock files and can fork the chain (h07). Closing it needs file identity (`unsafe` or a new dependency); `dos-audit` has no `unsafe`. Operators must use one canonical path.
+- **E-A3:** `--python-compat` accepts unsigned oracle logs by design, so without an anchor a keyless forged oracle-format log passes that mode (a04, CLI part). The sink refuses to extend such a log unless `adopt_unanchored(true)` is set, and after the first Rust append all writers must be Rust (the sink verifies everything after the anchor as signed).

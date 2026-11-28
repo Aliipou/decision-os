@@ -192,6 +192,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-cli"
+version = "0.1.0"
+dependencies = [
+ "dos-audit",
+ "dos-core",
+ "dos-decision",
+ "dos-exec",
+ "dos-install",
+ "getrandom",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "dos-conformance"
 version = "0.1.0"
 dependencies = [
@@ -234,6 +248,8 @@ dependencies = [
 name = "dos-exec"
 version = "0.1.0"
 dependencies = [
+ "dos-audit",
+ "dos-core",
  "serde",
  "serde_json",
 ]

@@ -118,7 +118,7 @@ pub fn verify_file_with_anchor_file(
     let anchor = read_anchor_file(anchor_path, opts.keys, opts.now_unix_ms)?;
     opts.anchor = anchor;
     let v = verify_file(path, &opts)?;
-    if opts.anchor.is_none() && v.entries > 0 {
+    if opts.anchor.is_none() {
         return Err(VerifyError {
             line: None,
             kind: VerifyErrorKind::AnchorMissing,
@@ -149,13 +149,11 @@ pub fn verify_bytes(bytes: &[u8], opts: &VerifyOptions<'_>) -> Result<Verified, 
             return Err(err(this, VerifyErrorKind::PartialLine));
         }
         let hash = verify_line(line, count, &prev, opts, this)?;
-        if let Some(a) = &opts.anchor {
-            if a.seq == count as u64 {
-                if a.entry_hash != hash {
-                    return Err(err(this, VerifyErrorKind::AnchorMismatch));
-                }
-                anchor_hit = true;
+        if let Some(a) = opts.anchor.as_ref().filter(|a| a.seq == count as u64) {
+            if a.entry_hash != hash {
+                return Err(err(this, VerifyErrorKind::AnchorMismatch));
             }
+            anchor_hit = true;
         }
         prev = hash;
         count += 1;
@@ -196,13 +194,16 @@ fn verify_line(
     }
     let stored = str_field(&m, "entry_hash").ok_or_else(|| err(n, VerifyErrorKind::Malformed))?;
     let jcs_ok = hash_of(&m).map_err(|_| err(n, VerifyErrorKind::Malformed))? == stored;
-    let legacy_ok =
-        opts.python_compat && legacy_hash_of(&m).as_deref() == Some(stored);
+    let legacy_ok = opts.python_compat && legacy_hash_of(&m).as_deref() == Some(stored);
     if !jcs_ok && !legacy_ok {
         return Err(err(n, VerifyErrorKind::HashMismatch));
     }
     match str_field(&m, "sig") {
-        None if opts.python_compat && str_field(&m, "kid").is_none() => {}
+        // Unsigned entries are only tolerated in compat mode, and never after the anchored head
+        // (everything written after the anchor was written by a signing sink).
+        None if opts.python_compat
+            && str_field(&m, "kid").is_none()
+            && !opts.anchor.as_ref().is_some_and(|a| index as u64 > a.seq) => {}
         None => return Err(err(n, VerifyErrorKind::MissingSignature)),
         Some(sig_hex) => {
             let bad = || err(n, VerifyErrorKind::BadSignature);

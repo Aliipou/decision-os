@@ -7,6 +7,7 @@
 //! verify the other's log (see `VerifyOptions::python_compat`).
 
 mod anchor;
+pub mod cli;
 mod entry;
 mod sink;
 mod verify;

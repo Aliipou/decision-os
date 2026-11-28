@@ -1,4 +1,9 @@
-﻿#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::indexing_slicing)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing
+)]
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -30,7 +35,12 @@ fn tmp(name: &str) -> PathBuf {
 }
 
 fn opts(keys: &Keys) -> VerifyOptions<'_> {
-    VerifyOptions { keys, now_unix_ms: 0, python_compat: false, anchor: None }
+    VerifyOptions {
+        keys,
+        now_unix_ms: 0,
+        python_compat: false,
+        anchor: None,
+    }
 }
 
 fn kind(r: Result<Verified, VerifyError>) -> VerifyErrorKind {
@@ -48,7 +58,11 @@ fn fill(path: &Path, n: usize) -> FileSink {
 }
 
 fn lines(path: &Path) -> Vec<String> {
-    std::fs::read_to_string(path).unwrap().lines().map(String::from).collect()
+    std::fs::read_to_string(path)
+        .unwrap()
+        .lines()
+        .map(String::from)
+        .collect()
 }
 
 fn write_lines(path: &Path, l: &[String]) {
@@ -87,14 +101,23 @@ fn empty_log_verifies() {
     let p = tmp("empty");
     let keys = keys_for(&SECRET);
     let _s = FileSink::open(&p, &SECRET).unwrap();
-    assert_eq!(full(&p, &keys).unwrap().entries, 0);
+    assert_eq!(verify_file(&p, &opts(&keys)).unwrap().entries, 0);
+    // With the anchor demanded, an empty log is refused: it cannot be told from a wiped one.
+    assert_eq!(kind(full(&p, &keys)), VerifyErrorKind::AnchorMissing);
 }
 
 #[test]
 fn refuses_reserved_and_bad_input() {
     let p = tmp("bad");
     let s = FileSink::open(&p, &SECRET).unwrap();
-    for bad in [&br#"{"seq":5}"#[..], br#"{"sig":"x"}"#, br#"{"entry_hash":"x"}"#, br#"[1]"#, b"nope", br#"{"a":1,"a":2}"#] {
+    for bad in [
+        &br#"{"seq":5}"#[..],
+        br#"{"sig":"x"}"#,
+        br#"{"entry_hash":"x"}"#,
+        br#"[1]"#,
+        b"nope",
+        br#"{"a":1,"a":2}"#,
+    ] {
         assert_eq!(s.append(bad), Err(StoreError::InvalidInput));
     }
     assert_eq!(std::fs::read(&p).unwrap().len(), 0);
@@ -108,7 +131,10 @@ fn edit_field_detected() {
     let mut l = lines(&p);
     l[1] = l[1].replace("ALLOW", "DENY_");
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::HashMismatch);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::HashMismatch
+    );
 }
 
 #[test]
@@ -125,15 +151,24 @@ fn rehash_without_key_detected() {
     v["entry_hash"] = h.into();
     l[1] = ser(&v);
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::BadSignature);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::BadSignature
+    );
 }
 
 #[test]
 fn wrong_and_unknown_key() {
     let p = tmp("key");
     fill(&p, 1);
-    assert_eq!(kind(verify_file(&p, &opts(&keys_for(&[9u8; 32])))), VerifyErrorKind::UnknownKey);
-    assert_eq!(kind(verify_file(&p, &opts(&Keys(vec![])))), VerifyErrorKind::UnknownKey);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys_for(&[9u8; 32])))),
+        VerifyErrorKind::UnknownKey
+    );
+    assert_eq!(
+        kind(verify_file(&p, &opts(&Keys(vec![])))),
+        VerifyErrorKind::UnknownKey
+    );
 }
 
 #[test]
@@ -146,22 +181,34 @@ fn reorder_delete_insert_detected() {
     let mut l = orig.clone();
     l.swap(1, 2);
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::SeqMismatch);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::SeqMismatch
+    );
 
     let mut l = orig.clone();
     l.remove(1);
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::SeqMismatch);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::SeqMismatch
+    );
 
     let mut l = orig.clone();
     l.remove(0);
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::SeqMismatch);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::SeqMismatch
+    );
 
     let mut l = orig.clone();
     l.insert(2, orig[1].clone());
     write_lines(&p, &l);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::SeqMismatch);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::SeqMismatch
+    );
 }
 
 #[test]
@@ -189,7 +236,8 @@ fn fork_detected_by_anchor() {
     let anchored = std::fs::read(anchor_path(&p)).unwrap();
     // an attacker with the key rewrites the last entry; the old anchor disagrees
     std::fs::remove_file(&p).unwrap();
-    let s = FileSink::open(&p, &SECRET).unwrap();
+    // (a sink without an anchor: the rewriting attacker holds the key and bypasses the checks)
+    let s = FileSink::open_with_anchor(&p, &SECRET, None).unwrap();
     for i in 0..3 {
         s.append(format!(r#"{{"other":{i}}}"#).as_bytes()).unwrap();
     }
@@ -222,7 +270,10 @@ fn partial_line_garbage_and_blank() {
     let mut b = orig.clone();
     b.pop();
     std::fs::write(&p, &b).unwrap();
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::PartialLine);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::PartialLine
+    );
     // the sink refuses to append after a torn tail (fail closed)
     let s = FileSink::open(&p, &SECRET).unwrap();
     assert_eq!(s.append(b"{}"), Err(StoreError::Unavailable));
@@ -230,13 +281,19 @@ fn partial_line_garbage_and_blank() {
     let mut b = orig.clone();
     b.extend_from_slice(b"junk\n");
     std::fs::write(&p, &b).unwrap();
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::Malformed);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::Malformed
+    );
     assert_eq!(s.append(b"{}"), Err(StoreError::Unavailable));
 
     let mut b = orig.clone();
     b.extend_from_slice(b"\n");
     std::fs::write(&p, &b).unwrap();
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::PartialLine);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::PartialLine
+    );
 }
 
 #[test]
@@ -246,7 +303,10 @@ fn non_canonical_line_detected() {
     fill(&p, 1);
     let l = lines(&p);
     write_lines(&p, &[l[0].replacen(",", ", ", 1)]);
-    assert_eq!(kind(verify_file(&p, &opts(&keys))), VerifyErrorKind::NonCanonical);
+    assert_eq!(
+        kind(verify_file(&p, &opts(&keys))),
+        VerifyErrorKind::NonCanonical
+    );
 }
 
 #[test]
@@ -260,7 +320,8 @@ fn concurrent_threads_and_two_sinks() {
         let s = if t % 2 == 0 { a.clone() } else { b.clone() };
         hs.push(std::thread::spawn(move || {
             for i in 0..15 {
-                s.append(format!(r#"{{"t":{t},"i":{i}}}"#).as_bytes()).unwrap();
+                s.append(format!(r#"{{"t":{t},"i":{i}}}"#).as_bytes())
+                    .unwrap();
             }
         }));
     }
@@ -292,30 +353,6 @@ fn unwritable_location_fails() {
 
 // ---- oracle compatibility ----
 
-/// Serialise like Python's `json.dumps(sort_keys=True)` regardless of which
-/// serde_json features other workspace crates enable (dos-install turns on
-/// `preserve_order`, which would otherwise keep insertion order).
-fn sorted(v: &serde_json::Value) -> serde_json::Value {
-    match v {
-        serde_json::Value::Object(m) => {
-            let mut keys: Vec<&String> = m.keys().collect();
-            keys.sort();
-            let mut out = serde_json::Map::new();
-            for k in keys {
-                if let Some(x) = m.get(k) {
-                    out.insert(k.clone(), sorted(x));
-                }
-            }
-            serde_json::Value::Object(out)
-        }
-        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
-        other => other.clone(),
-    }
-}
-
-fn ser(v: &serde_json::Value) -> String {
-    serde_json::to_string(&sorted(v)).unwrap()
-}
 fn python_log(entries: &[serde_json::Value]) -> String {
     // Python recipe: sha256(json.dumps(entry minus entry_hash, sort_keys, compact, ensure_ascii))
     let mut out = String::new();
@@ -347,7 +384,9 @@ fn python_log_verifies_in_compat_mode_only() {
     o.python_compat = true;
     assert_eq!(verify_file(&p, &o).unwrap().entries, 3);
     // tamper still caught in compat mode
-    let s = std::fs::read_to_string(&p).unwrap().replace("ALLOW", "DENY_");
+    let s = std::fs::read_to_string(&p)
+        .unwrap()
+        .replace("ALLOW", "DENY_");
     std::fs::write(&p, s).unwrap();
     assert_eq!(kind(verify_file(&p, &o)), VerifyErrorKind::HashMismatch);
 }
@@ -356,10 +395,12 @@ fn python_log_verifies_in_compat_mode_only() {
 fn python_non_ascii_legacy_hash() {
     let keys = keys_for(&SECRET);
     let p = tmp("pyuni");
-    // Python's ensure_ascii hash input: "cafÃ©" and an astral char as a surrogate pair
-    let e = r#"{"actor":"cafÃ© ðŸ˜€","prev_hash":"0000000000000000000000000000000000000000000000000000000000000000","seq":0}"#;
+    // Python's ensure_ascii hash input: "café" and an astral char as a surrogate pair
+    let e = r#"{"actor":"café 😀","prev_hash":"0000000000000000000000000000000000000000000000000000000000000000","seq":0}"#;
     let h = hex_encode(&Sha256::digest(e.as_bytes()));
-    let line = format!(r#"{{"actor": "cafÃ© ðŸ˜€", "seq": 0, "prev_hash": "{GENESIS}", "entry_hash": "{h}"}}"#);
+    let line = format!(
+        r#"{{"actor": "café 😀", "seq": 0, "prev_hash": "{GENESIS}", "entry_hash": "{h}"}}"#
+    );
     std::fs::write(&p, format!("{line}\n")).unwrap();
     let mut o = opts(&keys);
     o.python_compat = true;
@@ -385,7 +426,7 @@ fn rust_extends_python_log() {
     let keys = keys_for(&SECRET);
     let p = tmp("pyext");
     std::fs::write(&p, python_log(&[serde_json::json!({"actor":"a"})])).unwrap();
-    let s = FileSink::open(&p, &SECRET).unwrap();
+    let s = FileSink::open(&p, &SECRET).unwrap().adopt_unanchored(true);
     assert_eq!(s.append(b"{}").unwrap().seq, 1);
     let mut o = opts(&keys);
     assert_eq!(kind(verify_file(&p, &o)), VerifyErrorKind::NonCanonical);
@@ -399,8 +440,10 @@ fn large_entries_and_non_ascii_resume() {
     let p = tmp("large");
     let s = FileSink::open(&p, &SECRET).unwrap();
     let big = "x".repeat(40_000);
-    s.append(format!(r#"{{"actor":"caf\u00e9","blob":"{big}"}}"#).as_bytes()).unwrap();
-    s.append(format!(r#"{{"blob":"{big}"}}"#).as_bytes()).unwrap();
+    s.append(format!(r#"{{"actor":"caf\u00e9","blob":"{big}"}}"#).as_bytes())
+        .unwrap();
+    s.append(format!(r#"{{"blob":"{big}"}}"#).as_bytes())
+        .unwrap();
     drop(s);
     // fresh sink must find the head with a tail read across several 8 KiB steps
     let s = FileSink::open(&p, &SECRET).unwrap();
@@ -417,11 +460,47 @@ fn cli_verify_exit_codes() {
     let run = |args: &[&str]| std::process::Command::new(exe).args(args).output().unwrap();
     let ps = p.to_str().unwrap();
     let a = anchor_path(&p);
-    let o = run(&["verify", ps, "--key", &pk, "--anchor-file", a.to_str().unwrap()]);
-    assert_eq!(o.status.code(), Some(0), "{}", String::from_utf8_lossy(&o.stderr));
+    let o = run(&[
+        "verify",
+        ps,
+        "--key",
+        &pk,
+        "--anchor-file",
+        a.to_str().unwrap(),
+    ]);
+    assert_eq!(
+        o.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&o.stderr)
+    );
     assert!(String::from_utf8_lossy(&o.stdout).starts_with("ok entries=2"));
     let other = SigningKey::from_bytes(&[9u8; 32]).verifying_key().to_hex();
     assert_eq!(run(&["verify", ps, "--key", &other]).status.code(), Some(1));
     assert_eq!(run(&["verify"]).status.code(), Some(2));
     assert_eq!(run(&["nope"]).status.code(), Some(2));
+}
+
+/// Sort object keys recursively. Other workspace crates (dos-install) enable serde_json's
+/// `preserve_order`, so serialisation order cannot be assumed.
+fn sorted(v: &serde_json::Value) -> serde_json::Value {
+    match v {
+        serde_json::Value::Object(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let mut out = serde_json::Map::new();
+            for k in keys {
+                if let Some(x) = m.get(k) {
+                    out.insert(k.clone(), sorted(x));
+                }
+            }
+            serde_json::Value::Object(out)
+        }
+        serde_json::Value::Array(a) => serde_json::Value::Array(a.iter().map(sorted).collect()),
+        other => other.clone(),
+    }
+}
+
+fn ser(v: &serde_json::Value) -> String {
+    serde_json::to_string(&sorted(v)).unwrap()
 }
