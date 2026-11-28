@@ -1,0 +1,50 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-custom-and-unknown-tool-calls",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body": "{\"id\": \"c1\", \"object\": \"chat.completion\", \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"c1\", \"type\": \"custom\", \"custom\": {\"name\": \"delete_repo\", \"input\": \"me/x\"}}, {\"id\": \"c2\", \"type\": \"custom\", \"custom\": {\"name\": \"get_weather\", \"input\": \"Oulu\"}}, {\"id\": \"c3\", \"type\": \"mystery\", \"mystery\": {\"payload\": 1}}]}}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"c1\", \"object\": \"chat.completion\", \"model\": \"gpt-x\", \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"[Decision OS] Blocked the `delete_repo` tool call: repos are not deleted by agents\\n[Decision OS] Blocked a tool call in an unrecognized format.\", \"tool_calls\": [{\"id\": \"c2\", \"type\": \"custom\", \"custom\": {\"name\": \"get_weather\", \"input\": \"Oulu\"}}]}}]}",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "input": "me/x"
+          }
+        ],
+        [
+          "get_weather",
+          {
+            "input": "Oulu"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_custom_and_unknown_chat_tool_calls"
+}

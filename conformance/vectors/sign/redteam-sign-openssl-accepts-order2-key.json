@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "redteam-sign-openssl-accepts-order2-key",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "public_key": "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+    "sig": "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "weak_key"
+  },
+  "source": "red team findings/sign.md differential: Python cryptography 46.0.5 (OpenSSL) accepts this forgery (order-2 key, R = key, S = 0); spec rejects"
+}

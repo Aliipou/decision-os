@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-concat",
+  "input": {
+    "op": "parse",
+    "s": "ALLOWDENY"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "concatenation"
+}

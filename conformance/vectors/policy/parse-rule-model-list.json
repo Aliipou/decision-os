@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-model-list",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\nmodel = [\"gpt\"]"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1: model must be a string"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

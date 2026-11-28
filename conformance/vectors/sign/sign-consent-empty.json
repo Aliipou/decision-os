@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-consent-empty",
+  "input": {
+    "op": "sign",
+    "domain": "consent",
+    "payload_hex": ""
+  },
+  "expected": {
+    "ok": {
+      "sig": "25ddf249adc00828b3900ca752b8f9fa8fabae2f7d3287a5d036e7999425ac572984e8e1021cd93992c36042f85147940f6a0ae473e38edac385e0c80723770b",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md reserved domain",
+  "gap": "SG-9"
+}

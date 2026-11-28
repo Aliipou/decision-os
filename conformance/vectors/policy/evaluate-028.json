@@ -1,0 +1,35 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-028",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"filesystem\"\ntool = \"write_file\"\nargs = { path = \"~/projects/*\" }\ndecision = \"allow\"\n\n[[rule]]\ntool = \"*delete*\"\ndecision = \"deny\"\nreason = \"nothing gets deleted by an agent\"\n\n[[rule]]\nclient = \"claude-code\"\nserver = \"llm\"\ntool = \"Bash\"\ndecision = \"ask\"\n\n[[rule]]\ntool = \"send_*\"\ndecision = \"ask\"\nredact = [\"token\"]\n",
+    "flavor": "nt",
+    "env": {
+      "USERPROFILE": "C:\\Users\\Alice",
+      "USERNAME": "Alice",
+      "APPDATA": "C:\\Users\\Alice\\AppData\\Roaming",
+      "PROJ": "D:\\proj"
+    },
+    "client": "c",
+    "server": "filesystem",
+    "tool": "write_file",
+    "model": null,
+    "args": {
+      "path": "C:\\Users\\Alice\\projects\\x"
+    },
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "rule:1",
+      "reason": "allowed by rule 1 (server=filesystem, tool=write_file, args.path=~/projects/*)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-duplicate-key",
+  "input": {
+    "op": "parse",
+    "text": "mode = \"enforce\"\nmode = \"observe\""
+  },
+  "expected": {
+    "error": "policy.invalid-toml"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

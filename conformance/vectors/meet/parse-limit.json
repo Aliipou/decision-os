@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-limit",
+  "input": {
+    "op": "parse",
+    "s": "LIMIT"
+  },
+  "expected": {
+    "ok": "LIMIT"
+  },
+  "source": "spec wire string"
+}

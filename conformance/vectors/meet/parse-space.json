@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-space",
+  "input": {
+    "op": "parse",
+    "s": " "
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py off_lattice"
+}

@@ -1,0 +1,32 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-011",
+  "input": {
+    "op": "evaluate",
+    "policy": "\n[[rule]]\nserver = \"github\"\ntool = \"*\"\nargs = { repo = [\"me/*\", \"team/public-*\"] }\ndecision = \"allow\"\n\n[[rule]]\nserver = \"github\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "gitlab",
+    "tool": "list_repos",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "profile:balanced:read",
+      "reason": "balanced profile allows read-only tools",
+      "redact": [],
+      "source": "profile"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

@@ -1,5 +1,9 @@
 # Escalation: decisions only Ali can make
 
+Status 2026-11-27: Ali accepted E1 and E7 for Phase 0 and authorized the merge of PR #1
+(merge commit 353008e) and the `oracle-v0` tag. Both stay open as risks until a
+non-admin agent account exists.
+
 Raised under CLAUDE.md "Stop and ask Ali". Nothing here is worked around; each item
 waits for a decision.
 
@@ -85,3 +89,38 @@ Options (any of them closes it; 1 is the root cause, shared with E1):
 3. `check-protected.sh` fails closed after Phase 0 when the tag is missing (for
    example, when `oracle/` exists and no `oracle-v*` tag is found, exit 1 unless the
    branch is the Phase 0 import).
+
+## E8 (PR #2, executor): Rust drops client lines the oracle forwards raw
+
+`dos-exec` drops any client line that is not strict JSON (duplicate keys, NaN, lone
+surrogates). The oracle forwards such lines to the upstream unparsed. Reason for the
+deviation: a lenient upstream parser could read a tool call the gateway never saw
+(parser differential). Rust refuses; the oracle fails open.
+
+Needs: your acceptance of the deviation, then a disagreement vector (new file, with
+`oracle_expected`) before merge. Recommended: accept. Fail closed is the point.
+
+## E9 (PR #2, supply chain): RUSTSEC-2026-0573 in `wasmtime 49.0.5` (oracle)
+
+`cargo-deny` fails on the advisory. The only path is `authgate-kernel` (frozen under
+`oracle/`), so agents cannot bump it or add an ignore. The wasmtime fix is in
+49.0.6, 48.0.9 and 50.0.2.
+
+Options:
+1. Oracle change: bump to `wasmtime >= 49.0.6` (a new oracle tag, Phase 1c style).
+2. A time-boxed `ignore` for the advisory in `deny.toml` with an expiry date.
+3. Scope the supply-chain job to the Rust crates and keep oracles out of it.
+
+Recommended: 1 if the oracle's tests pass on 49.0.6, else 2 with a 30-day expiry.
+
+## E10 (dos-audit red team 2): S0 found and fixed, three decisions for Ali (E-A1, E-A2, E-A3)
+
+Raised 2026-11-27 from `findings/audit-redteam2.md` (independent red team, 34 tests).
+
+**R2-1 (S0), fixed:** `append` re-read only the last line and overwrote the anchor, so an attacker who could write the log could delete the last entries (or wipe the file) and the next normal append hid it; strict verification with the anchor then passed. Fix: the sink checks the log against the anchor before every append (truncated, wiped, replaced or forged logs are refused; a log longer than the anchor must verify in full with the sink's own key), chains the last line to its predecessor, and rolls the entry back if the anchor cannot be published. Permanent tests: `h01*`, `h02`, `h05*`, `h06*`. No decision needed unless you disagree with the fix.
+
+Open decisions (accepted limits, their tests are `#[ignore]` with this reference, not deleted):
+
+- **E-A1:** a key holder or file-level attacker who rolls back log AND anchor together to an older matching pair, or substitutes a log and anchor from another log under the same key, is undetectable with the file anchor (a02b, a03b, h04). Only an external anchor (WORM store, another host, a transparency log) closes it. Decide where the anchor goes before production. Also: an empty log without an anchor (never used, or wiped with the anchor deleted) cannot be told apart; verification with an anchor file now fails closed (`anchor_missing`).
+- **E-A2:** two paths to one log through a hard link get two lock files and can fork the chain (h07). Closing it needs file identity (`unsafe` or a new dependency); `dos-audit` has no `unsafe`. Operators must use one canonical path.
+- **E-A3:** `--python-compat` accepts unsigned oracle logs by design, so without an anchor a keyless forged oracle-format log passes that mode (a04, CLI part). The sink refuses to extend such a log unless `adopt_unanchored(true)` is set, and after the first Rust append all writers must be Rust (the sink verifies everything after the anchor as signed).

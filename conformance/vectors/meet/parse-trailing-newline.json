@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-trailing-newline",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\n"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "line-based transport residue"
+}

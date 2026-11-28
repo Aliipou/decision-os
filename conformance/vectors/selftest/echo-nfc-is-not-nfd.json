@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-nfc-is-not-nfd",
+  "input": {"op": "echo", "value": ["é", "é"]},
+  "expected": {"ok": ["é", "é"]},
+  "source": "red team conformance-runner H5: no Unicode normalisation; NFC and NFD stay distinct and in order."
+}

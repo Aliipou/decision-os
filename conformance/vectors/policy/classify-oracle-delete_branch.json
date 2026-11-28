@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-delete_branch",
+  "input": {
+    "op": "classify",
+    "name": "delete_branch",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

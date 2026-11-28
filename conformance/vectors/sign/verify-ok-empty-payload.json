@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-ok-empty-payload",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "sig": "916ae6104b6be9a1b0cdd725ac4fe9cb0ee4231f16d9278d16bc9c67875ea582bdd21243bf03cd74977d144359188fb67b156741214abc5d5fb01bfe038fc000"
+  },
+  "expected": {
+    "ok": true
+  },
+  "source": "spec/sign.md"
+}

@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-browser_snapshot",
+  "input": {
+    "op": "classify",
+    "name": "browser_snapshot",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

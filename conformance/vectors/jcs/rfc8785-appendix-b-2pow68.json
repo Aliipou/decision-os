@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-2pow68",
+  "input": {
+    "text": "295147905179352830000"
+  },
+  "expected": {
+    "ok": "295147905179352830000"
+  },
+  "source": "RFC 8785 Appendix B, row 2pow68"
+}

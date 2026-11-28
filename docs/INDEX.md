@@ -13,6 +13,11 @@ and `spec/KNOWN_GAPS.md` records the disagreement.
 - [Rewrite plan](../RUST_REWRITE.md) and [how work is run](../CLAUDE.md)
 - [Known gaps](../spec/KNOWN_GAPS.md)
 
+## Rust implementation: audit log (`dos-audit`)
+
+- Design: [design/audit.md](../design/audit.md). Status and open decisions: [status/audit.md](../status/audit.md). Red-team results: [findings/audit.md](../findings/audit.md).
+- Code: [crates/dos-audit](../crates/dos-audit/) (sink, anchor, verifier, `dos-audit verify` CLI). Vectors: [conformance/vectors/audit](../conformance/vectors/audit/).
+
 ## Requirements and conformance
 
 - [AE-1..AE-10 profile](../oracle/contracts-spec/conformance/PROFILE.md), [claim](../oracle/contracts-spec/conformance/CLAIM.md), [taxonomy](../oracle/contracts-spec/conformance/TAXONOMY_MAP.md)
@@ -25,6 +30,7 @@ and `spec/KNOWN_GAPS.md` records the disagreement.
 
 ## Formal
 
+- This repository: [formal/audit/](../formal/audit/) (Lean 4 models of the audit chain and the verdict logic).
 - SG: [formal/](../oracle/sluicegate-py/formal/) (Lean 4, TLA+, Kani), [axiomatic foundation](../oracle/sluicegate-py/AXIOMATIC_FOUNDATION.md)
 
 ## Decisions and positioning

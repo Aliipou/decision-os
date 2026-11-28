@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-21-_nfo",
+  "input": {
+    "op": "classify",
+    "name": "\u0130nfo",
+    "hints": []
+  },
+  "expected": {
+    "ok": "unknown"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

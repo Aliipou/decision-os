@@ -1,0 +1,42 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "anthropic-stream-allowed-byte-identical",
+  "input": {
+    "shape": "anthropic",
+    "stream": true,
+    "body": "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"m2\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"claude-x\", \"stop_reason\": null}}\n\nevent: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"On it.\"}}\n\nevent: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\nevent: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"tool_use\", \"id\": \"tu2\", \"name\": \"Bash\", \"input\": {}}}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 1, \"delta\": {\"type\": \"input_json_delta\", \"partial_json\": \"{\\\"comman\"}}\n\nevent: ping\ndata: {\"type\": \"ping\"}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 1, \"delta\": {\"type\": \"input_json_delta\", \"partial_json\": \"d\\\": \\\"ls\\\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\nevent: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"tool_use\"}, \"usage\": {\"output_tokens\": 9}}\n\nevent: message_stop\ndata: {\"type\": \"message_stop\"}\n\n",
+    "model": "claude-x",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "allow": true
+      },
+      "Bash": {
+        "allow": true
+      },
+      "shell": {
+        "allow": true
+      },
+      "send_email": {
+        "allow": true
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"m2\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"claude-x\", \"stop_reason\": null}}\n\nevent: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"On it.\"}}\n\nevent: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\nevent: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"tool_use\", \"id\": \"tu2\", \"name\": \"Bash\", \"input\": {}}}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 1, \"delta\": {\"type\": \"input_json_delta\", \"partial_json\": \"{\\\"comman\"}}\n\nevent: ping\ndata: {\"type\": \"ping\"}\n\nevent: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 1, \"delta\": {\"type\": \"input_json_delta\", \"partial_json\": \"d\\\": \\\"ls\\\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\nevent: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"tool_use\"}, \"usage\": {\"output_tokens\": 9}}\n\nevent: message_stop\ndata: {\"type\": \"message_stop\"}\n\n",
+      "calls": [
+        [
+          "Bash",
+          {
+            "command": "ls"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "spec: byte-identical when nothing is refused"
+}

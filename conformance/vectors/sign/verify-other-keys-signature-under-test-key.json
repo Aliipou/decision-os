@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-other-keys-signature-under-test-key",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "e89b547b3f78d3bb9b4497d8431daecbb9cefa9e99286af991fd77629d86a499783104a8527ba2b865865d392e3693d2d85311c666a6a3849342ab0bd8655e02"
+  },
+  "expected": {
+    "error": "bad_signature"
+  },
+  "source": "spec/sign.md"
+}

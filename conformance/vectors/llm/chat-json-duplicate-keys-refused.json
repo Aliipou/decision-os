@@ -1,0 +1,40 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "chat-json-duplicate-keys-refused",
+  "input": {
+    "shape": "chat",
+    "stream": false,
+    "body": "{\"id\":\"d\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"hi\"}}],\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"hi\"}}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "error": "unparseable_body"
+  },
+  "oracle_expected": {
+    "ok": {
+      "body": "{\"id\": \"d\", \"choices\": [{\"index\": 0, \"message\": {\"role\": \"assistant\", \"content\": \"hi\"}}]}",
+      "calls": []
+    }
+  },
+  "source": "spec: an ambiguous body is refused (a first-wins client would read another body)"
+}

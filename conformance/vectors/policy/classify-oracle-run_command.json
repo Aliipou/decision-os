@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-run_command",
+  "input": {
+    "op": "classify",
+    "name": "run_command",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

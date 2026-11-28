@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-guardrails-enabled-string",
+  "input": {
+    "op": "parse",
+    "text": "[guardrails]\nenabled = \"yes\""
+  },
+  "expected": {
+    "error": "policy.toml: guardrails.enabled must be true or false"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

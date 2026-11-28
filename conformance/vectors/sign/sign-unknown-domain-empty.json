@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-unknown-domain-empty",
+  "input": {
+    "op": "sign",
+    "domain": "",
+    "payload_hex": ""
+  },
+  "expected": {
+    "error": "unknown_domain"
+  },
+  "source": "spec/sign.md domains"
+}

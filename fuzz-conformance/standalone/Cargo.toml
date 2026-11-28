@@ -1,0 +1,23 @@
+# Red team tools for the conformance runner that need neither nightly nor libFuzzer:
+#   json_diff  : time-boxed differential fuzzer for crates/dos-conformance/src/json.rs
+#   rt_adapter : a hostile adapter (RT_MODE=...) for reproducing findings
+# cargo run --release --manifest-path fuzz/standalone/Cargo.toml --bin json_diff -- <secs> <corpus-dir>
+[package]
+name = "dos-conformance-rt"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+serde_json = "=1.0.154"
+dos-conformance = { path = "../../crates/dos-conformance" }
+
+[[bin]]
+name = "json_diff"
+path = "src/json_diff.rs"
+
+[[bin]]
+name = "rt_adapter"
+path = "src/rt_adapter.rs"

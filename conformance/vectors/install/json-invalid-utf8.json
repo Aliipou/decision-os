@@ -1,0 +1,56 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-invalid-utf8",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "b64": "eyJtY3BTZXJ2ZXJzIjogeyJhIjogeyJjb21tYW5kIjogIv8ifX19"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "file": {
+            "b64": "eyJtY3BTZXJ2ZXJzIjogeyJhIjogeyJjb21tYW5kIjogIv8ifX19"
+          },
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-utf8"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "crash": "UnicodeDecodeError",
+          "file": {
+            "b64": "eyJtY3BTZXJ2ZXJzIjogeyJhIjogeyJjb21tYW5kIjogIv8ifX19"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle crashes with UnicodeDecodeError and aborts the whole run; Rust reports this file",
+  "source": "REDTEAM installer: encodings"
+}

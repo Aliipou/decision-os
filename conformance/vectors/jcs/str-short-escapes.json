@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-short-escapes",
+  "input": {
+    "text": "\"\\u0008\\u0009\\u000a\\u000c\\u000d\""
+  },
+  "expected": {
+    "ok": "\"\\b\\t\\n\\f\\r\""
+  },
+  "source": "RFC 8785 3.2.2.2"
+}

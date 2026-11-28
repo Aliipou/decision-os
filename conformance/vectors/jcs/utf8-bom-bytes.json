@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "utf8-bom-bytes",
+  "input": {
+    "bytes_hex": "efbbbf7b7d"
+  },
+  "expected": {
+    "error": "leading_bom"
+  },
+  "oracle_expected": {
+    "ok": "{}"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8259 8.1"
+}

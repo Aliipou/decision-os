@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-int-max-safe",
+  "input": {
+    "text": "9007199254740991"
+  },
+  "expected": {
+    "ok": "9007199254740991"
+  },
+  "source": "RFC 7493 2.2"
+}

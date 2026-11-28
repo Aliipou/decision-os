@@ -1,0 +1,20 @@
+[package]
+name = "dos-llm"
+version = "0.1.0"
+description = "Decision OS model gateway: gate the tool calls in OpenAI chat, OpenAI Responses and Anthropic Messages responses."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+serde = "1"
+# preserve_order: a rewritten body keeps the upstream key order (the oracle's dicts do).
+# arbitrary_precision: numbers keep their text through a rewrite.
+serde_json = { version = "1", features = ["preserve_order", "arbitrary_precision"] }

@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-write_file",
+  "input": {
+    "op": "classify",
+    "name": "write_file",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

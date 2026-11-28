@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-combining-acute",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW\u0301"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "combining mark suffix"
+}

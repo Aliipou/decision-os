@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-bool",
+  "input": {"op": "echo", "value": [true, false]},
+  "expected": {"ok": [true, false]},
+  "source": "pipe: booleans"
+}

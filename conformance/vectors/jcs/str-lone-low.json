@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-lone-low",
+  "input": {
+    "text": "\"\\udead\""
+  },
+  "expected": {
+    "error": "lone_surrogate"
+  },
+  "oracle_expected": {
+    "ok": "\"\\udead\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1 example"
+}

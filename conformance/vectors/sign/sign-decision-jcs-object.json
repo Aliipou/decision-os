@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-decision-jcs-object",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "7b22616374696f6e5f66696e6765727072696e74223a226162222c2276223a312c2276657264696374223a225045524d4954227d"
+  },
+  "expected": {
+    "ok": {
+      "sig": "0c38999ec877d16f0cac4474c1b30f2fc47fd2e66a34d7ff0e93925b138e13c5799a9d7d93353e7898440675c505a228f8531befcd3cadc81c16b297d3198f0c",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md; payload is JCS bytes",
+  "gap": "SG-9"
+}

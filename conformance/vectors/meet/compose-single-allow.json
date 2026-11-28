@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-allow",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW"
+    ]
+  },
+  "expected": {
+    "ok": "ALLOW"
+  },
+  "source": "oracle tests/test_compose_properties.py every element reachable"
+}

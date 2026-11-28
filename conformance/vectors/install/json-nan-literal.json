@@ -1,0 +1,101 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-nan-literal",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"n\": NaN, \"i\": -Infinity, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-json"
+          },
+          "file": {
+            "text": "{\"n\": NaN, \"i\": -Infinity, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        },
+        {
+          "report": {
+            "status": "error",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "invalid-json"
+          },
+          "file": {
+            "text": "{\"n\": NaN, \"i\": -Infinity, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"n\": NaN,\n  \"i\": -Infinity,\n  \"mcpServers\": {\n    \"a\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"a\",\n        \"--\",\n        \"x\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\"n\": NaN, \"i\": -Infinity, \"mcpServers\": {\"a\": {\"command\": \"x\"}}}"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "NaN and Infinity are not JSON; the oracle parses them (and then fails its own NaN != NaN verification); Rust refuses the file as invalid JSON",
+  "source": "Python json allow_nan"
+}

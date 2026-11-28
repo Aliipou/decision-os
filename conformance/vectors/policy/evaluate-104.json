@@ -1,0 +1,35 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-104",
+  "input": {
+    "op": "evaluate",
+    "policy": "[[rule]]\ntool = \"move_*\"\ndecision = \"ask\"\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "fs",
+    "tool": "rm",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {
+      "c|fs|rm": "allow",
+      "*|fs|rm": "allow"
+    }
+  },
+  "expected": {
+    "ok": {
+      "decision": "deny",
+      "purpose": "rule:2",
+      "reason": "denied by rule 2 (tool=rm)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

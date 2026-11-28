@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-nonchar-ffff",
+  "input": {
+    "text": "\"\\uffff\""
+  },
+  "expected": {
+    "error": "noncharacter"
+  },
+  "oracle_expected": {
+    "ok": "\"\\uffff\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1"
+}

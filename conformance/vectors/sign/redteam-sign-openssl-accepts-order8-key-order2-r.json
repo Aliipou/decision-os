@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "redteam-sign-openssl-accepts-order8-key-order2-r",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "public_key": "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac037a",
+    "sig": "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "weak_key"
+  },
+  "source": "red team findings/sign.md differential: Python cryptography 46.0.5 (OpenSSL) accepts this forgery (order-8 key, order-2 R, S = 0); spec rejects"
+}

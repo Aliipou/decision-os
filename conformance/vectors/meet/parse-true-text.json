@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-true-text",
+  "input": {
+    "op": "parse",
+    "s": "true"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "boolean as text"
+}

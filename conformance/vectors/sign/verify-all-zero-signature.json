@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-all-zero-signature",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "bad_signature"
+  },
+  "source": "spec/sign.md; R small order",
+  "gap": "SG-8"
+}

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-contain",
+  "input": {
+    "op": "parse",
+    "s": "CONTAIN"
+  },
+  "expected": {
+    "ok": "CONTAIN"
+  },
+  "source": "spec wire string"
+}

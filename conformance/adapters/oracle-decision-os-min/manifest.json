@@ -1,0 +1,7 @@
+{
+  "v": 1,
+  "command": ["./adapter"],
+  "required": ["selftest", "meet"],
+  "unsupported_ok": ["audit", "install", "jcs", "llm", "policy", "sign"],
+  "oracle": true
+}

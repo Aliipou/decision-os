@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-title-allow",
+  "input": {
+    "op": "parse",
+    "s": "Allow"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "case variant"
+}

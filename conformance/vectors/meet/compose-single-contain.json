@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-contain",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "CONTAIN"
+    ]
+  },
+  "expected": {
+    "ok": "CONTAIN"
+  },
+  "source": "oracle tests/test_compose_properties.py every element reachable"
+}

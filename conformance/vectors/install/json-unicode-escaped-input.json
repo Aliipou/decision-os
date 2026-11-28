@@ -1,0 +1,70 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-unicode-escaped-input",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"\\u0444\\u0430\\u0439\\u043b\\u044b\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"\\u00fc\"\n      ]\n    },\n    \"\\ud83d\\udd27 tools\": {\n      \"command\": \"t\"\n    },\n    \"\\u540d\\u524d\": {\n      \"command\": \"n\",\n      \"env\": {\n        \"\\u043a\\u043b\\u044e\\u0447\": \"\\u0437\\u043d\\u0430\\u0447\\u0435\\u043d\\u0438\\u0435\"\n      }\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "файлы",
+              "🔧 tools",
+              "名前"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"файлы\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"файлы\",\n        \"--\",\n        \"npx\",\n        \"ü\"\n      ]\n    },\n    \"🔧 tools\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"🔧 tools\",\n        \"--\",\n        \"t\"\n      ]\n    },\n    \"名前\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"env\": {\n        \"ключ\": \"значение\"\n      },\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"名前\",\n        \"--\",\n        \"n\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "файлы",
+              "🔧 tools",
+              "名前"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"\\u0444\\u0430\\u0439\\u043b\\u044b\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"\\u00fc\"\n      ]\n    },\n    \"\\ud83d\\udd27 tools\": {\n      \"command\": \"t\"\n    },\n    \"\\u540d\\u524d\": {\n      \"command\": \"n\",\n      \"env\": {\n        \"\\u043a\\u043b\\u044e\\u0447\": \"\\u0437\\u043d\\u0430\\u0447\\u0435\\u043d\\u0438\\u0435\"\n      }\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "\\u escapes are written back as UTF-8 by the oracle"
+}

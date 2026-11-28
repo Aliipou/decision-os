@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-nonchar-raw-fdef",
+  "input": {
+    "bytes_hex": "22efb7af22"
+  },
+  "expected": {
+    "error": "noncharacter"
+  },
+  "oracle_expected": {
+    "ok": "\"\\ufdef\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 7493 2.1: raw UTF-8 too"
+}

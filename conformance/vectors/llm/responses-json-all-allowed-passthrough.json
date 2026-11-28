@@ -1,0 +1,47 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-json-all-allowed-passthrough",
+  "input": {
+    "shape": "responses",
+    "stream": false,
+    "body": "{\"id\": \"r1\", \"object\": \"response\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}, {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "allow": true
+      },
+      "Bash": {
+        "allow": true
+      },
+      "shell": {
+        "allow": true
+      },
+      "send_email": {
+        "allow": true
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"r1\", \"object\": \"response\", \"output\": [{\"type\": \"function_call\", \"id\": \"fc1\", \"call_id\": \"c1\", \"name\": \"delete_repo\", \"arguments\": \"{\\\"repo\\\":\\\"a\\\"}\"}, {\"type\": \"function_call\", \"id\": \"fc2\", \"call_id\": \"c2\", \"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\":\\\"Oulu\\\"}\"}]}",
+      "calls": [
+        [
+          "delete_repo",
+          {
+            "repo": "a"
+          }
+        ],
+        [
+          "get_weather",
+          {
+            "city": "Oulu"
+          }
+        ]
+      ]
+    }
+  },
+  "source": "spec: byte-identical when nothing is refused (oracle re-serializes)"
+}

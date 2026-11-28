@@ -1,0 +1,64 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-trailing-commas-refused",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"a\": {\"command\": \"npx\", \"args\": [\"a\",],},\n  },\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "manual",
+            "wrapped": [],
+            "already": [],
+            "plain": [
+              "a"
+            ],
+            "remote": [],
+            "unwrapped": [],
+            "message": "jsonc"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\"command\": \"npx\", \"args\": [\"a\",],},\n  },\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"a\": {\"command\": \"npx\", \"args\": [\"a\",],},\n  },\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "REDTEAM installer: trailing commas"
+}

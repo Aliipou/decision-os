@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-getIssue",
+  "input": {
+    "op": "classify",
+    "name": "getIssue",
+    "hints": []
+  },
+  "expected": {
+    "ok": "read"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

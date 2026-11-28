@@ -1,0 +1,10 @@
+#!/bin/sh
+# Rust core adapter. The runner exports DOS_CONFORMANCE_BIN_DIR (its own directory);
+# conformance/run.sh builds dos-core-adapter into the same target directory.
+set -eu
+bin="${DOS_CONFORMANCE_BIN_DIR:?run through dos-conformance (conformance/run.sh)}/dos-core-adapter"
+if [ ! -x "$bin" ]; then
+  echo "rust-dos-core adapter: $bin not built (cargo build -p dos-core-adapter)" >&2
+  exit 2
+fi
+exec "$bin"

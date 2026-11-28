@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-leading-tab",
+  "input": {
+    "op": "parse",
+    "s": "\tLIMIT"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "whitespace is not trimmed"
+}

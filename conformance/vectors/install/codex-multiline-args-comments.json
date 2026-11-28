@@ -1,0 +1,74 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-multiline-args-comments",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\n  command = \"x\"\n  args = [ # c\n    \"a\", # d\n    'b',\n  ] # e\n  enabled = true\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "[mcp_servers.a]\n  command = \"/opt/decision-os/bin/decision-os\"\n  args = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\", \"a\", \"b\"]\n  enabled = true\n\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\n  command = \"/opt/decision-os/bin/decision-os\"\n  args = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\", \"a\", \"b\"]\n  enabled = true\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\n  command = \"x\"\n  args = [\"a\", \"b\"]\n  enabled = true\n\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _statement_end"
+}

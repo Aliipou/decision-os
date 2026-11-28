@@ -1,0 +1,76 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "claude-code-projects-app-edit",
+  "input": {
+    "kind": "run",
+    "client": "claude-code",
+    "project": false,
+    "path": ".claude.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\"numStartups\": 7, \"mcpServers\": {\"memory\": {\"type\": \"stdio\", \"command\": \"npx\", \"args\": [\"-y\", \"@mcp/memory\"]}}, \"projects\": {\"/w/app\": {\"mcpServers\": {\"db\": {\"command\": \"uvx\", \"args\": [\"mcp-db\"]}}, \"allowedTools\": []}, \"/w/empty\": {\"mcpServers\": {}}}}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "{\n  \"numStartups\": 8,\n  \"mcpServers\": {\n    \"memory\": {\n      \"type\": \"stdio\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-code\",\n        \"--server\",\n        \"memory\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"@mcp/memory\"\n      ]\n    }\n  },\n  \"projects\": {\n    \"/w/app\": {\n      \"mcpServers\": {\n        \"db\": {\n          \"command\": \"/opt/decision-os/bin/decision-os\",\n          \"args\": [\n            \"mcp-proxy\",\n            \"--home\",\n            \"@DOS_HOME@\",\n            \"--client\",\n            \"claude-code\",\n            \"--server\",\n            \"db\",\n            \"--\",\n            \"uvx\",\n            \"mcp-db\"\n          ]\n        }\n      },\n      \"allowedTools\": []\n    },\n    \"/w/empty\": {\n      \"mcpServers\": {}\n    }\n  }\n}"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "memory",
+              "[/w/app] db"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"numStartups\": 7,\n  \"mcpServers\": {\n    \"memory\": {\n      \"type\": \"stdio\",\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-code\",\n        \"--server\",\n        \"memory\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"@mcp/memory\"\n      ]\n    }\n  },\n  \"projects\": {\n    \"/w/app\": {\n      \"mcpServers\": {\n        \"db\": {\n          \"command\": \"/opt/decision-os/bin/decision-os\",\n          \"args\": [\n            \"mcp-proxy\",\n            \"--home\",\n            \"@DOS_HOME@\",\n            \"--client\",\n            \"claude-code\",\n            \"--server\",\n            \"db\",\n            \"--\",\n            \"uvx\",\n            \"mcp-db\"\n          ]\n        }\n      },\n      \"allowedTools\": []\n    },\n    \"/w/empty\": {\n      \"mcpServers\": {}\n    }\n  }\n}"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "memory",
+              "[/w/app] db"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"numStartups\": 8,\n  \"mcpServers\": {\n    \"memory\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@mcp/memory\"\n      ]\n    }\n  },\n  \"projects\": {\n    \"/w/app\": {\n      \"mcpServers\": {\n        \"db\": {\n          \"command\": \"uvx\",\n          \"args\": [\n            \"mcp-db\"\n          ]\n        }\n      },\n      \"allowedTools\": []\n    },\n    \"/w/empty\": {\n      \"mcpServers\": {}\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py (claude-code shape, entry-by-entry)"
+}

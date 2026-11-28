@@ -1,0 +1,36 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "pdp-21",
+  "input": {
+    "op": "pdp",
+    "policy": "[[rule]]\ntool = \"w\"\nargs = { p = \"/tmp/*\" }\ndecision = \"allow\"\n",
+    "policy_error": null,
+    "action": {
+      "actor": "agent:c",
+      "tool": "fs/w",
+      "capability": "tool:fs/w",
+      "action_purpose": "rule:1",
+      "data_labels": [],
+      "payload": {
+        "p": "/tmp/../etc/x"
+      },
+      "nonce": "n"
+    },
+    "learned": {},
+    "approved": false,
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    }
+  },
+  "expected": {
+    "ok": {
+      "verdict": "DENY",
+      "reason": "policy changed while this call was being decided; retry"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/engine.py GatewayAuthorityPDP"
+}

@@ -1,0 +1,18 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "sign-decision-all-ff",
+  "input": {
+    "op": "sign",
+    "domain": "decision",
+    "payload_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "expected": {
+    "ok": {
+      "sig": "d9382eeeda4bf7bd4c2766f7bf99b399f35227bdfdbed2639f19687e2b9ad483ed7152ca51abad8168632d3620b5dff2f129c58d4a1a88d17003e34a5dbd7d09",
+      "kid": "b1f1515d964ca23d4f37283c507551d3"
+    }
+  },
+  "source": "spec/sign.md signed bytes",
+  "gap": "SG-9"
+}

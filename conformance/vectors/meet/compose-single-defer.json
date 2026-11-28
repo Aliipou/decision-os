@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-defer",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "DEFER"
+    ]
+  },
+  "expected": {
+    "ok": "DEFER"
+  },
+  "source": "oracle tests/test_compose_properties.py every element reachable"
+}

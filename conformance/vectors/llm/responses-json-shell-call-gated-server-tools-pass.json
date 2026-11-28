@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "area": "llm",
+  "name": "responses-json-shell-call-gated-server-tools-pass",
+  "input": {
+    "shape": "responses",
+    "stream": false,
+    "body": "{\"id\": \"r9\", \"object\": \"response\", \"output\": [{\"type\": \"shell_call\", \"id\": \"s1\", \"call_id\": \"x\", \"action\": {\"commands\": [\"rm -rf /\"]}}, {\"type\": \"web_search_call\", \"id\": \"w1\", \"status\": \"completed\"}]}",
+    "decisions": {
+      "get_weather": {
+        "allow": true
+      },
+      "delete_repo": {
+        "deny": "repos are not deleted by agents"
+      },
+      "send_email": {
+        "output": {
+          "to": "a@b.c",
+          "password": "[REDACTED]"
+        }
+      },
+      "Bash": {
+        "deny": "guardrail: recursive delete of / or home"
+      },
+      "shell": {
+        "deny": "guardrail: recursive delete of / or home"
+      }
+    }
+  },
+  "expected": {
+    "ok": {
+      "body": "{\"id\": \"r9\", \"object\": \"response\", \"output\": [{\"type\": \"web_search_call\", \"id\": \"w1\", \"status\": \"completed\"}, {\"type\": \"message\", \"id\": \"msg_dos_00000000000000000001\", \"status\": \"completed\", \"role\": \"assistant\", \"content\": [{\"type\": \"output_text\", \"text\": \"[Decision OS] Blocked the `shell` tool call: guardrail: recursive delete of / or home\", \"annotations\": []}]}]}",
+      "calls": [
+        [
+          "shell",
+          {
+            "action": {
+              "commands": [
+                "rm -rf /"
+              ]
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_llm_proxy.py::test_responses_shell_call_is_gated_server_tools_pass"
+}

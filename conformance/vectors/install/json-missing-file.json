@@ -1,0 +1,56 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-missing-file",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": null,
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "missing",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": null
+        },
+        {
+          "report": {
+            "status": "missing",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": null
+        }
+      ]
+    }
+  },
+  "source": "oracle missing"
+}

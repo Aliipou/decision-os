@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-3",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ntool = \"x\""
+  },
+  "expected": {
+    "error": "policy.toml: rule 1 needs decision = allow | ask | deny"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

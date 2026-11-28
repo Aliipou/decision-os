@@ -1,0 +1,29 @@
+[package]
+name = "dos-exec"
+version = "0.1.0"
+description = "Decision OS executor: stdio MCP gateway proxy that gates every tools/call and resources/read."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+# Test fixture only: a minimal MCP server the integration tests launch.
+[[bin]]
+name = "dos-exec-fake-mcp"
+path = "src/bin/dos-exec-fake-mcp.rs"
+test = false
+doc = false
+
+[dependencies]
+dos-core = { path = "../dos-core" }
+serde = "1"
+serde_json = "1"
+
+[dev-dependencies]
+dos-audit = { path = "../dos-audit" }

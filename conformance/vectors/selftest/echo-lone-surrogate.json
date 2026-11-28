@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-lone-surrogate",
+  "input": {"op": "echo", "value": "a\ud800b"},
+  "expected": {"ok": "a\uD800b"},
+  "source": "a lone surrogate survives the pipe as its own code point"
+}

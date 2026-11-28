@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-10-readfile",
+  "input": {
+    "op": "classify",
+    "name": "readfile",
+    "hints": []
+  },
+  "expected": {
+    "ok": "unknown"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

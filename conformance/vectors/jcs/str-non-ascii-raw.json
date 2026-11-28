@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-non-ascii-raw",
+  "input": {
+    "text": "\"\\u00e9\\u20AC\""
+  },
+  "expected": {
+    "ok": "\"\u00e9\u20ac\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\u00e9\\u20ac\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.2.2"
+}

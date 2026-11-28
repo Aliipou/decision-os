@@ -1,0 +1,32 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-096",
+  "input": {
+    "op": "evaluate",
+    "policy": "\nprofile = \"strict\"\n\n[[rule]]\nmodel = \"gpt-4*\"\ntool = \"Bash\"\ndecision = \"deny\"\n\n[[rule]]\nmodel = \"\"\ntool = \"Read\"\ndecision = \"allow\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "llm",
+    "tool": "Read",
+    "model": "",
+    "args": {},
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "rule:2",
+      "reason": "allowed by rule 2 (tool=Read)",
+      "redact": [],
+      "source": "policy"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

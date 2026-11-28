@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "rfc8785-appendix-b-3eb0c6f7a0b5ed8c",
+  "input": {
+    "text": "9.999999999999997e-7"
+  },
+  "expected": {
+    "ok": "9.999999999999997e-7"
+  },
+  "oracle_expected": {
+    "ok": "9.999999999999997e-07"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 Appendix B, row 3eb0c6f7a0b5ed8c"
+}

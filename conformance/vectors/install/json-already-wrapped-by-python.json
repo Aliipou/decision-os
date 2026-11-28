@@ -1,0 +1,94 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "json-already-wrapped-by-python",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"old\": {\n      \"command\": \"/usr/bin/python3\",\n      \"args\": [\n        \"-P\",\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/home/old/.decision-os\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"old\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"old\"\n      ],\n      \"env\": {\n        \"K\": \"v\"\n      }\n    },\n    \"older\": {\n      \"command\": \"python\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/h\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"older\",\n        \"--\",\n        \"uvx\",\n        \"older\"\n      ]\n    },\n    \"new\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"new\"\n      ]\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "status",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "new"
+            ],
+            "already": [
+              "old",
+              "older"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"old\": {\n      \"command\": \"/usr/bin/python3\",\n      \"args\": [\n        \"-P\",\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/home/old/.decision-os\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"old\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"old\"\n      ],\n      \"env\": {\n        \"K\": \"v\"\n      }\n    },\n    \"older\": {\n      \"command\": \"python\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/h\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"older\",\n        \"--\",\n        \"uvx\",\n        \"older\"\n      ]\n    },\n    \"new\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"new\",\n        \"--\",\n        \"npx\",\n        \"new\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [
+              "old",
+              "older",
+              "new"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"old\": {\n      \"command\": \"/usr/bin/python3\",\n      \"args\": [\n        \"-P\",\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/home/old/.decision-os\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"old\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"old\"\n      ],\n      \"env\": {\n        \"K\": \"v\"\n      }\n    },\n    \"older\": {\n      \"command\": \"python\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/h\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"older\",\n        \"--\",\n        \"uvx\",\n        \"older\"\n      ]\n    },\n    \"new\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"new\",\n        \"--\",\n        \"npx\",\n        \"new\"\n      ]\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "old",
+              "older",
+              "new"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"old\": {\n      \"command\": \"/usr/bin/python3\",\n      \"args\": [\n        \"-P\",\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/home/old/.decision-os\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"old\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"old\"\n      ],\n      \"env\": {\n        \"K\": \"v\"\n      }\n    },\n    \"older\": {\n      \"command\": \"python\",\n      \"args\": [\n        \"-m\",\n        \"decision_os_min.gateway\",\n        \"--home\",\n        \"/h\",\n        \"mcp-proxy\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"older\",\n        \"--\",\n        \"uvx\",\n        \"older\"\n      ]\n    },\n    \"new\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"new\"\n      ]\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "RUST_REWRITE Phase 5: unwrap entries written by the Python gateway"
+}

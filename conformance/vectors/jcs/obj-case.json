@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "obj-case",
+  "input": {
+    "text": "{\"a\":1,\"A\":2}"
+  },
+  "expected": {
+    "ok": "{\"A\":2,\"a\":1}"
+  },
+  "source": "RFC 8785 3.2.3"
+}

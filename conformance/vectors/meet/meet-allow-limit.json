@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "meet-allow-limit",
+  "input": {
+    "op": "meet",
+    "a": "ALLOW",
+    "b": "LIMIT"
+  },
+  "expected": {
+    "ok": "LIMIT"
+  },
+  "source": "spec 5x5 meet table"
+}

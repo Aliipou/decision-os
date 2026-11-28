@@ -1,0 +1,76 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-subtables-and-arrays-of-tables",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\ncommand = \"x\"\n[mcp_servers.a.env]\nK = \"v\"\n[[profiles]]\nname = \"p\"\n[mcp_servers.b]\ncommand = \"y\"\nargs = []\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "app_write": {
+          "text": "[mcp_servers.a]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\"]\n[mcp_servers.a.env]\nK = \"v\"\n[[profiles]]\nname = \"p\"\n[mcp_servers.b]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"b\", \"--\", \"y\"]\n\n"
+        }
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a",
+              "b"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\"]\n[mcp_servers.a.env]\nK = \"v\"\n[[profiles]]\nname = \"p\"\n[mcp_servers.b]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"b\", \"--\", \"y\"]\n"
+          }
+        },
+        {
+          "app_write": true
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a",
+              "b"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"x\"\n[mcp_servers.a.env]\nK = \"v\"\n[[profiles]]\nname = \"p\"\n[mcp_servers.b]\ncommand = \"y\"\nargs = []\n\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "installer _edit_codex_server end of table"
+}

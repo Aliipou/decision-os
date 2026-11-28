@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-float-form-rounds",
+  "input": {
+    "text": "9007199254740993.0"
+  },
+  "expected": {
+    "ok": "9007199254740992"
+  },
+  "oracle_expected": {
+    "ok": "9007199254740992.0"
+  },
+  "gap": "DM-2",
+  "source": "spec/canon.md numbers: fraction form is a double"
+}

@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-nan-in-array",
+  "input": {
+    "text": "[1,NaN]"
+  },
+  "expected": {
+    "error": "non_finite_number"
+  },
+  "oracle_expected": {
+    "ok": "[1,NaN]"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.2.3 note"
+}

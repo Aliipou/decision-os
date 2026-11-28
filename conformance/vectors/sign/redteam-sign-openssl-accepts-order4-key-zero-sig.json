@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "redteam-sign-openssl-accepts-order4-key-zero-sig",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "public_key": "0000000000000000000000000000000000000000000000000000000000000080",
+    "sig": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "weak_key"
+  },
+  "source": "red team findings/sign.md differential: Python cryptography 46.0.5 (OpenSSL) accepts this forgery (order-4 key, all-zero signature); spec rejects"
+}

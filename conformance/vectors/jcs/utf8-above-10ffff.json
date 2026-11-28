@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "utf8-above-10ffff",
+  "input": {
+    "bytes_hex": "22f490808022"
+  },
+  "expected": {
+    "error": "invalid_utf8"
+  },
+  "source": "RFC 3629"
+}

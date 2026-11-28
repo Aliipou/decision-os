@@ -1,0 +1,34 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-105",
+  "input": {
+    "op": "evaluate",
+    "policy": "[[rule]]\ntool = \"move_*\"\ndecision = \"ask\"\n[[rule]]\ntool = \"rm\"\ndecision = \"deny\"\n",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "fs",
+    "tool": "write_file",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {
+      "*|fs|write_file": "allow"
+    }
+  },
+  "expected": {
+    "ok": {
+      "decision": "allow",
+      "purpose": "profile:balanced:write",
+      "reason": "you chose 'always allow' for fs/write_file",
+      "redact": [],
+      "source": "learned"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

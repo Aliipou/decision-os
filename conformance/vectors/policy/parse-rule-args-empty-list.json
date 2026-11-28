@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-args-empty-list",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\nargs = { path = [] }"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1: args.path must be a glob or a list of globs"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

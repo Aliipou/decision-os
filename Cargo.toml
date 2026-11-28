@@ -1,0 +1,24 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+# The oracles are frozen and build as their own workspaces.
+exclude = ["oracle"]
+
+[workspace.package]
+edition = "2024"
+license = "Apache-2.0"
+rust-version = "1.96"
+repository = "https://github.com/Aliipou/decision-os"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+# Kani harnesses live under #[cfg(kani)] next to the code they prove.
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(kani)"] }
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+todo = "deny"
+unimplemented = "deny"

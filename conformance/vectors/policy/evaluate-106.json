@@ -1,0 +1,32 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "evaluate-106",
+  "input": {
+    "op": "evaluate",
+    "policy": "",
+    "flavor": "posix",
+    "env": {
+      "HOME": "/home/alice",
+      "PROJ": "/srv/proj",
+      "EMPTY": ""
+    },
+    "client": "c",
+    "server": "s",
+    "tool": "\u212aill_process",
+    "model": null,
+    "args": {},
+    "hints": [],
+    "learned": {}
+  },
+  "expected": {
+    "ok": {
+      "decision": "ask",
+      "purpose": "profile:balanced:write",
+      "reason": "balanced profile asks for state-changing tools",
+      "redact": [],
+      "source": "profile"
+    }
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

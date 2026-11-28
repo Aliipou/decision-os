@@ -1,0 +1,21 @@
+{
+  "area": "audit",
+  "expected": {
+    "ok": {
+      "entries": 1
+    }
+  },
+  "input": {
+    "keys": {
+      "b1f1515d964ca23d4f37283c507551d3": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"
+    },
+    "log": [
+      "{\"actor\": \"a\", \"seq\": 0, \"prev_hash\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"entry_hash\": \"9594f87bff26bfa747503bec16d6d1827c0982a8677dd7e7d10990bb3b3751f2\"}"
+    ],
+    "op": "verify",
+    "python_compat": true
+  },
+  "name": "oracle-log-compat",
+  "source": "oracle audit.py",
+  "v": 1
+}

@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-single-off-lattice",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "deny"
+    ]
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_redteam_composition.py fixed1"
+}

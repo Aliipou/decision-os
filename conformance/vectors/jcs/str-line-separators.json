@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-line-separators",
+  "input": {
+    "text": "\"\\u2028\\u2029\""
+  },
+  "expected": {
+    "ok": "\"\u2028\u2029\""
+  },
+  "oracle_expected": {
+    "ok": "\"\\u2028\\u2029\""
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.2.2"
+}

@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-nul",
+  "input": {
+    "text": "\"\\u0000\""
+  },
+  "expected": {
+    "ok": "\"\\u0000\""
+  },
+  "source": "RFC 8785 3.2.2.2"
+}

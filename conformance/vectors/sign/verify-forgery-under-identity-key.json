@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-forgery-under-identity-key",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "public_key": "0100000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "weak_key"
+  },
+  "source": "plain verify accepts R=identity,S=0 under the identity key for every message; refused at key parse",
+  "gap": "SG-8"
+}

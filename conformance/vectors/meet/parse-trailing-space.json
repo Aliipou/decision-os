@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-trailing-space",
+  "input": {
+    "op": "parse",
+    "s": "ALLOW "
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "whitespace is not trimmed"
+}

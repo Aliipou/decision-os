@@ -1,0 +1,95 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-template-strict-enforce",
+  "input": {
+    "op": "parse",
+    "text": "# Decision OS gateway policy.\n# Changes apply on the next tool call; `decision-os policy check` validates this file.\n\nmode = \"enforce\"            # enforce | observe (record what would happen, block nothing)\nprofile = \"strict\"       # balanced: read-only tools run, everything else asks\n                          # strict:   every tool call asks until you allow it\n                          # open:     everything runs; guardrails and audit still apply\nask_timeout_seconds = 120 # an unanswered approval is refused after this long\nhide_denied_tools = true  # hard-denied tools are removed from tools/list\nnotify = true             # desktop notification when a call needs approval\nopen_dashboard = true     # open the approval page in the browser when needed\ndashboard_port = 8766\n\n[guardrails]\n# deterministic checks that run on every call as a veto; each is deny | ask | off\nenabled = true\nprotected_paths = \"deny\"        # ~/.ssh, ~/.aws, ~/.gnupg, cloud and package credentials\nsecret_files = \"ask\"            # .env, *.pem, *.key, id_rsa ...\nsecrets_in_arguments = \"deny\"   # API keys, tokens and private keys inside arguments\ncatastrophic_commands = \"deny\"  # rm -rf /, mkfs, dd onto a disk, fork bombs, format C:\nrisky_commands = \"ask\"          # git push --force, DROP TABLE, curl | sh, sudo, terraform destroy\nextra_protected_paths = []\n\n# Rules: first match wins. Globs: * matches anything (including /).\n# Fields: client, server, tool, model, args = { name = \"glob\" }, decision, reason,\n# redact = [\"argument\", ...] (the value is replaced before the tool sees it).\n#\n# Examples:\n#\n# [[rule]]\n# server = \"filesystem\"\n# tool = \"write_file\"\n# args = { path = \"~/projects/*\" }\n# decision = \"allow\"\n#\n# [[rule]]\n# tool = \"*delete*\"\n# decision = \"deny\"\n# reason = \"nothing gets deleted by an agent\"\n#\n# [[rule]]\n# client = \"claude-code\"\n# server = \"llm\"\n# tool = \"Bash\"\n# decision = \"ask\"\n\n# Model gateway upstreams for `decision-os run` (OpenAI-compatible or Anthropic).\n# [llm.upstreams]\n# work = \"https://my-gateway.example.com/v1\"\n"
+  },
+  "expected": {
+    "ok": {
+      "mode": "enforce",
+      "profile": "strict",
+      "ask_timeout_seconds": 120.0,
+      "hide_denied_tools": true,
+      "notify": true,
+      "open_dashboard": true,
+      "dashboard_port": 8766,
+      "guardrails": {
+        "enabled": true,
+        "levels": [
+          [
+            "protected_paths",
+            "deny"
+          ],
+          [
+            "secret_files",
+            "ask"
+          ],
+          [
+            "secrets_in_arguments",
+            "deny"
+          ],
+          [
+            "catastrophic_commands",
+            "deny"
+          ],
+          [
+            "risky_commands",
+            "ask"
+          ]
+        ],
+        "extra_protected_paths": []
+      },
+      "rules": [],
+      "upstreams": [
+        [
+          "openai",
+          "https://api.openai.com/v1"
+        ],
+        [
+          "anthropic",
+          "https://api.anthropic.com"
+        ],
+        [
+          "ollama",
+          "http://localhost:11434/v1"
+        ],
+        [
+          "lmstudio",
+          "http://localhost:1234/v1"
+        ],
+        [
+          "openrouter",
+          "https://openrouter.ai/api/v1"
+        ],
+        [
+          "groq",
+          "https://api.groq.com/openai/v1"
+        ],
+        [
+          "deepseek",
+          "https://api.deepseek.com/v1"
+        ],
+        [
+          "mistral",
+          "https://api.mistral.ai/v1"
+        ],
+        [
+          "together",
+          "https://api.together.xyz/v1"
+        ],
+        [
+          "xai",
+          "https://api.x.ai/v1"
+        ],
+        [
+          "gemini",
+          "https://generativelanguage.googleapis.com/v1beta/openai"
+        ]
+      ],
+      "revision": "sha256:910e3dd0092ef72b"
+    }
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

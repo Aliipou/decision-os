@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "compose-allow-limit-contain",
+  "input": {
+    "op": "compose",
+    "verdicts": [
+      "ALLOW",
+      "LIMIT",
+      "CONTAIN"
+    ]
+  },
+  "expected": {
+    "ok": "CONTAIN"
+  },
+  "source": "permitting chain"
+}

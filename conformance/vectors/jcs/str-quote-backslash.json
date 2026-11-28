@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "str-quote-backslash",
+  "input": {
+    "text": "\"\\\"\\\\\""
+  },
+  "expected": {
+    "ok": "\"\\\"\\\\\""
+  },
+  "source": "RFC 8785 3.2.2.2"
+}

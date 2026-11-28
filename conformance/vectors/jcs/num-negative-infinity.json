@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "num-negative-infinity",
+  "input": {
+    "text": "-Infinity"
+  },
+  "expected": {
+    "error": "non_finite_number"
+  },
+  "oracle_expected": {
+    "ok": "-Infinity"
+  },
+  "gap": "DM-2",
+  "source": "RFC 8785 3.2.2.3 note"
+}

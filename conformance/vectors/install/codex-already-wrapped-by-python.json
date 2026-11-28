@@ -1,0 +1,87 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-already-wrapped-by-python",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\ncommand = \"/usr/bin/python3\"\nargs = [\"-P\", \"-m\", \"decision_os_min.gateway\", \"--home\", \"/h\", \"mcp-proxy\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"npx\", \"a\"]\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "status",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [
+              "a"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"/usr/bin/python3\"\nargs = [\"-P\", \"-m\", \"decision_os_min.gateway\", \"--home\", \"/h\", \"mcp-proxy\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"npx\", \"a\"]\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [
+              "a"
+            ],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"/usr/bin/python3\"\nargs = [\"-P\", \"-m\", \"decision_os_min.gateway\", \"--home\", \"/h\", \"mcp-proxy\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"npx\", \"a\"]\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "a"
+            ],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"npx\"\nargs = [\"a\"]\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "RUST_REWRITE Phase 5: unwrap entries written by the Python gateway"
+}

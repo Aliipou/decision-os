@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-bad-toml-unclosed",
+  "input": {
+    "op": "parse",
+    "text": "[guardrails"
+  },
+  "expected": {
+    "error": "policy.invalid-toml"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

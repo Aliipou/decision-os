@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-permit",
+  "input": {
+    "op": "parse",
+    "s": "permit"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py docstring: foreign vocabulary 'permit'"
+}

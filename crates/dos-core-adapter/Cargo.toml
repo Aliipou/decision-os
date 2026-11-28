@@ -1,0 +1,16 @@
+[package]
+name = "dos-core-adapter"
+version = "0.1.0"
+description = "Conformance adapter for the Rust core: answers conformance/vectors requests over JSONL."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]
+dos-conformance = { path = "../dos-conformance" }
+dos-core = { path = "../dos-core" }
+dos-audit = { path = "../dos-audit" }

@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "verify-s-equal-l",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "78",
+    "sig": "584f808f7921f2247af1eb49f337cc75b19b60aecdce8d6db46bc15509976cb1edd3f55c1a631258d69cf7a2def9de1400000000000000000000000000000010"
+  },
+  "expected": {
+    "error": "non_canonical_signature"
+  },
+  "source": "spec/sign.md signature checks",
+  "gap": "SG-8"
+}

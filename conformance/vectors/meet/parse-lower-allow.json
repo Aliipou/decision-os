@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-lower-allow",
+  "input": {
+    "op": "parse",
+    "s": "allow"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "oracle tests/test_compose_properties.py docstring: foreign vocabulary 'allow'"
+}

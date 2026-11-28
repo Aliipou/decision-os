@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-rule-unknown-two",
+  "input": {
+    "op": "parse",
+    "text": "[[rule]]\ndecision = \"allow\"\nwhen = 1\nalso = 2"
+  },
+  "expected": {
+    "error": "policy.toml: rule 1 has unknown field(s) ['also', 'when']"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

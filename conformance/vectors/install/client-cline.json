@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "client-cline",
+  "input": {
+    "kind": "run",
+    "client": "cline",
+    "project": false,
+    "path": ".config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"fs\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"fs\"\n      ],\n      \"disabled\": false,\n      \"autoApprove\": []\n    }\n  }\n}"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "fs"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"fs\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"cline\",\n        \"--server\",\n        \"fs\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"fs\"\n      ],\n      \"disabled\": false,\n      \"autoApprove\": []\n    }\n  }\n}"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "fs"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"fs\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"fs\"\n      ],\n      \"disabled\": false,\n      \"autoApprove\": []\n    }\n  }\n}"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle clients.py registry"
+}

@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "classify-oracle-get_or_create_user",
+  "input": {
+    "op": "classify",
+    "name": "get_or_create_user",
+    "hints": []
+  },
+  "expected": {
+    "ok": "write"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

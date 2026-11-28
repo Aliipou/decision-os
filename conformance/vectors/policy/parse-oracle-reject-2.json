@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-oracle-reject-2",
+  "input": {
+    "op": "parse",
+    "text": "typo_setting = 1"
+  },
+  "expected": {
+    "error": "policy.toml: unknown setting(s) ['typo_setting']"
+  },
+  "source": "oracle tests/gateway/test_policy_guardrails.py"
+}

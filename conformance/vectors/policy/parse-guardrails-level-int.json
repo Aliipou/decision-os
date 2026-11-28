@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "policy",
+  "name": "parse-guardrails-level-int",
+  "input": {
+    "op": "parse",
+    "text": "[guardrails]\nsecret_files = 1"
+  },
+  "expected": {
+    "error": "policy.toml: guardrails.secret_files must be one of ('deny', 'ask', 'off')"
+  },
+  "source": "oracle decision_os_min/gateway/policy.py"
+}

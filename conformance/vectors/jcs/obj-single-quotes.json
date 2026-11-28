@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "area": "jcs",
+  "name": "obj-single-quotes",
+  "input": {
+    "text": "{'a':1}"
+  },
+  "expected": {
+    "error": "syntax"
+  },
+  "source": "RFC 8259 4"
+}

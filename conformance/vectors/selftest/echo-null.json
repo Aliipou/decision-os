@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-null",
+  "input": {"op": "echo", "value": null},
+  "expected": {"ok": null},
+  "source": "pipe: null"
+}

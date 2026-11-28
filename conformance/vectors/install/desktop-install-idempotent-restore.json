@@ -1,0 +1,94 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "desktop-install-idempotent-restore",
+  "input": {
+    "kind": "run",
+    "client": "claude-desktop",
+    "project": false,
+    "path": ".config/Claude/claude_desktop_config.json",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      },
+      {
+        "action": "uninstall",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "filesystem",
+              "github"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [
+              "linear"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"filesystem\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"github\",\n        \"--\",\n        \"docker\",\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [
+              "filesystem",
+              "github"
+            ],
+            "plain": [],
+            "remote": [
+              "linear"
+            ],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"filesystem\",\n        \"--\",\n        \"npx\",\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"/opt/decision-os/bin/decision-os\",\n      \"args\": [\n        \"mcp-proxy\",\n        \"--home\",\n        \"@DOS_HOME@\",\n        \"--client\",\n        \"claude-desktop\",\n        \"--server\",\n        \"github\",\n        \"--\",\n        \"docker\",\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+          }
+        },
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [
+              "filesystem",
+              "github"
+            ],
+            "message": "restored-exact"
+          },
+          "file": {
+            "text": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-filesystem\",\n        \"/w\"\n      ]\n    },\n    \"github\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\",\n        \"-i\",\n        \"ghcr.io/github/github-mcp-server\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"x\"\n      }\n    },\n    \"linear\": {\n      \"url\": \"https://mcp.linear.app/sse\"\n    }\n  },\n  \"globalShortcut\": \"Ctrl+Space\"\n}\n"
+          }
+        }
+      ]
+    }
+  },
+  "source": "oracle tests/gateway/test_installer.py::test_install_wraps_every_stdio_server_and_keeps_everything_else"
+}

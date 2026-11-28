@@ -1,0 +1,66 @@
+{
+  "v": 1,
+  "area": "install",
+  "name": "codex-args-string",
+  "input": {
+    "kind": "run",
+    "client": "codex",
+    "project": false,
+    "path": ".codex/config.toml",
+    "binary": "/opt/decision-os/bin/decision-os",
+    "before": {
+      "text": "[mcp_servers.a]\ncommand = \"x\"\nargs = \"abc\"\n"
+    },
+    "steps": [
+      {
+        "action": "install",
+        "dry_run": false,
+        "force_jsonc": false
+      }
+    ]
+  },
+  "expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "unchanged",
+            "wrapped": [],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": "args-not-strings"
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"x\"\nargs = \"abc\"\n"
+          }
+        }
+      ]
+    }
+  },
+  "oracle_expected": {
+    "ok": {
+      "steps": [
+        {
+          "report": {
+            "status": "ok",
+            "wrapped": [
+              "a"
+            ],
+            "already": [],
+            "plain": [],
+            "remote": [],
+            "unwrapped": [],
+            "message": null
+          },
+          "file": {
+            "text": "[mcp_servers.a]\ncommand = \"/opt/decision-os/bin/decision-os\"\nargs = [\"mcp-proxy\", \"--home\", \"@DOS_HOME@\", \"--client\", \"codex\", \"--server\", \"a\", \"--\", \"x\", \"a\", \"b\", \"c\"]\n"
+          }
+        }
+      ]
+    }
+  },
+  "divergence": "the oracle turns args = \"abc\" into the arguments a, b, c; Rust skips the entry like the JSON path",
+  "source": "installer list(args or [])"
+}

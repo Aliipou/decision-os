@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "selftest",
+  "name": "echo-unicode-escapes",
+  "input": {"op": "echo", "value": "é😀\"\\\n\u0001 "},
+  "expected": {"ok": "é😀\"\\\n\u0001 "},
+  "source": "strings compare by code points: escaped and raw forms are equal"
+}

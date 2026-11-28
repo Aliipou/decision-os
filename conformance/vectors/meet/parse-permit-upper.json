@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "area": "meet",
+  "name": "parse-permit-upper",
+  "input": {
+    "op": "parse",
+    "s": "PERMIT"
+  },
+  "expected": {
+    "ok": "DENY"
+  },
+  "source": "foreign vocabulary (XACML)"
+}
