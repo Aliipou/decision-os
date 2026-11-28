@@ -540,7 +540,8 @@ fn a_planted_approval_does_not_pre_approve_a_call() {
     let d = tmpdir("planted");
     let home = d.join("home");
     std::fs::create_dir_all(home.join("approvals")).unwrap();
-    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 1\n").unwrap();
+    // long while the first run learns the id (answered at once), short for the planted run
+    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 30\n").unwrap();
     let server_log = d.join("server.log");
     let start = |planted: Option<&str>| {
         if let Some(id) = planted {
@@ -578,6 +579,13 @@ fn a_planted_approval_does_not_pre_approve_a_call() {
             }
             std::thread::sleep(std::time::Duration::from_millis(30));
         }
+        // Learning run: answer it at once so the proxy ends; the planted run must expire alone.
+        if let (true, Some(id)) = (planted.is_none(), &id) {
+            let _ = Command::new(BIN)
+                .args(["deny", id, "--home"])
+                .arg(&home)
+                .output();
+        }
         drop(si);
         let out = child.wait_with_output().unwrap();
         (id, String::from_utf8_lossy(&out.stdout).into_owned())
@@ -585,7 +593,8 @@ fn a_planted_approval_does_not_pre_approve_a_call() {
     // first run only to learn the deterministic id of this exact call
     let (id, _) = start(None);
     let id = id.expect("no approval requested");
-    // second run with a planted approved record for that id
+    // second run with a planted approved record for that id, and a short timeout
+    std::fs::write(home.join("policy.toml"), "ask_timeout_seconds = 1\n").unwrap();
     let (_, stdout) = start(Some(&id));
     assert!(
         stdout.contains("isError"),
