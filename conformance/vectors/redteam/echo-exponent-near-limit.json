@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "redteam",
+  "name": "echo-exponent-near-limit",
+  "input": {"op": "echo", "value": [1e999999999999999, -0.0e-999999999999999, 1e0000000000000000000000001]},
+  "expected": {"ok": [10e999999999999998, 0, 10]},
+  "source": "red team conformance-runner H4: exponents just under 10^15, a signed zero and an exponent with leading zeros compare by exact value. NOTE finding F1 (inert area)"
+}

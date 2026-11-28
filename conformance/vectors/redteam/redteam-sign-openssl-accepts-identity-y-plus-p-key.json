@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "redteam-sign-openssl-accepts-identity-y-plus-p-key",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "public_key": "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+    "sig": "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "non_canonical_key"
+  },
+  "source": "red team findings/sign.md differential: Python cryptography 46.0.5 (OpenSSL) accepts this forgery (identity encoded as y = p + 1, R=identity, S=0); spec rejects"
+}

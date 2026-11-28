@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "area": "redteam",
+  "name": "echo-astral-escaped-pair-equals-raw",
+  "input": {"op": "echo", "value": "😀"},
+  "expected": {"ok": "😀"},
+  "source": "red team conformance-runner H5: an escaped surrogate pair is one code point, equal to the raw character. NOTE finding F1: area redteam is answered unsupported by every adapter, so this vector checks nothing until an adapter implements or a manifest requires it"
+}

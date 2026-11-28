@@ -1,0 +1,12 @@
+# Red team (findings/sign.md, H12): reads the memory of a dropped SigningKey.
+# Needs `unsafe`, so it is its own crate and workspace, never part of dos-core.
+[package]
+name = "rt-sign-zeroize"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[dependencies]
+dos-core = { path = "../../../crates/dos-core" }
+
+[workspace]

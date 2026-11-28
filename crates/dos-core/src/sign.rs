@@ -309,6 +309,26 @@ impl VerifyingKey {
         }
         self.verify(domain, payload, sig)
     }
+
+    /// Verify from wire (hex) inputs in the order `spec/sign.md` fixes: the optional
+    /// expected kid (hex, length, match) is settled before the signature is parsed,
+    /// so a wrong kid is `kid_mismatch` even when the signature is also malformed.
+    /// This is the path a protocol layer should use; [`Signature::from_hex`] followed
+    /// by [`VerifyingKey::verify_with_kid`] checks `S` before the kid.
+    pub fn verify_wire(
+        &self,
+        domain: Domain,
+        payload: &[u8],
+        expected_kid_hex: Option<&str>,
+        sig_hex: &str,
+    ) -> Result<(), SignError> {
+        if let Some(k) = expected_kid_hex {
+            if self.kid() != Kid::from_hex(k)? {
+                return Err(SignError::KidMismatch);
+            }
+        }
+        self.verify(domain, payload, &Signature::from_hex(sig_hex)?)
+    }
 }
 
 /// A secret signing key. Zeroized on drop (`ed25519-dalek` `zeroize`); its

@@ -1,0 +1,16 @@
+{
+  "v": 1,
+  "area": "sign",
+  "name": "redteam-sign-openssl-accepts-identity-sign-bit-key",
+  "input": {
+    "op": "verify",
+    "domain": "decision",
+    "payload_hex": "",
+    "public_key": "0100000000000000000000000000000000000000000000000000000000000080",
+    "sig": "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "error": "non_canonical_key"
+  },
+  "source": "red team findings/sign.md differential: Python cryptography 46.0.5 (OpenSSL) accepts this forgery (identity key with x=0 sign bit, R=identity, S=0); spec rejects"
+}
