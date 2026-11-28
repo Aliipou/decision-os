@@ -23,12 +23,14 @@ done is `CLAUDE.md`.
 ## The `decision-os` command (`dos-cli`)
 
 ```text
+decision-os install | uninstall | status [--client <id>]... [--project <dir>] [--home <dir>] [--dry-run]
+decision-os mcp-proxy --home <dir> --client <id> --server <name> -- <mcp server command...>
 decision-os keygen <key-file>
 decision-os proxy --key-file <f> [--policy <toml>] [--audit <log>] [--client <name>] -- <mcp server command...>
 decision-os audit verify <log> --key <pubkey-hex> [--anchor-file <p>] [--python-compat]
 ```
 
-`proxy` sits between an MCP client and a server, gates every `tools/call` and `resources/read` with the gateway policy (`dos-decision`), and writes every outcome to the signed, hash-chained audit log before any effect (`dos-exec`, `dos-audit`). `Ask` is refused (no interactive approvals yet). If the log cannot be written the call is blocked. `keygen` writes a random 32-byte key (never overwrites) and prints the public key for `audit verify`.
+`proxy` sits between an MCP client and a server, gates every `tools/call` and `resources/read` with the gateway policy (`dos-decision`), and writes every outcome to the signed, hash-chained audit log before any effect (`dos-exec`, `dos-audit`). `Ask` is refused (no interactive approvals yet). If the log cannot be written the call is blocked. `install` wraps every stdio server in the clients' configs so it starts behind `decision-os mcp-proxy` (state in `~/.decision-os`: `policy.toml`, `audit.jsonl`, `keys/audit.key` created on first use, `locks/audit.lock`, the Python gateway's layout); `uninstall` restores the files byte for byte. `keygen` writes a random 32-byte key (never overwrites) and prints the public key for `audit verify`.
 
 ## Audit log (`dos-audit`)
 

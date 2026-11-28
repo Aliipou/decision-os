@@ -199,6 +199,7 @@ dependencies = [
  "dos-core",
  "dos-decision",
  "dos-exec",
+ "dos-install",
  "getrandom",
  "serde_json",
  "sha2",

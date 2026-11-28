@@ -258,3 +258,135 @@ fn proxy_fails_closed_when_the_audit_log_is_unusable() {
 fn blocked(v: &serde_json::Value) -> bool {
     v.get("error").is_some() || v["result"]["isError"] == true
 }
+
+/// Clears every variable the installer reads so a test can never touch a real config.
+fn throwaway(cmd: &mut Command, root: &std::path::Path) {
+    for k in [
+        "HOME",
+        "USERPROFILE",
+        "APPDATA",
+        "LOCALAPPDATA",
+        "XDG_CONFIG_HOME",
+        "CODEX_HOME",
+        "COPILOT_HOME",
+        "HOMEDRIVE",
+        "HOMEPATH",
+    ] {
+        cmd.env(k, root);
+    }
+}
+
+#[test]
+fn install_wraps_a_project_server_the_wrapped_entry_runs_and_uninstall_restores_it() {
+    let d = tmpdir("install");
+    let home = d.join("home");
+    let project = d.join("project");
+    std::fs::create_dir_all(&project).unwrap();
+    let server_log = d.join("server.log");
+    let fake = fake_server();
+    let original = format!(
+        "{{\n  \"mcpServers\": {{\n    \"fake\": {{\n      \"command\": {},\n      \"args\": [{}]\n    }}\n  }}\n}}\n",
+        serde_json::to_string(&fake.to_string_lossy()).unwrap(),
+        serde_json::to_string(&server_log.to_string_lossy()).unwrap()
+    );
+    let cfg = project.join(".mcp.json");
+    std::fs::write(&cfg, &original).unwrap();
+
+    let run = |action: &str| {
+        let mut c = Command::new(BIN);
+        throwaway(&mut c, &d);
+        c.arg(action)
+            .args(["--client", "claude-code", "--project"])
+            .arg(&project)
+            .arg("--home")
+            .arg(&home);
+        c.output().unwrap()
+    };
+    let o = run("install");
+    assert_eq!(
+        o.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&o.stderr)
+    );
+    let wrapped: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&cfg).unwrap()).unwrap();
+    let entry = &wrapped["mcpServers"]["fake"];
+    assert_eq!(entry["command"], BIN);
+    assert_eq!(entry["args"][0], "mcp-proxy");
+    assert_ne!(std::fs::read_to_string(&cfg).unwrap(), original);
+
+    // the status command reports it as wrapped, and changes nothing
+    let st = run("status");
+    assert_eq!(st.status.code(), Some(0));
+
+    // Run the wrapped entry exactly as a client would.
+    let args: Vec<String> = entry["args"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap().to_owned())
+        .collect();
+    let mut child = Command::new(entry["command"].as_str().unwrap())
+        .args(&args)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    {
+        let mut si = child.stdin.take().unwrap();
+        writeln!(si, r#"{{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{{"name":"read_file","arguments":{{"path":"/tmp/x"}}}}}}"#).unwrap();
+    }
+    let out = child.wait_with_output().unwrap();
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("\"result\"") && !stdout.contains("isError"),
+        "{stdout}\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(
+        std::fs::read_to_string(&server_log)
+            .unwrap()
+            .contains("read_file")
+    );
+    // the key and the signed log were created in the home, and the log verifies
+    let key = home.join("keys").join("audit.key");
+    assert!(key.exists() && home.join("audit.jsonl").exists());
+    let secret = std::fs::read_to_string(&key).unwrap();
+    let shown = Command::new(BIN)
+        .arg("keygen")
+        .arg(d.join("scratch.key"))
+        .output()
+        .unwrap();
+    assert!(shown.status.success());
+    let sk = {
+        // derive the public key through the library the binary uses
+        let bytes = dos_core::sign::hex_decode_array::<32>(secret.trim()).unwrap();
+        dos_core::sign::SigningKey::from_bytes(&bytes)
+            .verifying_key()
+            .to_hex()
+    };
+    let v = Command::new(BIN)
+        .args(["audit", "verify"])
+        .arg(home.join("audit.jsonl"))
+        .args(["--key", &sk])
+        .output()
+        .unwrap();
+    assert_eq!(
+        v.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&v.stderr)
+    );
+
+    // uninstall restores the file byte for byte
+    let un = run("uninstall");
+    assert_eq!(
+        un.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&un.stderr)
+    );
+    assert_eq!(std::fs::read_to_string(&cfg).unwrap(), original);
+}
