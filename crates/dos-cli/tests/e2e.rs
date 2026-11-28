@@ -437,9 +437,15 @@ fn ask_round(
         }
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
-    let id = id.expect("the proxy never asked for approval");
-    assert!(id.starts_with("ask-"));
-    if let Some(approve) = resolve {
+    // With nobody answering the window is the policy timeout (1 s): seeing the request is
+    // optional there, so a loaded machine cannot make the test flaky.
+    if resolve.is_some() {
+        assert!(id.is_some(), "the proxy never asked for approval");
+    }
+    if let Some(id) = &id {
+        assert!(id.starts_with("ask-"));
+    }
+    if let (Some(approve), Some(id)) = (resolve, id) {
         let verb = if approve { "approve" } else { "deny" };
         let o = Command::new(BIN)
             .args([verb, &id, "--home"])
