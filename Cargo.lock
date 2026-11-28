@@ -192,6 +192,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dos-authority"
+version = "0.1.0"
+dependencies = [
+ "dos-core",
+ "proptest",
+ "sha2",
+]
+
+[[package]]
 name = "dos-cli"
 version = "0.1.0"
 dependencies = [
