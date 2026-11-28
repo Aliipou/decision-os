@@ -398,12 +398,15 @@ fn execute(cfg: &Config, cases: &[&Vector]) -> Session {
         } else {
             wait.min(slice)
         };
+        // A flood of extra lines never times out `recv_timeout`, so the budget is checked
+        // on every pass, not only when the channel is idle (red team H10).
+        let out_of_time = !exited && started.elapsed() >= wait;
         match rx.recv_timeout(step) {
-            Ok(Msg::Line(_) | Msg::Partial | Msg::TooLong) => s.extra += 1,
+            Ok(Msg::Line(_) | Msg::Partial | Msg::TooLong) if !out_of_time => s.extra += 1,
             Ok(Msg::Eof | Msg::ReadError(_)) | Err(RecvTimeoutError::Disconnected) => ended = true,
             Err(RecvTimeoutError::Timeout) if exited => ended = true,
             Err(RecvTimeoutError::Timeout) if started.elapsed() < wait => {}
-            Err(RecvTimeoutError::Timeout) => {
+            Ok(_) | Err(RecvTimeoutError::Timeout) => {
                 s.adapter_error = Some(
                     "adapter did not exit (stdout still open) after the last response; killed"
                         .into(),
