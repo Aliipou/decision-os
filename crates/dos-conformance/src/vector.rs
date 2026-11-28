@@ -141,7 +141,7 @@ fn load_area(area: &str, dir: &Path) -> Result<Vec<Vector>, Vec<String>> {
 }
 
 const REQUIRED: [&str; 6] = ["v", "area", "name", "input", "expected", "source"];
-const OPTIONAL: [&str; 2] = ["oracle_expected", "gap"];
+const OPTIONAL: [&str; 3] = ["oracle_expected", "gap", "divergence"];
 
 fn load_one(area: &str, stem: &str, path: &Path) -> Result<Vector, String> {
     let size = fs::metadata(path).map_err(|e| e.to_string())?.len();

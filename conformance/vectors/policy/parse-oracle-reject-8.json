@@ -7,7 +7,7 @@
     "text": "this is not toml"
   },
   "expected": {
-    "error_prefix": "policy.toml: invalid TOML: "
+    "error": "policy.invalid-toml"
   },
   "source": "oracle tests/gateway/test_policy_guardrails.py"
 }

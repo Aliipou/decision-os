@@ -93,7 +93,7 @@ fn run(input: &J) -> J {
         "parse" => match parse_policy(input["text"].as_str().unwrap(), "policy.toml") {
             Ok(p) => json!({ "ok": summary(&p) }),
             Err(e) if e.0.starts_with("policy.toml: invalid TOML: ") => {
-                json!({ "error_prefix": "policy.toml: invalid TOML: " })
+                json!({ "error": "policy.invalid-toml" })
             }
             Err(e) => json!({ "error": e.0 }),
         },

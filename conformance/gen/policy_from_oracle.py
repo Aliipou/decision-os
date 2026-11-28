@@ -171,7 +171,7 @@ def do_parse(inp: dict) -> dict:
     except policy.PolicyError as exc:
         msg = str(exc)
         if msg.startswith("policy.toml: invalid TOML: "):
-            return {"error_prefix": "policy.toml: invalid TOML: "}
+            return {"error": "policy.invalid-toml"}
         return {"error": msg}
 
 

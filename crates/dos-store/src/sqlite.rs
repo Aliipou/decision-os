@@ -18,6 +18,23 @@ const SCHEMA: &str = "CREATE TABLE IF NOT EXISTS spent (token_id BLOB PRIMARY KE
 
 pub struct SqliteSpentStore {
     conn: Mutex<Connection>,
+    #[cfg_attr(not(unix), allow(dead_code))]
+    path: PathBuf,
+    /// (device, inode) of the db file as opened. An unlinked or replaced file keeps
+    /// working through the open handle but is no longer the durable record, so a
+    /// restart would forget every spent token: fail closed instead.
+    #[cfg(unix)]
+    ident: (u64, u64),
+}
+
+#[cfg(unix)]
+fn file_ident(path: &Path) -> Result<(u64, u64), StoreError> {
+    use std::os::unix::fs::MetadataExt;
+    let md = fs::symlink_metadata(path).map_err(u)?;
+    if !md.file_type().is_file() {
+        return Err(U);
+    }
+    Ok((md.dev(), md.ino()))
 }
 
 fn u<E>(_: E) -> StoreError {
@@ -120,7 +137,19 @@ impl SqliteSpentStore {
         }
         Ok(SqliteSpentStore {
             conn: Mutex::new(conn),
+            path: path.to_path_buf(),
+            #[cfg(unix)]
+            ident: file_ident(path)?,
         })
+    }
+
+    /// Err unless the path still names the file this store opened.
+    fn still_present(&self) -> Result<(), StoreError> {
+        #[cfg(unix)]
+        if file_ident(&self.path)? != self.ident {
+            return Err(U);
+        }
+        Ok(())
     }
 
     /// The cross-process lock that serializes opening: `<db path>.lock`.
@@ -133,6 +162,7 @@ impl SqliteSpentStore {
     /// Delete records whose expiry is strictly before `now_unix_ms`.
     pub fn purge_expired(&self, now_unix_ms: i64) -> Result<u64, StoreError> {
         let mut conn = self.conn.lock().map_err(u)?;
+        self.still_present()?;
         let tx = conn
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(u)?;
@@ -152,6 +182,7 @@ impl SpentStore for SqliteSpentStore {
         validate_token_id(token_id)?;
         let id = token_id.as_bytes();
         let mut conn = self.conn.lock().map_err(u)?;
+        self.still_present()?;
         let tx = conn
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(u)?;
@@ -171,6 +202,8 @@ impl SpentStore for SqliteSpentStore {
             }
             Err(_) => return Err(U),
         };
+        // Re-check before commit: the file may have vanished since the first check.
+        self.still_present()?;
         // First only once the insert is committed (synchronous=FULL).
         tx.commit().map_err(u)?;
         Ok(outcome)

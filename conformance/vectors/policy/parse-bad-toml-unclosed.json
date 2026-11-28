@@ -7,7 +7,7 @@
     "text": "[guardrails"
   },
   "expected": {
-    "error_prefix": "policy.toml: invalid TOML: "
+    "error": "policy.invalid-toml"
   },
   "source": "oracle decision_os_min/gateway/policy.py"
 }
